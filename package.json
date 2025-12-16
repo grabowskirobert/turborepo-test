@@ -6,12 +6,31 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "check-types": "turbo run check-types",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,md,css,json,yaml,js,jsx}\"",
     "check-deps": "ncu --workspaces",
     "update-deps": "ncu --workspaces -u",
-    "update-deps-i": "ncu --workspaces -i"
+    "update-deps-i": "ncu --workspaces -i",
+    "ci:is-working": "pnpm check-types && pnpm lint && pnpm build",
+    "ci:format": "lint-staged",
+    "ci:check-updates": "pnpm check-deps",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,md,css,json,yaml,js,jsx}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "npm-check-updates": "19.2.0",
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.7.2",
