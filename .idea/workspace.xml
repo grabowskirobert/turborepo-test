@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d99b478-57db-44c2-913e-e3e956311bcf" name="Changes" comment="" />
+    <list default="true" id="6d99b478-57db-44c2-913e-e3e956311bcf" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/mvp.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/prd.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/docs/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/next-env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/next-env.d.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +31,9 @@
   &quot;associatedIndex&quot;: 1
 }</component>
   <component name="ProjectId" id="36drdMtHxQvFxQXeP5JU0faStAf" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -41,9 +50,17 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test/node_modules/prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test/packages/ui/node_modules/typescript/lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/apps/intersection-visualizer/docs" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -63,6 +80,13 @@
       <workItem from="1765785389979" duration="715000" />
       <workItem from="1765786110931" duration="200000" />
       <workItem from="1765786314442" duration="294000" />
+      <workItem from="1765997749766" duration="1375000" />
+      <workItem from="1766088169554" duration="599000" />
+      <workItem from="1766150038047" duration="3436000" />
+      <workItem from="1766230086022" duration="2072000" />
+      <workItem from="1766516895204" duration="2893000" />
+      <workItem from="1767855705227" duration="843000" />
+      <workItem from="1767899049270" duration="2902000" />
     </task>
     <servers />
   </component>
