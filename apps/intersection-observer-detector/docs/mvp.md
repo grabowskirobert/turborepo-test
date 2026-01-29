@@ -25,7 +25,6 @@ We transform the invisible, abstract logic of the Intersection Observer into a r
 - **rootMargin Visualizer:** An overlay that draws the physical frames of buffer zones.
 - **Live Thresholds & Ratio Monitor:** A panel displaying real-time `intersectionRatio` and crossed thresholds.
 - **"Zombie Hunter" Panel (Observer List):** A list of active instances, flagging observers whose target elements have been removed from the DOM (memory leaks).
-- **Source Detection (3rd-party Filter):** Identification of the observer's origin (e.g., "Your Code" vs. "Google Ads").
 
 ## 5. "Measure" - Key Success Metrics (Privacy First)
 

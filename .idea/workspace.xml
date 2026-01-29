@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d99b478-57db-44c2-913e-e3e956311bcf" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/mvp.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/prd.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/feat-001.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/feat-002.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/feat-003.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/docs/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/next-env.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/web/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/next-env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/intersection-visualizer/docs/prd.md" beforeDir="false" afterPath="$PROJECT_DIR$/apps/intersection-visualizer/docs/prd.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +87,9 @@
       <workItem from="1766516895204" duration="2893000" />
       <workItem from="1767855705227" duration="843000" />
       <workItem from="1767899049270" duration="2902000" />
+      <workItem from="1768804991584" duration="3877000" />
+      <workItem from="1769064530688" duration="4072000" />
+      <workItem from="1769429028439" duration="3572000" />
     </task>
     <servers />
   </component>
