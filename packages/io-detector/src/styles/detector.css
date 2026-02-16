@@ -1,0 +1,209 @@
+/**
+ * IODetector Styles
+ * Injected into Shadow DOM for complete isolation
+ *
+ * Z-Index Layers:
+ * - Overlay: 10 (FEAT-003)
+ * - Panel: 9999
+ */
+
+/* CSS Custom Properties */
+:host {
+  --io-bg-primary: rgba(15, 15, 25, 0.95);
+  --io-bg-secondary: rgba(30, 30, 45, 0.9);
+  --io-text-primary: #ffffff;
+  --io-text-secondary: #a0a0b0;
+  --io-text-muted: #606070;
+  --io-accent: #7c3aed;
+  --io-accent-hover: #8b5cf6;
+  --io-warning: #f59e0b;
+  --io-danger: #ef4444;
+  --io-success: #10b981;
+  --io-border: rgba(255, 255, 255, 0.1);
+  --io-radius: 8px;
+  --io-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+  /* FR-VIS colors for overlays */
+  --io-rootmargin-color: rgba(255, 0, 255, 0.3);
+  --io-target-color: rgba(0, 255, 0, 0.3);
+  --io-guideline-color: #ffff00;
+}
+
+/* Container */
+.io-detector-container {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--io-text-primary);
+}
+
+/* Panel */
+.io-detector-panel {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 320px;
+  max-height: 400px;
+  background: var(--io-bg-primary);
+  border: 1px solid var(--io-border);
+  border-radius: var(--io-radius);
+  box-shadow: var(--io-shadow);
+  z-index: 9999;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.io-detector-panel--collapsed {
+  width: auto;
+  max-height: none;
+  padding: 0;
+  background: var(--io-bg-secondary);
+}
+
+/* Header */
+.io-detector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--io-bg-secondary);
+  border-bottom: 1px solid var(--io-border);
+}
+
+.io-detector-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--io-text-primary);
+}
+
+/* Toggle Button */
+.io-detector-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--io-accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.io-detector-toggle:hover {
+  background: var(--io-accent-hover);
+}
+
+.io-detector-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: var(--io-warning);
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+/* Stats */
+.io-detector-stats {
+  display: flex;
+  gap: 16px;
+  padding: 10px 16px;
+  background: var(--io-bg-secondary);
+  font-size: 12px;
+  color: var(--io-text-secondary);
+}
+
+.io-detector-warning {
+  color: var(--io-warning);
+  font-weight: 500;
+}
+
+/* List */
+.io-detector-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.io-detector-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.io-detector-empty {
+  text-align: center;
+  color: var(--io-text-muted);
+  padding: 24px 16px;
+  margin: 0;
+}
+
+/* Item */
+.io-detector-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: var(--io-bg-secondary);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.io-detector-item--zombie {
+  border-left: 3px solid var(--io-danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.io-detector-item-id {
+  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  color: var(--io-text-secondary);
+  font-size: 11px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.io-detector-item-targets {
+  color: var(--io-text-muted);
+  font-size: 11px;
+}
+
+.io-detector-item-zombie {
+  color: var(--io-danger);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/* Footer */
+.io-detector-footer {
+  padding: 8px 16px;
+  background: var(--io-bg-secondary);
+  border-top: 1px solid var(--io-border);
+  text-align: center;
+  color: var(--io-text-muted);
+}
+
+/* Scrollbar */
+.io-detector-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.io-detector-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.io-detector-list::-webkit-scrollbar-thumb {
+  background: var(--io-border);
+  border-radius: 3px;
+}
+
+.io-detector-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

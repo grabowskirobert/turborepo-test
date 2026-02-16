@@ -1,0 +1,42 @@
+{
+  "name": "@repo/io-detector",
+  "version": "0.0.1",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/io-detector.js"
+    }
+  },
+  "main": "./dist/io-detector.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "dependencies": {
+    "nanostores": "^0.11.0",
+    "@nanostores/react": "^0.8.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.6.0",
+    "eslint": "^9.39.2",
+    "typescript": "5.9.3",
+    "vite": "^7.0.5",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}
