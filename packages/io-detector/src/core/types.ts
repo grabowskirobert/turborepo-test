@@ -22,3 +22,15 @@ export interface UIConfig {
   inspectionMode: 'none' | 'highlight' | 'inspect';
   selectedObserverId: string | null;
 }
+
+/**
+ * Port for observer registry storage.
+ * Dependency Inversion: Core logic depends on this abstraction,
+ * concrete implementation (nanostores) is injected at composition root.
+ */
+export interface ObserverRegistryPort {
+  set(id: string, metadata: ObserverMetadata): void;
+  remove(id: string): void;
+  getAll(): Record<string, ObserverMetadata>;
+  markZombie(id: string): void;
+}

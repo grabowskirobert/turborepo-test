@@ -3,17 +3,19 @@
  * Polls observer registry to detect "zombie" observers - those observing
  * elements that have been removed from DOM (memory leaks)
  */
-import { $observers, markAsZombie } from '../stores';
-import type { ObserverMetadata } from './types';
+import type { ObserverMetadata, ObserverRegistryPort } from './types';
 
 let pollingIntervalId: ReturnType<typeof setInterval> | null = null;
+let registryPort: ObserverRegistryPort | null = null;
 const POLLING_INTERVAL_MS = 2000;
 
 /**
  * Check all observed targets for zombie state
  */
 function checkForZombies(): void {
-  const observers = $observers.get();
+  if (!registryPort) return;
+
+  const observers = registryPort.getAll();
 
   (Object.values(observers) as ObserverMetadata[]).forEach((metadata) => {
     if (metadata.isZombie) return; // Already marked
@@ -30,7 +32,7 @@ function checkForZombies(): void {
 
       // Mark as zombie if no targets are connected to DOM
       if (!hasConnectedTarget) {
-        markAsZombie(metadata.id);
+        registryPort!.markZombie(metadata.id);
         console.warn(
           `[IODetector] Zombie Observer detected! ID: ${metadata.id}`,
           '\nObserver has targets that are no longer in DOM.',
@@ -44,12 +46,15 @@ function checkForZombies(): void {
 
 /**
  * Start zombie detection polling loop
+ * @param registry - Injected storage port (Dependency Inversion)
  */
-export function startZombiePolling(): void {
+export function startZombiePolling(registry: ObserverRegistryPort): void {
   if (pollingIntervalId !== null) {
     console.warn('[IODetector] Zombie polling already active.');
     return;
   }
+
+  registryPort = registry;
 
   // Use requestIdleCallback if available, fallback to setInterval
   if (typeof requestIdleCallback !== 'undefined') {
@@ -83,5 +88,6 @@ export function stopZombiePolling(): void {
   }
 
   pollingIntervalId = null;
+  registryPort = null;
   console.debug('[IODetector] Zombie polling stopped.');
 }

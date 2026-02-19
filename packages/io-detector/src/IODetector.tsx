@@ -13,7 +13,7 @@ import {
   startZombiePolling,
   stopZombiePolling,
 } from './core';
-import { resetStores } from './stores';
+import { resetStores, createRegistryAdapter } from './stores';
 import { ShadowRoot, ErrorBoundary, DetectorUI } from './components';
 
 // Singleton enforcement - module-level instance tracking
@@ -37,9 +37,10 @@ function createInstance(): IODetectorInstance {
 
   activeInstanceId = id;
 
-  // Initialize core logic
-  initMonkeyPatch();
-  startZombiePolling();
+  // Initialize core logic with injected registry (Dependency Inversion)
+  const registry = createRegistryAdapter();
+  initMonkeyPatch(registry);
+  startZombiePolling(registry);
 
   const destroy = (): void => {
     if (activeInstanceId !== id) return; // Already replaced

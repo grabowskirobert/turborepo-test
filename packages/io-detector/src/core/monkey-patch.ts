@@ -4,8 +4,7 @@
  *
  * This module is pure TypeScript - no React dependencies
  */
-import type { ObserverMetadata } from './types';
-import { batchedSetObserver, batchedRemoveObserver } from '../stores';
+import type { ObserverMetadata, ObserverRegistryPort } from './types';
 
 // Store original IntersectionObserver for restoration
 let OriginalIntersectionObserver: typeof IntersectionObserver | null = null;
@@ -32,8 +31,9 @@ function captureStackTrace(): string | undefined {
 
 /**
  * Initialize monkey patching of IntersectionObserver
+ * @param registry - Injected storage port (Dependency Inversion)
  */
-export function initMonkeyPatch(): void {
+export function initMonkeyPatch(registry: ObserverRegistryPort): void {
   if (isPatched) {
     console.warn('[IODetector] Already patched. Skipping.');
     return;
@@ -72,7 +72,7 @@ export function initMonkeyPatch(): void {
     const originalObserve = instance.observe.bind(instance);
     instance.observe = (target: Element): void => {
       metadata.targets.add(target);
-      batchedSetObserver(id, { ...metadata });
+      registry.set(id, { ...metadata });
       originalObserve(target);
     };
 
@@ -80,19 +80,19 @@ export function initMonkeyPatch(): void {
     const originalUnobserve = instance.unobserve.bind(instance);
     instance.unobserve = (target: Element): void => {
       metadata.targets.delete(target);
-      batchedSetObserver(id, { ...metadata });
+      registry.set(id, { ...metadata });
       originalUnobserve(target);
     };
 
     // Patch disconnect method
     const originalDisconnect = instance.disconnect.bind(instance);
     instance.disconnect = (): void => {
-      batchedRemoveObserver(id);
+      registry.remove(id);
       originalDisconnect();
     };
 
     // Register observer
-    batchedSetObserver(id, metadata);
+    registry.set(id, metadata);
 
     return instance;
   } as unknown as typeof IntersectionObserver;

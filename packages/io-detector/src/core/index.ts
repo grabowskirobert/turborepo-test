@@ -1,4 +1,9 @@
-export type { ObserverMetadata, ObserverRegistry, UIConfig } from './types';
+export type {
+  ObserverMetadata,
+  ObserverRegistry,
+  UIConfig,
+  ObserverRegistryPort,
+} from './types';
 export {
   initMonkeyPatch,
   destroyMonkeyPatch,
