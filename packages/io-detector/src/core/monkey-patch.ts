@@ -51,10 +51,33 @@ export function initMonkeyPatch(registry: ObserverRegistryPort): void {
     callback: IntersectionObserverCallback,
     options?: IntersectionObserverInit,
   ): IntersectionObserver {
-    // Create real observer instance
-    const instance = new OriginalIntersectionObserver!(callback, options);
-
     const id = generateId();
+
+    // FEAT-002: wrap callback to intercept intersectionRatio per entry tick
+    // TODO(feat-002): targetIndex lookup relies on metadata.targets ordering —
+    //   wire fully once ratio store integration is complete.
+    const wrappedCallback: IntersectionObserverCallback = (
+      entries,
+      observer,
+    ) => {
+      if (registry.updateRatio) {
+        entries.forEach((entry) => {
+          const targetArray = Array.from(metadata.targets);
+          const idx = targetArray.indexOf(entry.target);
+          if (idx !== -1) {
+            registry.updateRatio!(id, idx, entry.intersectionRatio);
+          }
+        });
+      }
+      callback(entries, observer);
+    };
+
+    // Create real observer instance (uses wrapped callback)
+    const instance = new OriginalIntersectionObserver!(
+      wrappedCallback,
+      options,
+    );
+
     observerToId.set(instance, id);
 
     const metadata: ObserverMetadata = {

@@ -3,7 +3,12 @@
  * Bridge between Pure TS Core and React UI
  */
 import { map, atom } from 'nanostores';
-import type { ObserverMetadata, UIConfig, ObserverRegistryPort } from '@/core';
+import type {
+  ObserverMetadata,
+  UIConfig,
+  ObserverRegistryPort,
+  IntersectionRatioMap,
+} from '@/core';
 
 /**
  * Registry of active IntersectionObserver instances
@@ -18,7 +23,30 @@ export const $uiConfig = atom<UIConfig>({
   collapsed: false,
   inspectionMode: 'none',
   selectedObserverId: null,
+  expandedGroups: new Set(),
 });
+
+// ---------------------------------------------------------------------------
+// FEAT-002 stores
+// ---------------------------------------------------------------------------
+
+/**
+ * Per-target intersection ratios.
+ * Key format: "${observerId}::${targetIndex}"
+ * Updated on every IntersectionObserver callback tick.
+ */
+export const $intersectionRatios = map<IntersectionRatioMap>({});
+
+/**
+ * Running count of thumbnails rendered this session.
+ * @see feat-002.md § C.1 — max 50 thumbnails per session.
+ */
+export const MAX_THUMBNAILS = 50;
+export const $thumbnailCount = atom<number>(0);
+
+// ---------------------------------------------------------------------------
+// Batched update helpers
+// ---------------------------------------------------------------------------
 
 /**
  * Batched update helper - throttles store writes to avoid React re-render thrashing
@@ -67,6 +95,40 @@ function markAsZombie(id: string): void {
   }
 }
 
+// ---------------------------------------------------------------------------
+// FEAT-002 helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Update intersection ratio for a specific observer target.
+ * Key: "${observerId}::${targetIndex}"
+ *
+ * TODO(feat-002): call this from monkey-patch callback wrapper
+ */
+export function updateRatio(
+  observerId: string,
+  targetIndex: number,
+  ratio: number,
+): void {
+  const key = `${observerId}::${targetIndex}`;
+  $intersectionRatios.setKey(key, ratio);
+}
+
+/**
+ * Increment thumbnail session counter.
+ * Returns true if the limit has NOT been reached (thumbnail should render).
+ */
+export function incrementThumbnailCount(): boolean {
+  const current = $thumbnailCount.get();
+  if (current >= MAX_THUMBNAILS) return false;
+  $thumbnailCount.set(current + 1);
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// Factory & reset
+// ---------------------------------------------------------------------------
+
 /**
  * Factory: Creates an ObserverRegistryPort backed by nanostores.
  * Injected into Core modules at the composition root (IODetector.tsx).
@@ -77,6 +139,8 @@ export function createRegistryAdapter(): ObserverRegistryPort {
     remove: batchedRemoveObserver,
     getAll: () => $observers.get(),
     markZombie: markAsZombie,
+    // FEAT-002: ratio update hook
+    updateRatio,
   };
 }
 
@@ -94,5 +158,9 @@ export function resetStores(): void {
     collapsed: false,
     inspectionMode: 'none',
     selectedObserverId: null,
+    expandedGroups: new Set(),
   });
+  // FEAT-002
+  $intersectionRatios.set({});
+  $thumbnailCount.set(0);
 }

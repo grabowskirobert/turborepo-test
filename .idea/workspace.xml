@@ -5,8 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d99b478-57db-44c2-913e-e3e956311bcf" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/EmptyState.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/InstanceRow.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/ObserverGroupRow.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/Thumbnail.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/core/grouping.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/core/naming.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/core/selector.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/docs/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/next-env.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/web/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/next-env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/eslint.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/DetectorUI.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/DetectorUI.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/monkey-patch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/monkey-patch.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/hooks/useVisualOverlay.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/hooks/useVisualOverlay.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/stores/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/stores/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/styles/detector.css" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/styles/detector.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +35,13 @@
     <persistenceIdMap>
       <entry key="_/Users/robert.grabowski/Projects/Personal/turborepo-test" value="36drdMtHxQvFxQXeP5JU0faStAf" />
     </persistenceIdMap>
+  </component>
+  <component name="CopilotUserSelectedModel">
+    <selectedModels>
+      <entry key="edit-panel" value="GPT-4.1" />
+      <entry key="chat-panel" value="Claude Opus 4.6" />
+      <entry key="agent-panel" value="Claude Opus 4.6" />
+    </selectedModels>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -40,24 +65,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/robert.grabowski/Projects/Personal/turborepo-test",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "pnpm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/robert.grabowski/Projects/Personal/turborepo-test/node_modules/prettier",
-    "settings.editor.selected.configurable": "preferences.editor.code.editing",
-    "ts.external.directory.path": "/Users/robert.grabowski/Projects/Personal/turborepo-test/packages/ui/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test/node_modules/prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.network.NetworkConfigurable&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test/packages/eslint-config/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/apps/intersection-visualizer/docs" />
@@ -66,7 +91,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-WS-251.25410.117" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-WS-251.29188.1" />
       </set>
     </attachedChunks>
   </component>
@@ -99,6 +124,8 @@
       <workItem from="1771223248632" duration="1204000" />
       <workItem from="1771225569936" duration="1790000" />
       <workItem from="1771227371360" duration="809000" />
+      <workItem from="1771483529417" duration="3245000" />
+      <workItem from="1771570733835" duration="1029000" />
     </task>
     <servers />
   </component>

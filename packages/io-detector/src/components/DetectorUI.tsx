@@ -1,20 +1,26 @@
 /**
- * Placeholder UI Component
- * Minimal UI for Foundation phase - expanded in FEAT-002
+ * FEAT-002 — Live Monitor Panel
+ *
+ * Main panel component. Replaces the FEAT-001 placeholder.
+ * Fixed bottom-right, collapsible, aggregates observers by fingerprint.
+ *
+ * @see feat-002.md
  */
 import { useStore } from '@nanostores/react';
-import { $observers, $uiConfig } from '../stores';
-import type { ObserverMetadata } from '../core';
 import type { ReactNode } from 'react';
+import { $observers, $uiConfig } from '@/stores';
+import { groupObservers } from '@/core';
+import { EmptyState, ObserverGroupRow } from './panel';
 
 export function DetectorUI(): ReactNode {
   const observers = useStore($observers);
   const uiConfig = useStore($uiConfig);
 
-  const observerList = Object.values(observers) as ObserverMetadata[];
-  const observerCount = observerList.length;
-  const zombieCount = observerList.filter((o) => o.isZombie).length;
+  const groups = groupObservers(observers);
+  const totalObservers = Object.keys(observers).length;
+  const zombieCount = Object.values(observers).filter((o) => o.isZombie).length;
 
+  // ── Collapsed pill ────────────────────────────────────────────────────────
   if (uiConfig.collapsed) {
     return (
       <div className="io-detector-panel io-detector-panel--collapsed">
@@ -23,7 +29,7 @@ export function DetectorUI(): ReactNode {
           onClick={() => $uiConfig.set({ ...uiConfig, collapsed: false })}
           aria-label="Expand IO Detector"
         >
-          👁 IO ({observerCount})
+          👁 IO ({totalObservers})
           {zombieCount > 0 && (
             <span className="io-detector-badge">⚠️ {zombieCount}</span>
           )}
@@ -32,10 +38,12 @@ export function DetectorUI(): ReactNode {
     );
   }
 
+  // ── Expanded panel ────────────────────────────────────────────────────────
   return (
     <div className="io-detector-panel">
+      {/* Header */}
       <header className="io-detector-header">
-        <h2 className="io-detector-title">Intersection Observer Detector</h2>
+        <h2 className="io-detector-title">IO Detector</h2>
         <button
           className="io-detector-toggle"
           onClick={() => $uiConfig.set({ ...uiConfig, collapsed: true })}
@@ -45,36 +53,31 @@ export function DetectorUI(): ReactNode {
         </button>
       </header>
 
+      {/* Stats bar */}
       <div className="io-detector-stats">
-        <span>Active Observers: {observerCount}</span>
+        <span>Active: {totalObservers}</span>
         {zombieCount > 0 && (
-          <span className="io-detector-warning">⚠️ Zombies: {zombieCount}</span>
+          <span className="io-detector-warning">💀 Zombies: {zombieCount}</span>
         )}
       </div>
 
+      {/* Body */}
       <div className="io-detector-list">
-        {observerList.length === 0 ? (
-          <p className="io-detector-empty">No observers detected yet.</p>
+        {groups.length === 0 ? (
+          <EmptyState />
         ) : (
-          <ul>
-            {observerList.map((observer) => (
-              <li
-                key={observer.id}
-                className={`io-detector-item ${observer.isZombie ? 'io-detector-item--zombie' : ''}`}
-              >
-                <span className="io-detector-item-id">{observer.id}</span>
-                <span className="io-detector-item-targets">
-                  Targets: {observer.targets.size}
-                </span>
-                {observer.isZombie && (
-                  <span className="io-detector-item-zombie">🧟 ZOMBIE</span>
-                )}
+          <ul className="io-group-list">
+            {groups.map((group) => (
+              <li key={group.fingerprint}>
+                {/* TODO(feat-002): ObserverGroupRow renders full group UI */}
+                <ObserverGroupRow group={group} />
               </li>
             ))}
           </ul>
         )}
       </div>
 
+      {/* Footer */}
       <footer className="io-detector-footer">
         <small>Development Mode Only</small>
       </footer>

@@ -207,3 +207,215 @@
 .io-detector-list::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* ==========================================================================
+   FEAT-002 — Live Monitor Panel
+   ========================================================================== */
+
+/* Empty State
+   -------------------------------------------------------------------------- */
+.io-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.io-empty-state__status {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--io-text-secondary);
+}
+
+.io-empty-state__cta {
+  margin: 0;
+  font-size: 11px;
+  color: var(--io-text-muted);
+}
+
+/* Pulsing green dot — @see feat-002.md § A */
+.io-pulse-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--io-success);
+  animation: io-pulse 2s ease-in-out infinite;
+}
+
+@keyframes io-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+/* Group List
+   -------------------------------------------------------------------------- */
+.io-group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Group Row
+   -------------------------------------------------------------------------- */
+.io-group-row {
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--io-border);
+}
+
+.io-group-row--zombie {
+  border-color: var(--io-danger);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.io-group-row__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--io-bg-secondary);
+  border: none;
+  cursor: pointer;
+  color: var(--io-text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  transition: background 0.1s ease;
+}
+
+.io-group-row__header:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.io-group-row__chevron {
+  font-size: 10px;
+  color: var(--io-text-muted);
+  flex-shrink: 0;
+}
+
+.io-group-row__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.io-group-row__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.io-group-row__instances {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  background: var(--io-bg-primary);
+}
+
+/* Instance Row
+   -------------------------------------------------------------------------- */
+.io-instance-row {
+  display: grid;
+  /* thumbnail | selector | ratio | status | actions */
+  grid-template-columns: 48px 1fr auto auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 3px;
+  background: var(--io-bg-secondary);
+  font-size: 11px;
+}
+
+/* Zombie row — washed-out red per feat-002.md § E */
+.io-instance-row--zombie {
+  background: rgba(255, 0, 0, 0.1);
+  cursor: not-allowed;
+}
+
+/* Thumbnail
+   -------------------------------------------------------------------------- */
+.io-thumbnail {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid var(--io-border);
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+/* Inspect button
+   -------------------------------------------------------------------------- */
+.io-inspect-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid var(--io-border);
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--io-text-secondary);
+  font-size: 11px;
+  transition:
+    border-color 0.1s,
+    color 0.1s;
+}
+
+.io-inspect-btn:hover {
+  border-color: var(--io-accent);
+  color: var(--io-accent);
+}
+
+/* Force Stop button — @see feat-002.md § E */
+.io-force-stop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: transparent;
+  border: 1px solid var(--io-danger);
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--io-danger);
+  font-size: 10px;
+  font-weight: 600;
+  transition: background 0.1s;
+}
+
+.io-force-stop-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Flash effect — @see feat-002.md § D (useInspect)
+   Applied via JS: target.setAttribute('data-io-flash', '')
+   Removed via JS: setTimeout(() => target.removeAttribute('data-io-flash'), 800) */
+[data-io-flash] {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px;
+}
