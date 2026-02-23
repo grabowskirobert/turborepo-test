@@ -5,26 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d99b478-57db-44c2-913e-e3e956311bcf" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/EmptyState.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/InstanceRow.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/ObserverGroupRow.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/Thumbnail.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/core/grouping.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/core/naming.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/io-detector/src/core/selector.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/docs/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/next-env.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/web/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/next-env.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/eslint.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/eslint.config.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/DetectorUI.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/DetectorUI.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/monkey-patch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/monkey-patch.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/hooks/useVisualOverlay.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/hooks/useVisualOverlay.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/stores/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/stores/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/styles/detector.css" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/styles/detector.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/grouping.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/grouping.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/naming.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/naming.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,8 +23,8 @@
   <component name="CopilotUserSelectedModel">
     <selectedModels>
       <entry key="edit-panel" value="GPT-4.1" />
-      <entry key="chat-panel" value="Claude Opus 4.6" />
-      <entry key="agent-panel" value="Claude Opus 4.6" />
+      <entry key="chat-panel" value="Claude Sonnet 4.6" />
+      <entry key="agent-panel" value="Claude Sonnet 4.6" />
     </selectedModels>
   </component>
   <component name="Git.Settings">

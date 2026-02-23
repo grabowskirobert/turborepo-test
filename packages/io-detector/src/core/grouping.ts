@@ -11,6 +11,7 @@ import type {
   ObserverGroup,
   ObserverFingerprint,
 } from './types';
+import { resolveGroupName } from './naming';
 
 // ---------------------------------------------------------------------------
 // computeFingerprint
@@ -31,9 +32,19 @@ import type {
 export function computeFingerprint(
   options?: IntersectionObserverInit,
 ): ObserverFingerprint {
-  // TODO(feat-002): implement
-  void options;
-  return 'PLACEHOLDER_FINGERPRINT';
+  const root = options?.root ? 'custom-root' : 'viewport';
+  const rootMargin = (options?.rootMargin ?? '0px 0px 0px 0px')
+    .trim()
+    .replace(/\s+/g, ' ');
+  const rawThresholds = options?.threshold ?? [0];
+  const thresholds = (
+    Array.isArray(rawThresholds) ? rawThresholds : [rawThresholds]
+  )
+    .slice()
+    .sort((a, b) => a - b)
+    .map((t) => t.toFixed(2))
+    .join(',');
+  return `${root}|${rootMargin}|${thresholds}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -44,16 +55,39 @@ export function computeFingerprint(
  * Group a flat observer registry map into sorted ObserverGroup[].
  * Each group's displayName is resolved via the Weighted Fallback System
  * (see core/naming.ts → resolveGroupName).
- *
- * TODO(feat-002): implement
- *   1. Iterate observers, computeFingerprint per entry
- *   2. Bucket into Map<fingerprint, ObserverMetadata[]>
- *   3. For each bucket: resolveGroupName + build ObserverGroup
- *   4. Sort groups by earliest member.createdAt
  */
 export function groupObservers(
-  _observers: Record<string, ObserverMetadata>,
+  observers: Record<string, ObserverMetadata>,
 ): ObserverGroup[] {
-  // TODO(feat-002): implement
-  return [];
+  // 1. Bucket by fingerprint
+  const buckets = new Map<ObserverFingerprint, ObserverMetadata[]>();
+  for (const metadata of Object.values(observers)) {
+    const fp = computeFingerprint(metadata.options);
+    const bucket = buckets.get(fp);
+    if (bucket) {
+      bucket.push(metadata);
+    } else {
+      buckets.set(fp, [metadata]);
+    }
+  }
+
+  // 2. Build ObserverGroup[] sorted by earliest createdAt in each bucket
+  const groups: ObserverGroup[] = [];
+  let counter = 1;
+  for (const [fingerprint, members] of buckets) {
+    members.sort((a, b) => a.createdAt - b.createdAt);
+    groups.push({
+      fingerprint,
+      displayName: resolveGroupName(members, counter++),
+      members,
+      isZombie: members.every((m) => m.isZombie),
+    });
+  }
+
+  // 3. Sort groups by earliest member.createdAt
+  groups.sort(
+    (a, b) => (a.members[0]?.createdAt ?? 0) - (b.members[0]?.createdAt ?? 0),
+  );
+
+  return groups;
 }
