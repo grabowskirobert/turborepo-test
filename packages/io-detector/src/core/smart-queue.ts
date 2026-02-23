@@ -42,8 +42,8 @@ import { MAX_VISIBLE_OVERLAYS } from './types';
  *   - Compute surfaceArea: rect.width * rect.height
  */
 function classifyTarget(
-  target: Element,
-  observer: ObserverMetadata,
+  _target: Element,
+  _observer: ObserverMetadata,
 ): {
   priority: SmartQueuePriority;
   distanceToCenter: number;
@@ -88,7 +88,7 @@ function sortEntries(entries: SmartQueueEntry[]): SmartQueueEntry[] {
  * Build the Smart Queue: classify all non-zombie observer targets, sort them,
  * and return the top N (MAX_VISIBLE_OVERLAYS = 30) entries.
  *
- * @param observers  - Current observer registry snapshot (non-zombie only).
+ * @param _observers  - Current observer registry snapshot (non-zombie only).
  * @returns          - Sorted & capped list of SmartQueueEntry[].
  *
  * TODO(feat-003): implement
@@ -99,7 +99,7 @@ function sortEntries(entries: SmartQueueEntry[]): SmartQueueEntry[] {
  *   5. Slice to MAX_VISIBLE_OVERLAYS
  */
 export function buildSmartQueue(
-  observers: Record<string, ObserverMetadata>,
+  _observers: Record<string, ObserverMetadata>,
 ): SmartQueueEntry[] {
   // TODO(feat-003): implement
   void classifyTarget;

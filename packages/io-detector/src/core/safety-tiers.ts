@@ -25,8 +25,8 @@ const TIER_2_MAX = 50;
 /**
  * Determine the current safety tier from the active (non-zombie) observer count.
  *
- * @param observers  - Current observer registry snapshot.
- * @param userToggle - User's manual visual toggle. `null` = no override yet.
+ * @param _observers  - Current observer registry snapshot.
+ * @param _userToggle - User's manual visual toggle. `null` = no override yet.
  *
  * TODO(feat-003): implement
  *   - Count non-zombie observers:
@@ -42,8 +42,8 @@ const TIER_2_MAX = 50;
  *       do NOT auto-enable visuals; keep user's last state (see feat-003.md § f)
  */
 export function determineSafetyTier(
-  observers: Record<string, ObserverMetadata>,
-  userToggle: boolean | null,
+  _observers: Record<string, ObserverMetadata>,
+  _userToggle: boolean | null,
 ): SafetyTierState {
   // TODO(feat-003): implement
   void TIER_1_MAX;

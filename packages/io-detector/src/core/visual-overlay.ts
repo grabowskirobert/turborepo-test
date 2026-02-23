@@ -18,21 +18,21 @@ import { LOOP_A_INTERVAL_MS } from './types';
 
 let loopATimerId: ReturnType<typeof setTimeout> | null = null;
 let loopBRafId: number | null = null;
-let registryRef: ObserverRegistryPort | null = null;
+let _registryRef: ObserverRegistryPort | null = null;
 
 /**
  * Callback invoked by Loop A when the visible overlay set changes.
  * Injected at start time so the core module stays React-free.
  */
 type OnVisibleIdsUpdate = (ids: string[]) => void;
-let onVisibleIdsUpdate: OnVisibleIdsUpdate | null = null;
+let _onVisibleIdsUpdate: OnVisibleIdsUpdate | null = null;
 
 /**
  * Callback invoked by Loop B with updated overlay rects each frame.
  * Injected at start time.
  */
 type OnRectsUpdate = (rects: OverlayRect[]) => void;
-let onRectsUpdate: OnRectsUpdate | null = null;
+let _onRectsUpdate: OnRectsUpdate | null = null;
 
 // ---------------------------------------------------------------------------
 // isElementInViewport — Cheap Cull
@@ -53,7 +53,7 @@ let onRectsUpdate: OnRectsUpdate | null = null;
  *     rect.left < window.innerWidth
  *   );
  */
-export function isElementInViewport(element: Element): boolean {
+export function isElementInViewport(_element: Element): boolean {
   // TODO(feat-003): implement
   return false;
 }
@@ -94,8 +94,8 @@ export function startLoopA(
   visibleIdsCallback: OnVisibleIdsUpdate,
 ): void {
   // TODO(feat-003): implement
-  registryRef = registry;
-  onVisibleIdsUpdate = visibleIdsCallback;
+  _registryRef = registry;
+  _onVisibleIdsUpdate = visibleIdsCallback;
   void tickLoopA;
   void LOOP_A_INTERVAL_MS;
 }
@@ -113,8 +113,8 @@ export function stopLoopA(): void {
     clearTimeout(loopATimerId as unknown as number);
     loopATimerId = null;
   }
-  registryRef = null;
-  onVisibleIdsUpdate = null;
+  _registryRef = null;
+  _onVisibleIdsUpdate = null;
 }
 
 // ---------------------------------------------------------------------------
@@ -164,7 +164,7 @@ function tickLoopB(): void {
  */
 export function startLoopB(rectsCallback: OnRectsUpdate): void {
   // TODO(feat-003): implement
-  onRectsUpdate = rectsCallback;
+  _onRectsUpdate = rectsCallback;
   void tickLoopB;
 }
 
@@ -176,6 +176,6 @@ export function stopLoopB(): void {
     cancelAnimationFrame(loopBRafId);
     loopBRafId = null;
   }
-  onRectsUpdate = null;
+  _onRectsUpdate = null;
   currentVisibleIds = [];
 }
