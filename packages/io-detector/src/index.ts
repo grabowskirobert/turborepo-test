@@ -17,4 +17,12 @@ export { IODetector } from './IODetector';
 export { $observers, $uiConfig } from './stores';
 
 // Re-export types
-export type { ObserverMetadata, UIConfig } from './core/types';
+export type {
+  ObserverMetadata,
+  UIConfig,
+  // FEAT-003
+  SafetyTier,
+  SafetyTierState,
+  OverlayRect,
+  VisualOverlayConfig,
+} from './core/types';

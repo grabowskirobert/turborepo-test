@@ -419,3 +419,101 @@
   outline: 2px solid #3b82f6 !important;
   outline-offset: 2px;
 }
+
+/* ==========================================================================
+   FEAT-003 — Visual Debug Overlay
+   ========================================================================== */
+
+/* Overlay Canvas — the full-viewport container for all overlay rects.
+   z-index: 10 sits below the Panel (9999) within the Shadow Host.
+   -------------------------------------------------------------------------- */
+.io-overlay-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* rootMargin zone overlay — Magenta with additive blending
+   @see feat-003.md § a — rootMargin buffer zone
+   -------------------------------------------------------------------------- */
+.io-overlay-rootmargin {
+  position: fixed;
+  background: var(--io-rootmargin-color); /* rgba(255, 0, 255, 0.3) */
+  border: 2px dashed var(--io-guideline-color); /* Yellow */
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.05s linear; /* near-instant for Cheap Cull */
+}
+
+/* Intersection highlight — Neon Green with additive blending
+   @see feat-003.md § a — intersecting portion
+   -------------------------------------------------------------------------- */
+.io-overlay-intersection {
+  position: fixed;
+  background: var(--io-target-color); /* rgba(0, 255, 0, 0.3) */
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.05s linear;
+}
+
+/* Target outline — Yellow dashed border (2px)
+   @see feat-003.md § a — zone boundaries
+   -------------------------------------------------------------------------- */
+.io-overlay-target {
+  position: fixed;
+  border: 2px dashed var(--io-guideline-color);
+  pointer-events: none;
+  transition: opacity 0.05s linear;
+}
+
+/* Safety Tier Status Bar
+   @see feat-003.md § d, f
+   -------------------------------------------------------------------------- */
+.io-safety-status {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--io-bg-primary);
+  border: 1px solid var(--io-border);
+  border-radius: var(--io-radius);
+  font-size: 11px;
+  color: var(--io-text-secondary);
+  pointer-events: auto; /* clickable toggle */
+  z-index: 9999; /* above overlay rects */
+}
+
+.io-safety-status__message {
+  white-space: nowrap;
+}
+
+.io-safety-status__toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  background: transparent;
+  border: 1px solid var(--io-accent);
+  border-radius: 3px;
+  color: var(--io-accent);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.io-safety-status__toggle:hover {
+  background: rgba(124, 58, 237, 0.12);
+}
+
+.io-safety-status__toggle--danger {
+  border-color: var(--io-warning);
+  color: var(--io-warning);
+}
+
+.io-safety-status__toggle--danger:hover {
+  background: rgba(245, 158, 11, 0.12);
+}

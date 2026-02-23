@@ -13,15 +13,22 @@ import {
   startZombiePolling,
   stopZombiePolling,
 } from './core';
+import type { ObserverRegistryPort } from './core';
 import { resetStores, createRegistryAdapter } from './stores';
-import { ShadowRoot, ErrorBoundary, DetectorUI } from './components';
+import {
+  ShadowRoot,
+  ErrorBoundary,
+  DetectorUI,
+  VisualOverlay,
+} from './components';
 
 // Singleton enforcement - module-level instance tracking
 let activeInstanceId: symbol | null = null;
 
 interface IODetectorInstance {
   id: symbol;
-  destroy: () => void;
+  registry: ObserverRegistryPort;
+  destroy: VoidFunction;
 }
 
 function createInstance(): IODetectorInstance {
@@ -47,7 +54,7 @@ function createInstance(): IODetectorInstance {
     cleanup();
   };
 
-  return { id, destroy };
+  return { id, registry, destroy };
 }
 
 function cleanup(): void {
@@ -111,6 +118,13 @@ export function IODetector(): ReactNode {
     <ShadowRoot>
       <StrictMode>
         <ErrorBoundary>
+          {/* FEAT-003: VisualOverlay — z-index: 10 (below Panel) */}
+          {/* TODO(feat-003): VisualOverlay renders only when registry is available
+              (instanceRef.current is set after first useEffect tick).
+              Consider lifting registry to state or context to trigger re-render. */}
+          {instanceRef.current?.registry && (
+            <VisualOverlay registry={instanceRef.current.registry} />
+          )}
           <DetectorUI />
         </ErrorBoundary>
       </StrictMode>
