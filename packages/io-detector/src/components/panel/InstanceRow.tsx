@@ -51,11 +51,7 @@ export function InstanceRow({
   );
   const handleInspect = useInspect(target);
 
-  // TODO(feat-002): implement — replace stub below
   void targetIndex;
-  void ratio;
-  void computeSelector;
-  void handleInspect;
 
   return (
     <div
@@ -68,15 +64,43 @@ export function InstanceRow({
           : undefined
       }
     >
+      {/* Col 1 — Thumbnail */}
       <Thumbnail target={target} />
-      {/* TODO(feat-002): computed selector via computeSelector(target) */}
-      {/* TODO(feat-002): ratio display — ratio.toFixed(4) */}
-      {/* TODO(feat-002): status icon — ratio > 0 ? '✅' : indicator */}
-      {/* TODO(feat-002): zombie icons — 💀 + 🔗💥 when observer.isZombie */}
-      {/* TODO(feat-002): inspect button (.io-inspect-btn) — onClick={handleInspect} (handles Shift+Click internally) */}
-      {/* TODO(feat-002): force stop button (.io-force-stop-btn) — only when observer.isZombie
-           onClick: () => observer.instance.disconnect() */}
-      <span className="io-instance-row__placeholder">TODO</span>
+
+      {/* Col 2 — Computed selector */}
+      <span className="io-instance-row__selector">
+        {observer.isZombie && <span aria-label="Detached">🔗💥 </span>}
+        {computeSelector(target)}
+      </span>
+
+      {/* Col 3 — Real-time ratio */}
+      <span className="io-instance-row__ratio">
+        {(ratio * 100).toFixed(2)}%
+      </span>
+
+      {/* Col 4 — Visibility status */}
+      <span className="io-instance-row__status">{ratio > 0 ? '✅' : '○'}</span>
+
+      {/* Col 5 — Actions */}
+      <span className="io-instance-row__actions">
+        {observer.isZombie ? (
+          <button
+            className="io-force-stop-btn"
+            onClick={() => observer.instance.disconnect()}
+            title="Disconnect this zombie observer"
+          >
+            💀 Force Stop (Runtime)
+          </button>
+        ) : (
+          <button
+            className="io-inspect-btn"
+            onClick={handleInspect}
+            title="Click to scroll into view · Shift+Click to log element"
+          >
+            🔍
+          </button>
+        )}
+      </span>
     </div>
   );
 }

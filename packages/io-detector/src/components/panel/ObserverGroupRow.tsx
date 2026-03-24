@@ -12,7 +12,7 @@ import type { ReactNode } from 'react';
 import { useStore } from '@nanostores/react';
 import type { ObserverGroup } from '@/core';
 import { $uiConfig, $intersectionRatios } from '@/stores';
-import { InstanceRow } from './InstanceRow';
+import { InstanceRow } from '.';
 
 interface ObserverGroupRowProps {
   group: ObserverGroup;
@@ -34,8 +34,13 @@ export function ObserverGroupRow({ group }: ObserverGroupRowProps): ReactNode {
   const isExpanded = uiConfig.expandedGroups.has(group.fingerprint);
 
   function toggleExpand(): void {
-    // TODO(feat-002): implement — immutable Set update in $uiConfig
-    void isExpanded;
+    const newSet = new Set(uiConfig.expandedGroups);
+    if (isExpanded) {
+      newSet.delete(group.fingerprint);
+    } else {
+      newSet.add(group.fingerprint);
+    }
+    $uiConfig.set({ ...uiConfig, expandedGroups: newSet });
   }
 
   return (

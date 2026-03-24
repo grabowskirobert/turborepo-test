@@ -4,10 +4,11 @@ import { TurborepoLogo } from '@repo/ui/turborepo-logo';
 import { Card } from '@repo/ui/card';
 import { IODetector } from '@repo/io-detector';
 import { FadeInSection } from './components/FadeInSection';
+import { IODebugFixtures } from './components/IODebugFixtures';
 
 const LINKS = [
   {
-    title: 'Docs',
+    title: 'Dogs',
     href: 'https://turborepo.com/docs',
     description: 'Find in-depth information about Turborepo features and API.',
   },
@@ -118,41 +119,8 @@ export default function Page() {
           </div>
         </FadeInSection>
 
-        {/* Additional sections to test IO detection */}
-        <div className="w-full max-w-5xl mt-32 space-y-16">
-          <FadeInSection threshold={0.3} delay={0}>
-            <div className="p-8 border rounded-lg border-neutral-800 bg-neutral-900/50">
-              <h3 className="mb-4 text-2xl font-bold">Section 1 - Fast Fade</h3>
-              <p className="text-neutral-400">
-                This section uses IntersectionObserver with threshold 0.3 and no
-                delay. Check the IODetector panel to see it tracked!
-              </p>
-            </div>
-          </FadeInSection>
-
-          <FadeInSection threshold={0.5} delay={300}>
-            <div className="p-8 border rounded-lg border-neutral-800 bg-neutral-900/50">
-              <h3 className="mb-4 text-2xl font-bold">
-                Section 2 - Delayed Fade
-              </h3>
-              <p className="text-neutral-400">
-                This creates another IntersectionObserver instance with
-                threshold 0.5 and 300ms delay. Each section = separate observer!
-              </p>
-            </div>
-          </FadeInSection>
-
-          <FadeInSection threshold={0.1} delay={500}>
-            <div className="p-8 border rounded-lg border-neutral-800 bg-neutral-900/50">
-              <h3 className="mb-4 text-2xl font-bold">Section 3 - Slow Fade</h3>
-              <p className="text-neutral-400">
-                Low threshold (0.1) + 500ms delay. Scroll down to trigger all
-                observers and watch them appear in the detector panel. Total: 4
-                observers active!
-              </p>
-            </div>
-          </FadeInSection>
-        </div>
+        {/* IO Debug Fixtures — scenariusze do testowania FEAT-002 */}
+        <IODebugFixtures />
       </main>
     </>
   );

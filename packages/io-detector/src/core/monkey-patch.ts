@@ -14,6 +14,16 @@ let observerIdCounter = 0;
 // WeakMap to track observer instance -> metadata ID mapping
 const observerToId = new WeakMap<IntersectionObserver, string>();
 
+/**
+ * Dense threshold array — 101 values from 0.00 to 1.00 (every 1%).
+ * Used by per-target tracker observers to fire the ratio store update
+ * far more frequently than the user's own threshold config.
+ */
+const TRACKING_THRESHOLDS: number[] = Array.from(
+  { length: 101 },
+  (_, i) => i / 100,
+);
+
 function generateId(): string {
   return `io_${Date.now()}_${++observerIdCounter}`;
 }
@@ -53,17 +63,16 @@ export function initMonkeyPatch(registry: ObserverRegistryPort): void {
   ): IntersectionObserver {
     const id = generateId();
 
-    // FEAT-002: wrap callback to intercept intersectionRatio per entry tick
-    // TODO(feat-002): targetIndex lookup relies on metadata.targets ordering —
-    //   wire fully once ratio store integration is complete.
+    // Wrap callback — user's callback is called unchanged.
+    // Ratio updates are handled by the per-target tracker below.
     const wrappedCallback: IntersectionObserverCallback = (
       entries,
       observer,
     ) => {
+      // Fallback ratio sync in case tracker hasn't fired yet
       if (registry.updateRatio) {
         entries.forEach((entry) => {
-          const targetArray = Array.from(metadata.targets);
-          const idx = targetArray.indexOf(entry.target);
+          const idx = Array.from(metadata.targets).indexOf(entry.target);
           if (idx !== -1) {
             registry.updateRatio!(id, idx, entry.intersectionRatio);
           }
@@ -91,12 +100,43 @@ export function initMonkeyPatch(registry: ObserverRegistryPort): void {
       stackTrace: captureStackTrace(),
     };
 
+    /**
+     * Per-target high-frequency trackers.
+     * Each uses OriginalIntersectionObserver (avoids recursion) with
+     * TRACKING_THRESHOLDS (101 values, every 1%) to update the ratio
+     * store far more often than the user's own threshold config allows.
+     */
+    const trackers = new Map<Element, IntersectionObserver>();
+
+    const createTracker = (target: Element): void => {
+      if (!registry.updateRatio) return;
+
+      const tracker = new OriginalIntersectionObserver!(
+        (entries) => {
+          entries.forEach((entry) => {
+            const idx = Array.from(metadata.targets).indexOf(entry.target);
+            if (idx !== -1) {
+              registry.updateRatio!(id, idx, entry.intersectionRatio);
+            }
+          });
+        },
+        {
+          root: options?.root ?? null,
+          rootMargin: options?.rootMargin ?? '0px',
+          threshold: TRACKING_THRESHOLDS,
+        },
+      );
+      tracker.observe(target);
+      trackers.set(target, tracker);
+    };
+
     // Patch observe method
     const originalObserve = instance.observe.bind(instance);
     instance.observe = (target: Element): void => {
       metadata.targets.add(target);
       registry.set(id, { ...metadata });
       originalObserve(target);
+      createTracker(target);
     };
 
     // Patch unobserve method
@@ -105,11 +145,15 @@ export function initMonkeyPatch(registry: ObserverRegistryPort): void {
       metadata.targets.delete(target);
       registry.set(id, { ...metadata });
       originalUnobserve(target);
+      trackers.get(target)?.disconnect();
+      trackers.delete(target);
     };
 
     // Patch disconnect method
     const originalDisconnect = instance.disconnect.bind(instance);
     instance.disconnect = (): void => {
+      trackers.forEach((t) => t.disconnect());
+      trackers.clear();
       registry.remove(id);
       originalDisconnect();
     };

@@ -3,6 +3,8 @@
  *
  * @see feat-002.md § D. Interaction: Reverse Lookup & Inspection
  */
+import { useCallback, useEffect, useRef } from 'react';
+import type React from 'react';
 
 // ---------------------------------------------------------------------------
 // useHighlight
@@ -11,26 +13,36 @@
 /**
  * Highlights the corresponding DOM target while hovering a living observer row.
  * Guards against zombie targets (target.isConnected === false).
- *
- * Usage:
- *   const { onMouseEnter, onMouseLeave } = useHighlight(target, isZombie);
- *
- * TODO(feat-002): implement
- *   - onMouseEnter: if !isZombie && target.isConnected → apply highlight style
- *   - onMouseLeave: remove highlight style
- *   - highlight style: e.g. outline: "2px solid #7c3aed"
- *   - use useCallback for stable refs
- *   - cleanup on unmount (useEffect return)
  */
 export function useHighlight(
-  _target: Element | null,
-  _isZombie: boolean,
+  target: Element | null,
+  isZombie: boolean,
 ): { onMouseEnter: () => void; onMouseLeave: () => void } {
-  // TODO(feat-002): implement
-  return {
-    onMouseEnter: () => {},
-    onMouseLeave: () => {},
-  };
+  const onMouseEnter = useCallback(() => {
+    if (!isZombie && target && target.isConnected) {
+      (target as HTMLElement).style.outline = '2px solid #7c3aed';
+      (target as HTMLElement).style.outlineOffset = '2px';
+    }
+  }, [target, isZombie]);
+
+  const onMouseLeave = useCallback(() => {
+    if (target && target.isConnected) {
+      (target as HTMLElement).style.outline = '';
+      (target as HTMLElement).style.outlineOffset = '';
+    }
+  }, [target]);
+
+  // Cleanup outline on unmount to avoid ghost styles on the host page
+  useEffect(() => {
+    return () => {
+      if (target && target.isConnected) {
+        (target as HTMLElement).style.outline = '';
+        (target as HTMLElement).style.outlineOffset = '';
+      }
+    };
+  }, [target]);
+
+  return { onMouseEnter, onMouseLeave };
 }
 
 // ---------------------------------------------------------------------------
@@ -44,17 +56,40 @@ export function useHighlight(
  *   - Click:        scrollIntoView({ behavior: 'smooth', block: 'center' })
  *                   + temporary Flash effect (bright blue border, 800 ms)
  *   - Shift+Click:  console.log("[IO-Detector] Target Element:", element)
- *
- * TODO(feat-002): implement
- *   - return useCallback that checks event.shiftKey
- *   - flash: set attribute data-io-flash on target → matches [data-io-flash] rule in detector.css
- *   - cleanup: setTimeout(() => target.removeAttribute('data-io-flash'), 800)
- *   - guard: if target is null or !target.isConnected → no-op
- *   - consider cleanup on unmount (useEffect return) to clear pending timeout
  */
 export function useInspect(
-  _target: Element | null,
+  target: Element | null,
 ): (event: React.MouseEvent) => void {
-  // TODO(feat-002): implement
-  return () => {};
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return useCallback(
+    (event: React.MouseEvent) => {
+      if (!target || !target.isConnected) return;
+
+      if (event.shiftKey) {
+        console.log('[IO-Detector] Target Element:', target);
+        return;
+      }
+
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.setAttribute('data-io-flash', '');
+
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        target.removeAttribute('data-io-flash');
+        timeoutRef.current = null;
+      }, 800);
+    },
+    [target],
+  );
 }

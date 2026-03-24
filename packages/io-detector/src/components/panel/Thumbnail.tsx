@@ -24,8 +24,20 @@ interface ThumbnailProps {
  *   - Otherwise render null (no generic div thumbnails)
  */
 export function Thumbnail({ target }: ThumbnailProps): ReactNode {
-  // TODO(feat-002): implement
-  void target;
-  void incrementThumbnailCount;
-  return null;
+  let src: string | null = null;
+
+  if (target.tagName === 'IMG') {
+    src = (target as HTMLImageElement).src || null;
+  } else {
+    const bg = getComputedStyle(target).backgroundImage;
+    if (bg && bg !== 'none') {
+      const match = /url\("?(.+?)"?\)/.exec(bg);
+      src = match?.[1] ?? null;
+    }
+  }
+
+  if (!src) return null;
+  if (!incrementThumbnailCount()) return null;
+
+  return <img loading="lazy" src={src} className="io-thumbnail" alt="" />;
 }

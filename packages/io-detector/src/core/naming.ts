@@ -17,36 +17,43 @@ import type { ObserverMetadata } from './types';
 
 /**
  * Level 1: named callback function.
- * TODO(feat-002): check m.callback.name, skip "anonymous" / ""
  */
-function getCallbackName(_members: ObserverMetadata[]): string | null {
-  // TODO(feat-002): implement
+function getCallbackName(members: ObserverMetadata[]): string | null {
+  for (const m of members) {
+    const name = m.callback.name;
+    if (name && name !== 'anonymous' && name !== '') {
+      return name;
+    }
+  }
   return null;
 }
 
 /**
  * Level 2: data-io-name attribute on any target of any member.
- * TODO(feat-002): iterate members → targets → (el as HTMLElement).dataset.ioName
  */
-function getDataIoName(_members: ObserverMetadata[]): string | null {
-  // TODO(feat-002): implement
+function getDataIoName(members: ObserverMetadata[]): string | null {
+  for (const m of members) {
+    for (const el of m.targets) {
+      const name = (el as HTMLElement).dataset?.ioName;
+      if (name) return name;
+    }
+  }
   return null;
 }
 
 /**
  * Level 3: homogeneous tag inference.
- * Collect unique tagNames across ALL targets of ALL members.
- * If uniqueTags.size === 1 → return `Observer (<tag>)` (e.g. "Observer (<img>)")
- * If heterogeneous (multiple distinct tags) → return null (fall through to Level 4)
- *
- * TODO(feat-002): implement
- *   - iterate members → iterate member.targets → collect el.tagName.toLowerCase()
- *   - deduplicate into a Set
- *   - if set.size !== 1 → return null
  */
-function getHomogeneousTag(_members: ObserverMetadata[]): string | null {
-  // TODO(feat-002): implement
-  return null;
+function getHomogeneousTag(members: ObserverMetadata[]): string | null {
+  const tags = new Set<string>();
+  for (const m of members) {
+    for (const el of m.targets) {
+      tags.add(el.tagName.toLowerCase());
+    }
+  }
+  if (tags.size !== 1) return null;
+  const [tag] = tags;
+  return `Observer (<${tag}>)`;
 }
 
 // ---------------------------------------------------------------------------
@@ -58,14 +65,11 @@ function getHomogeneousTag(_members: ObserverMetadata[]): string | null {
  *
  * @param members  - Sorted list of ObserverMetadata belonging to the group
  * @param counter  - 1-based index used for the anonymous fallback label
- *
- * TODO(feat-002): wire up helpers above in priority order
  */
 export function resolveGroupName(
   members: ObserverMetadata[],
   counter: number,
 ): string {
-  // TODO(feat-002): each helper returns null until implemented — fallback fires
   return (
     getCallbackName(members) ??
     getDataIoName(members) ??

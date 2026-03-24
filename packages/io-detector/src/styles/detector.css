@@ -356,6 +356,42 @@
   cursor: not-allowed;
 }
 
+/* Instance Row columns
+   -------------------------------------------------------------------------- */
+.io-instance-row__selector {
+  font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+  font-size: 10px;
+  color: var(--io-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.io-instance-row__ratio {
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  color: var(--io-text-muted);
+  min-width: 52px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.io-instance-row__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.io-instance-row__actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 /* Thumbnail
    -------------------------------------------------------------------------- */
 .io-thumbnail {

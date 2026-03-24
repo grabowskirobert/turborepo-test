@@ -21,7 +21,21 @@
  *   3. count same-tag siblings in el.parentElement.children
  *   4. if siblings.length > 1 → append ":nth-of-type(N)"
  */
-export function computeSelector(_el: Element): string {
-  // TODO(feat-002): implement
-  return 'unknown';
+export function computeSelector(el: Element): string {
+  const tag = el.tagName.toLowerCase();
+  const classes = Array.from(el.classList)
+    .slice(0, 2)
+    .map((c) => `.${c}`)
+    .join('');
+
+  if (!el.parentElement) return `${tag}${classes}`;
+
+  const siblings = Array.from(el.parentElement.children).filter(
+    (child) => child.tagName === el.tagName,
+  );
+
+  if (siblings.length <= 1) return `${tag}${classes}`;
+
+  const index = siblings.indexOf(el) + 1;
+  return `${tag}${classes}:nth-of-type(${index})`;
 }
