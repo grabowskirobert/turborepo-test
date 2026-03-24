@@ -14,7 +14,9 @@ import type { ReactNode } from 'react';
 export function EmptyState(): ReactNode {
   return (
     <div className="io-empty-state">
-      <span className="io-pulse-dot" aria-hidden="true" />
+      <div className="io-empty-state__dot-wrap" aria-hidden="true">
+        <span className="io-pulse-dot" />
+      </div>
       <p className="io-empty-state__status">
         System Active. Monitoring Global IntersectionObserver.
       </p>

@@ -79,7 +79,12 @@ export function InstanceRow({
       </span>
 
       {/* Col 4 — Visibility status */}
-      <span className="io-instance-row__status">{ratio > 0 ? '✅' : '○'}</span>
+      <span className="io-instance-row__status">
+        <span
+          className={`io-status-dot${ratio > 0 ? '' : ' io-status-dot--inactive'}`}
+          aria-label={ratio > 0 ? 'Visible' : 'Not visible'}
+        />
+      </span>
 
       {/* Col 5 — Actions */}
       <span className="io-instance-row__actions">
@@ -87,7 +92,7 @@ export function InstanceRow({
           <button
             className="io-force-stop-btn"
             onClick={() => observer.instance.disconnect()}
-            title="Disconnect this zombie observer"
+            data-tooltip="Wywołuje .disconnect() natychmiast"
           >
             💀 Force Stop (Runtime)
           </button>
@@ -95,7 +100,9 @@ export function InstanceRow({
           <button
             className="io-inspect-btn"
             onClick={handleInspect}
-            title="Click to scroll into view · Shift+Click to log element"
+            data-tooltip={
+              'Click — scroll do elementu + flash\nShift+Click — console.log element'
+            }
           >
             🔍
           </button>

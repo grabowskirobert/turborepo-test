@@ -236,25 +236,48 @@
   color: var(--io-text-muted);
 }
 
-/* Pulsing green dot — @see feat-002.md § A */
+.io-empty-state__dot-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+}
+
+/* Pulsing idle dot — empty state "monitoring" indicator
+   Neutral slate-400, slow opacity-only breath (no scale on inline-block)
+   -------------------------------------------------------------------------- */
 .io-pulse-dot {
-  display: inline-block;
+  display: block;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--io-success);
-  animation: io-pulse 2s ease-in-out infinite;
+  background: #94a3b8; /* slate-400 — neutral "waiting" */
+  animation: io-pulse-idle 10s ease-in-out infinite;
 }
 
-@keyframes io-pulse {
+@keyframes io-pulse-idle {
   0%,
   100% {
-    opacity: 1;
+    opacity: 0.7;
     transform: scale(1);
   }
   50% {
-    opacity: 0.4;
-    transform: scale(0.85);
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+}
+
+/* Keep the old keyframes name for any external reference */
+@keyframes io-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(0.8);
   }
 }
 
@@ -404,8 +427,68 @@
   flex-shrink: 0;
 }
 
-/* Inspect button
+/* Status dot — row visibility indicator (replaces ✅ / ○ emoji)
    -------------------------------------------------------------------------- */
+.io-status-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--io-success);
+  animation: io-pulse-active 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ratio === 0 — hollow ring, no animation */
+.io-status-dot--inactive {
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  animation: none;
+}
+
+@keyframes io-pulse-active {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  }
+  60% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+  }
+}
+
+/* Custom tooltip — instant hover, no browser title delay
+   Usage: add data-tooltip="…" to any element (supports \n for newlines)
+   -------------------------------------------------------------------------- */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  right: 0;
+  white-space: pre;
+  background: rgba(10, 10, 20, 0.95);
+  color: #e2e8f0;
+  font-size: 10px;
+  line-height: 1.6;
+  padding: 5px 9px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.07s ease;
+  z-index: 10000;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* Inspect button */
 .io-inspect-btn {
   display: inline-flex;
   align-items: center;
