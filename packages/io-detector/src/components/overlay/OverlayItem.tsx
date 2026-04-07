@@ -31,16 +31,6 @@ interface OverlayItemProps {
   isForceShow: boolean;
 }
 
-/**
- * TODO(feat-003): implement
- *   - Render:
- *       1. <RootMarginZone> if overlay.rootMarginRect is not null
- *       2. <IntersectionHighlight> if overlay.intersectionRect is not null
- *       3. Target element outline (yellow dashed 2px via CSS class io-overlay-target)
- *   - Pass `visible: overlay.isInViewport` to children (Cheap Cull → opacity 0 if off-screen)
- *   - Force-show items always get visible=true (bypass Cheap Cull)
- *   - All wrappers must have pointer-events: none
- */
 export function OverlayItem({
   overlay,
   isForceShow,

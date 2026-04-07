@@ -17,18 +17,6 @@ interface RootMarginZoneProps {
   isVisible: boolean;
 }
 
-/**
- * TODO(feat-003): implement
- *   - Render a positioned <div> with:
- *       position: fixed
- *       top/left/width/height from rect
- *       background: var(--io-rootmargin-color)  → rgba(255, 0, 255, 0.033)
- *       border: 2px dashed var(--io-guideline-color)  → yellow
- *       mix-blend-mode: screen  (additive blending)
- *       pointer-events: none
- *       opacity: isVisible ? 1 : 0  (Cheap Cull: instant hide)
- *   - Use className "io-overlay-rootmargin"
- */
 export function RootMarginZone({
   rect,
   isVisible,

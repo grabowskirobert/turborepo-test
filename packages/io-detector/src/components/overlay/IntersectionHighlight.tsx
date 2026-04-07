@@ -16,17 +16,6 @@ interface IntersectionHighlightProps {
   isVisible: boolean;
 }
 
-/**
- * TODO(feat-003): implement
- *   - Render a positioned <div> with:
- *       position: fixed
- *       top/left/width/height from rect
- *       background: var(--io-target-color)  → rgba(0, 255, 128, 0.1)
- *       mix-blend-mode: screen  (additive blending)
- *       pointer-events: none
- *       opacity: isVisible ? 1 : 0  (Cheap Cull)
- *   - Use className "io-overlay-intersection"
- */
 export function IntersectionHighlight({
   rect,
   isVisible,

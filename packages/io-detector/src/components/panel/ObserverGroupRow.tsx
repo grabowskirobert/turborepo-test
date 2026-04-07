@@ -18,15 +18,6 @@ interface ObserverGroupRowProps {
   group: ObserverGroup;
 }
 
-/**
- * TODO(feat-002): implement
- *   - Toggle expanded/collapsed via $uiConfig.expandedGroups (Set mutation)
- *   - Header: chevron icon + group.displayName + member count badge
- *   - Zombie header: 💀 icon, red-tinted background
- *   - When expanded: iterate group.members → iterate member.targets
- *     → render <InstanceRow> with ratio from $intersectionRatios
- *     key: "${member.id}::${targetIndex}"
- */
 export function ObserverGroupRow({ group }: ObserverGroupRowProps): ReactNode {
   const uiConfig = useStore($uiConfig);
   const ratios = useStore($intersectionRatios);
@@ -61,7 +52,7 @@ export function ObserverGroupRow({ group }: ObserverGroupRowProps): ReactNode {
         )}
       </button>
 
-      {/* Instance list — TODO(feat-002): implement full member×target iteration */}
+      {/* Instance list */}
       {isExpanded && (
         <div className="io-group-row__instances">
           {group.members.map((member) =>

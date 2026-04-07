@@ -22,24 +22,6 @@ interface InstanceRowProps {
   ratio: number;
 }
 
-/**
- * TODO(feat-002): implement living row
- *   - <Thumbnail target={target} />
- *   - computeSelector(target) → display computed CSS selector (§ C.2)
- *   - ratio.toFixed(4) → display real-time ratio (§ C.3)
- *   - ratio > 0 → ✅ status icon (§ C.4)
- *   - onMouseEnter/onMouseLeave → useHighlight(target, false) (§ D hover-to-highlight)
- *   - inspect icon button (.io-inspect-btn) → pass onClick={handleInspect}
- *     handleInspect receives MouseEvent → useInspect checks event.shiftKey internally (§ D)
- *
- * TODO(feat-002): implement zombie variant (observer.isZombie === true)
- *   - className += " io-instance-row--zombie" (CSS handles cursor: not-allowed + red bg)
- *   - 💀 icon next to name, 🔗💥 broken-link icon for detached state (§ E Visual Identification)
- *   - NO highlight on hover — useHighlight already guards via isZombie param (§ E Inverted Feedback Loop)
- *   - title tooltip: "Target Node Detached. Memory Leak Detected." (§ E Inverted Feedback Loop)
- *   - "Force Stop (Runtime)" button (.io-force-stop-btn, hollow red border)
- *     → onClick: observer.instance.disconnect() — no confirmation modal (§ E Force Stop)
- */
 export function InstanceRow({
   observer,
   target,

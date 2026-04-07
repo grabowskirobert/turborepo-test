@@ -20,11 +20,6 @@ import { resolveGroupName } from './naming';
 /**
  * Produce a stable, deterministic fingerprint for a set of observer options.
  *
- * TODO(feat-002): implement stable serialisation
- *   - root:       "viewport" | "custom-root"
- *   - rootMargin: normalise whitespace
- *   - threshold:  sort + toFixed(2) join
- *
  * @example
  *   computeFingerprint({ rootMargin: '0px', threshold: [0, 0.5, 1] })
  *   // => "viewport|0px|0.00,0.50,1.00"

@@ -69,7 +69,6 @@ export function DetectorUI(): ReactNode {
           <ul className="io-group-list">
             {groups.map((group) => (
               <li key={group.fingerprint}>
-                {/* TODO(feat-002): ObserverGroupRow renders full group UI */}
                 <ObserverGroupRow group={group} />
               </li>
             ))}

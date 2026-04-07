@@ -13,16 +13,6 @@ interface ThumbnailProps {
   target: Element;
 }
 
-/**
- * TODO(feat-002): implement
- *   - Check: target.tagName === 'IMG'
- *     → src = (target as HTMLImageElement).src
- *   - Check: getComputedStyle(target).backgroundImage !== 'none'
- *     → extract url(...) value
- *   - Call incrementThumbnailCount(); if returns false → render null (cap hit)
- *   - Render: <img loading="lazy" src={src} className="io-thumbnail" alt="" />
- *   - Otherwise render null (no generic div thumbnails)
- */
 export function Thumbnail({ target }: ThumbnailProps): ReactNode {
   let src: string | null = null;
 

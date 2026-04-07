@@ -12,15 +12,7 @@
  * @see feat-002.md § C.2 Computed Selector
  */
 
-/**
- * Compute a short, readable selector for `el` relative to its parent.
- *
- * TODO(feat-002): implement
- *   1. tag = el.tagName.toLowerCase()
- *   2. classes = first 2 classes joined as ".foo.bar"
- *   3. count same-tag siblings in el.parentElement.children
- *   4. if siblings.length > 1 → append ":nth-of-type(N)"
- */
+/** Compute a short, readable selector for `el` relative to its parent. */
 export function computeSelector(el: Element): string {
   const tag = el.tagName.toLowerCase();
   const classes = Array.from(el.classList)
