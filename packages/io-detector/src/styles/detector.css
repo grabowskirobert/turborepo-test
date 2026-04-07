@@ -24,8 +24,8 @@
   --io-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 
   /* FR-VIS colors for overlays */
-  --io-rootmargin-color: rgba(255, 0, 255, 0.3);
-  --io-target-color: rgba(0, 255, 0, 0.3);
+  --io-rootmargin-color: rgba(255, 0, 255, 0.1);
+  --io-target-color: rgba(0, 255, 0, 0.25);
   --io-guideline-color: #ffff00;
 }
 
@@ -301,8 +301,8 @@
 }
 
 .io-group-row--zombie {
-  border-color: var(--io-danger);
-  background: rgba(239, 68, 68, 0.05);
+  border-color: var(--io-warning);
+  background: rgba(245, 158, 11, 0.05);
 }
 
 .io-group-row__header {
@@ -323,6 +323,16 @@
 
 .io-group-row__header:hover {
   background: rgba(255, 255, 255, 0.06);
+}
+
+.io-group-row--zombie .io-group-row__header {
+  color: var(--io-warning);
+}
+
+.io-group-row__zombie-badge {
+  font-size: 10px;
+  color: var(--io-warning);
+  flex-shrink: 0;
 }
 
 .io-group-row__chevron {
@@ -373,10 +383,11 @@
   font-size: 11px;
 }
 
-/* Zombie row — washed-out red per feat-002.md § E */
+/* Zombie row — warning highlight per feat-003.md § g */
 .io-instance-row--zombie {
-  background: rgba(255, 0, 0, 0.1);
+  background: rgba(245, 158, 11, 0.05);
   cursor: not-allowed;
+  color: var(--io-warning);
 }
 
 /* Instance Row columns
@@ -558,7 +569,7 @@
    -------------------------------------------------------------------------- */
 .io-overlay-rootmargin {
   position: fixed;
-  background: var(--io-rootmargin-color); /* rgba(255, 0, 255, 0.3) */
+  background: var(--io-rootmargin-color); /* rgba(255, 0, 255, 0.1) */
   border: 2px dashed var(--io-guideline-color); /* Yellow */
   mix-blend-mode: screen;
   pointer-events: none;
@@ -570,8 +581,8 @@
    -------------------------------------------------------------------------- */
 .io-overlay-intersection {
   position: fixed;
-  background: var(--io-target-color); /* rgba(0, 255, 0, 0.3) */
-  mix-blend-mode: screen;
+  background: var(--io-target-color); /* rgba(0, 255, 0, 0.25) */
+  mix-blend-mode: normal;
   pointer-events: none;
   transition: opacity 0.05s linear;
 }

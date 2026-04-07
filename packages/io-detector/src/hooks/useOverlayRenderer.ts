@@ -35,17 +35,6 @@ interface OverlayRendererState {
  * Manages Dual-Loop lifecycle and returns reactive overlay state.
  *
  * @param registry - Injected registry port (must be stable across renders).
- *
- * TODO(feat-003): implement
- *   - useEffect to start/stop Loop A:
- *       startLoopA(registry, updateVisibleOverlayIds)
- *       return () => stopLoopA()
- *   - useEffect to start/stop Loop B:
- *       startLoopB(updateOverlayRects)
- *       return () => stopLoopB()
- *   - Subscribe to $safetyTier, $overlayRects, $visualOverlayConfig via useStore
- *   - Derive areVisualsActive: safetyTier.visualsEnabled OR userToggle override
- *   - Return OverlayRendererState
  */
 export function useOverlayRenderer(
   registry: ObserverRegistryPort,
@@ -54,29 +43,37 @@ export function useOverlayRenderer(
   const rects = useStore($overlayRects);
   const config = useStore($visualOverlayConfig);
 
-  // TODO(feat-003): implement Loop A lifecycle
+  // Loop A — Priority Loop (throttled ~200ms)
   useEffect(() => {
-    // TODO(feat-003): startLoopA(_registry, updateVisibleOverlayIds);
-    void registry;
-    void updateVisibleOverlayIds;
-    void startLoopA;
+    startLoopA(registry, updateVisibleOverlayIds, {
+      getConfig: () => $visualOverlayConfig.get(),
+      onSafetyTierUpdate: (tier) => $safetyTier.set(tier),
+      // Hysteresis: first Tier 3 entry without user override → lock visuals OFF
+      onEnterTier3: () => {
+        const cfg = $visualOverlayConfig.get();
+        if (cfg.userToggledOn === null) {
+          $visualOverlayConfig.set({ ...cfg, userToggledOn: false });
+        }
+      },
+    });
     return () => {
       stopLoopA();
     };
   }, [registry]);
 
-  // TODO(feat-003): implement Loop B lifecycle
+  // Loop B — Render Loop (rAF)
   useEffect(() => {
-    // TODO(feat-003): startLoopB(updateOverlayRects);
-    void updateOverlayRects;
-    void startLoopB;
+    startLoopB(updateOverlayRects);
     return () => {
       stopLoopB();
     };
   }, []);
 
-  // TODO(feat-003): derive visualsActive from tier + user override
-  const areVisualsActive = safetyTier.areVisualsEnabled;
+  // areVisualsActive: tier default OR user override
+  const areVisualsActive =
+    config.userToggledOn !== null
+      ? config.userToggledOn
+      : safetyTier.areVisualsEnabled;
 
   return {
     rects,

@@ -2,7 +2,8 @@
  * FEAT-003 — IntersectionHighlight
  *
  * Renders the intersection area (visible portion of the target element).
- * Color: Neon Green (rgba(0, 255, 0, 0.3)) with additive blending.
+ * Color: Neon Green (rgba(0, 255, 0, 0.25)) with normal blending (covers magenta below).
+ * Alpha is intentionally low so that 30 overlapping layers reach max saturation.
  *
  * @see feat-003.md § a. Visual Visualization
  */
@@ -20,7 +21,7 @@ interface IntersectionHighlightProps {
  *   - Render a positioned <div> with:
  *       position: fixed
  *       top/left/width/height from rect
- *       background: var(--io-target-color)  → rgba(0, 255, 0, 0.3)
+ *       background: var(--io-target-color)  → rgba(0, 255, 128, 0.1)
  *       mix-blend-mode: screen  (additive blending)
  *       pointer-events: none
  *       opacity: isVisible ? 1 : 0  (Cheap Cull)
@@ -30,8 +31,19 @@ export function IntersectionHighlight({
   rect,
   isVisible,
 }: IntersectionHighlightProps): ReactNode {
-  // TODO(feat-003): implement
-  void rect;
-  void isVisible;
-  return null;
+  return (
+    <div
+      className="io-overlay-intersection"
+      style={{
+        position: 'fixed',
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        mixBlendMode: 'screen',
+        pointerEvents: 'none',
+        opacity: isVisible ? 1 : 0,
+      }}
+    />
+  );
 }

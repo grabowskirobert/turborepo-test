@@ -12,6 +12,7 @@ import type { ObserverMetadata } from '@/core';
 import { computeSelector } from '@/core';
 import { Thumbnail } from './Thumbnail';
 import { useHighlight, useInspect } from '@/hooks/useVisualOverlay';
+import { setForceShowId } from '@/stores';
 
 interface InstanceRowProps {
   observer: ObserverMetadata;
@@ -45,13 +46,24 @@ export function InstanceRow({
   targetIndex,
   ratio,
 }: InstanceRowProps): ReactNode {
-  const { onMouseEnter, onMouseLeave } = useHighlight(
-    target,
-    observer.isZombie,
-  );
+  const { onMouseEnter: highlightEnter, onMouseLeave: highlightLeave } =
+    useHighlight(target, observer.isZombie);
   const handleInspect = useInspect(target);
 
-  void targetIndex;
+  const overlayId = `${observer.id}::${targetIndex}`;
+
+  const onMouseEnter = () => {
+    highlightEnter();
+    // Spot Check — force-show overlay even if visuals are OFF or item is culled
+    if (!observer.isZombie) {
+      setForceShowId(overlayId);
+    }
+  };
+
+  const onMouseLeave = () => {
+    highlightLeave();
+    setForceShowId(null);
+  };
 
   return (
     <div

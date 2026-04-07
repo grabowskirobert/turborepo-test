@@ -29,10 +29,12 @@ export { computeSelector } from './selector';
 // FEAT-003
 export { determineSafetyTier } from './safety-tiers';
 export { buildSmartQueue } from './smart-queue';
+export type { LoopAOptions } from './visual-overlay';
 export {
   startLoopA,
   stopLoopA,
   startLoopB,
   stopLoopB,
   isElementInViewport,
+  setVisibleIds,
 } from './visual-overlay';

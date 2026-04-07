@@ -173,49 +173,37 @@ export function incrementThumbnailCount(): boolean {
  * Toggle visual overlay ON/OFF manually.
  * Hard limit of 30 overlays still applies regardless.
  * @see feat-003.md § f — Manual Toggle
- *
- * TODO(feat-003): implement
- *   - Update $visualOverlayConfig.userToggledOn
- *   - In Tier 3, toggling ON should still cap at 30 overlays
  */
 export function toggleVisualOverlay(): void {
-  // TODO(feat-003): implement
   const config = $visualOverlayConfig.get();
-  void config;
+  const safetyTier = $safetyTier.get();
+  // If userToggledOn is null, derive current state from tier default
+  const currentState = config.userToggledOn ?? safetyTier.areVisualsEnabled;
+  $visualOverlayConfig.set({ ...config, userToggledOn: !currentState });
 }
 
 /**
  * Set the force-show ID (Spot Check) — hover on a panel row triggers this.
- * Temporarily renders one specific overlay, ignoring all tier/queue limits.
  * Pass `null` to clear.
  * @see feat-003.md § f — Spot Check (Force-Show)
- *
- * TODO(feat-003): implement
- *   - Update $visualOverlayConfig.forceShowId
- *   - Loop B will pick this up on next frame tick
  */
-export function setForceShowId(_id: string | null): void {
-  // TODO(feat-003): implement
+export function setForceShowId(id: string | null): void {
+  const config = $visualOverlayConfig.get();
+  $visualOverlayConfig.set({ ...config, forceShowId: id });
 }
 
 /**
  * Bridge callback for Loop A → store: updates $visibleOverlayIds.
- *
- * TODO(feat-003): implement
- *   - $visibleOverlayIds.set(ids)
  */
-export function updateVisibleOverlayIds(_ids: string[]): void {
-  // TODO(feat-003): implement
+export function updateVisibleOverlayIds(ids: string[]): void {
+  $visibleOverlayIds.set(ids);
 }
 
 /**
  * Bridge callback for Loop B → store: updates $overlayRects.
- *
- * TODO(feat-003): implement
- *   - $overlayRects.set(rects)
  */
-export function updateOverlayRects(_rects: OverlayRect[]): void {
-  // TODO(feat-003): implement
+export function updateOverlayRects(rects: OverlayRect[]): void {
+  $overlayRects.set(rects);
 }
 
 // ---------------------------------------------------------------------------
@@ -224,7 +212,6 @@ export function updateOverlayRects(_rects: OverlayRect[]): void {
 
 /**
  * Factory: Creates an ObserverRegistryPort backed by nanostores.
- * Injected into Core modules at the composition root (IODetector.tsx).
  */
 export function createRegistryAdapter(): ObserverRegistryPort {
   return {
@@ -234,6 +221,8 @@ export function createRegistryAdapter(): ObserverRegistryPort {
     markZombie: markAsZombie,
     // FEAT-002: ratio update hook
     updateRatio,
+    // FEAT-003: read all ratios for Smart Queue
+    getRatios: () => $intersectionRatios.get(),
   };
 }
 

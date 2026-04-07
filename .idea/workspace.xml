@@ -5,10 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d99b478-57db-44c2-913e-e3e956311bcf" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/docs/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/docs/next-env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/web/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/app/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/web/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/apps/web/next-env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/docs/feat-003-qa.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/docs/feat-003-qa.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/docs/feat-003.md" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/docs/feat-003.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/IODetector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/IODetector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/VisualOverlay.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/VisualOverlay.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/IntersectionHighlight.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/IntersectionHighlight.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/OverlayItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/OverlayItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/RootMarginZone.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/RootMarginZone.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/SafetyTierStatus.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/overlay/SafetyTierStatus.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/panel/InstanceRow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/InstanceRow.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/components/panel/ObserverGroupRow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/components/panel/ObserverGroupRow.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/grouping.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/grouping.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/naming.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/naming.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/safety-tiers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/safety-tiers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/smart-queue.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/smart-queue.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/core/visual-overlay.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/core/visual-overlay.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/hooks/useOverlayRenderer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/hooks/useOverlayRenderer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/stores/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/stores/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/io-detector/src/styles/detector.css" beforeDir="false" afterPath="$PROJECT_DIR$/packages/io-detector/src/styles/detector.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,17 +72,22 @@
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
     &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test/node_modules/prettier&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.network.NetworkConfigurable&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test/packages/eslint-config/node_modules/typescript/lib&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/robert.grabowski/Projects/Personal/turborepo-test/apps/web/node_modules/typescript/lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -72,10 +96,38 @@
       <recent name="$PROJECT_DIR$/apps/intersection-visualizer/docs" />
     </key>
   </component>
+  <component name="RunManager" selected="npm.dev">
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-WS-251.29188.1" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.31033.133" />
       </set>
     </attachedChunks>
   </component>
@@ -110,6 +162,9 @@
       <workItem from="1771227371360" duration="809000" />
       <workItem from="1771483529417" duration="3245000" />
       <workItem from="1771570733835" duration="1029000" />
+      <workItem from="1774340036750" duration="5000" />
+      <workItem from="1774938354765" duration="5452000" />
+      <workItem from="1775196293778" duration="4919000" />
     </task>
     <servers />
   </component>

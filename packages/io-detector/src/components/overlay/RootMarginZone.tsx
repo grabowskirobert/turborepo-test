@@ -2,7 +2,8 @@
  * FEAT-003 — RootMarginZone
  *
  * Renders the rootMargin buffer zone around an observer's root.
- * Color: Magenta (rgba(255, 0, 255, 0.3)) with Yellow dashed border (2px).
+ * Color: Magenta (rgba(255, 0, 255, 0.033)) with Yellow dashed border (2px).
+ * Alpha is intentionally low so that 30 overlapping layers reach max saturation.
  * Uses additive blending (mix-blend-mode: screen) for overlapping zones.
  *
  * @see feat-003.md § a. Visual Visualization
@@ -21,7 +22,7 @@ interface RootMarginZoneProps {
  *   - Render a positioned <div> with:
  *       position: fixed
  *       top/left/width/height from rect
- *       background: var(--io-rootmargin-color)  → rgba(255, 0, 255, 0.3)
+ *       background: var(--io-rootmargin-color)  → rgba(255, 0, 255, 0.033)
  *       border: 2px dashed var(--io-guideline-color)  → yellow
  *       mix-blend-mode: screen  (additive blending)
  *       pointer-events: none
@@ -32,8 +33,19 @@ export function RootMarginZone({
   rect,
   isVisible,
 }: RootMarginZoneProps): ReactNode {
-  // TODO(feat-003): implement
-  void rect;
-  void isVisible;
-  return null;
+  return (
+    <div
+      className="io-overlay-rootmargin"
+      style={{
+        position: 'fixed',
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        mixBlendMode: 'screen',
+        pointerEvents: 'none',
+        opacity: isVisible ? 1 : 0,
+      }}
+    />
+  );
 }

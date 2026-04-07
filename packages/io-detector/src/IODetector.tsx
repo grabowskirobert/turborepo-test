@@ -6,7 +6,7 @@
  * The single public API for the Intersection Observer Detector.
  * Manages lifecycle, safety guards, and singleton enforcement.
  */
-import { useEffect, useRef, StrictMode, type ReactNode } from 'react';
+import { useEffect, useRef, useState, StrictMode, type ReactNode } from 'react';
 import {
   initMonkeyPatch,
   destroyMonkeyPatch,
@@ -91,6 +91,8 @@ function cleanup(): void {
  */
 export function IODetector(): ReactNode {
   const instanceRef = useRef<IODetectorInstance | null>(null);
+  // Lift registry to state so VisualOverlay mounts after useEffect runs
+  const [registry, setRegistry] = useState<ObserverRegistryPort | null>(null);
 
   // Lifecycle management
   useEffect(() => {
@@ -103,12 +105,14 @@ export function IODetector(): ReactNode {
     }
 
     instanceRef.current = createInstance();
+    setRegistry(instanceRef.current.registry);
 
     console.debug('[IODetector] Mounted and active.');
 
     return () => {
       instanceRef.current?.destroy();
       instanceRef.current = null;
+      setRegistry(null);
       console.debug('[IODetector] Unmounted and cleaned up.');
     };
   }, []);
@@ -119,12 +123,7 @@ export function IODetector(): ReactNode {
       <StrictMode>
         <ErrorBoundary>
           {/* FEAT-003: VisualOverlay — z-index: 10 (below Panel) */}
-          {/* TODO(feat-003): VisualOverlay renders only when registry is available
-              (instanceRef.current is set after first useEffect tick).
-              Consider lifting registry to state or context to trigger re-render. */}
-          {instanceRef.current?.registry && (
-            <VisualOverlay registry={instanceRef.current.registry} />
-          )}
+          {registry && <VisualOverlay registry={registry} />}
           <DetectorUI />
         </ErrorBoundary>
       </StrictMode>

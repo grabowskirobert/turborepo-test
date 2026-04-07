@@ -14,6 +14,14 @@ a. **Visual Visualization**
 - The system must highlight the intersecting portion of the element in **Neon Green (rgba(0, 255, 0, 0.3))**.
 - The system must draw zone boundaries using **Yellow Dashed Lines (2px)**.
 - **Additive Blending:** Overlapping overlays must use additive blending to visually indicate density.
+- **Layer Render Order:** All overlays must be rendered in three global passes to guarantee correct DOM stacking across all active observers:
+  1. **Pass 1 — rootMargin zones (Magenta)** — bottom layer
+  2. **Pass 2 — intersection highlights (Green)** — middle layer; always rendered above all magenta zones
+  3. **Pass 3 — target outlines (Yellow)** — top layer
+
+  An atomic per-element render (magenta + green + border for each item sequentially) must **not** be used, as it causes magenta from Observer A to appear above the green of Observer B in Smart Queue order.
+
+- **Blending Context Isolation:** Each pass must be wrapped in an `isolation: isolate` container. This ensures that same-type overlays screen-blend with each other (preserving the density signal within a layer) while preventing cross-layer screen blending between passes. Without isolation, green elements screen-blend with the composited magenta backdrop, producing cyan/white instead of visible green.
 
 b. **Technical Isolation & Safety**
 
@@ -64,6 +72,7 @@ f. **User Control & Overrides**
 g. **Zombie Exclusion**
 
 - Observers with null/detached targets ("Zombies") are strictly excluded from all visual rendering calculations.
+- **Zombie Visual Indicator:** Zombie entries in the Monitor Panel list must be visually distinguished at the row level — e.g., row text rendered in yellow (`#FFD700` or the existing yellow used for target outlines) or an equivalent highlight — so the developer can immediately identify zombies without expanding the row.
 
 **Out of Scope:**
 

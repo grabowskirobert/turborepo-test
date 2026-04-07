@@ -43,16 +43,22 @@ export function ObserverGroupRow({ group }: ObserverGroupRowProps): ReactNode {
     $uiConfig.set({ ...uiConfig, expandedGroups: newSet });
   }
 
+  const zombieCount = group.members.filter((m) => m.isZombie).length;
+
   return (
     <div
-      className={`io-group-row${group.isZombie ? ' io-group-row--zombie' : ''}`}
+      className={`io-group-row${zombieCount > 0 ? ' io-group-row--zombie' : ''}`}
     >
       {/* Header */}
       <button className="io-group-row__header" onClick={toggleExpand}>
         <span className="io-group-row__chevron">{isExpanded ? '▾' : '▸'}</span>
-        {group.isZombie && <span aria-label="Zombie">💀</span>}
         <span className="io-group-row__name">{group.displayName}</span>
         <span className="io-group-row__count">{group.members.length}</span>
+        {zombieCount > 0 && (
+          <span className="io-group-row__zombie-badge" aria-label="Zombie">
+            💀×{zombieCount}
+          </span>
+        )}
       </button>
 
       {/* Instance list — TODO(feat-002): implement full member×target iteration */}

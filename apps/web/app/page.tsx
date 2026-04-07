@@ -5,6 +5,7 @@ import { Card } from '@repo/ui/card';
 import { IODetector } from '@repo/io-detector';
 import { FadeInSection } from './components/FadeInSection';
 import { IODebugFixtures } from './components/IODebugFixtures';
+import { IntersectionTestBox } from './components/IntersectionTestBox';
 
 const LINKS = [
   {
@@ -34,6 +35,7 @@ export default function Page() {
   return (
     <>
       <IODetector />
+      <IntersectionTestBox />
       <main className="flex flex-col items-center justify-between min-h-screen p-24">
         <div className="z-10 items-center justify-between w-full max-w-5xl font-mono text-sm lg:flex">
           <p className="fixed top-0 left-0 flex justify-center w-full px-4 pt-8 pb-6 border backdrop-blur-2xl border-neutral-800 from-inherit lg:static lg:w-auto lg:rounded-xl lg:p-4">

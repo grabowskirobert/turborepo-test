@@ -80,7 +80,7 @@ export function groupObservers(
       fingerprint,
       displayName: resolveGroupName(members, counter++),
       members,
-      isZombie: members.every((m) => m.isZombie),
+      isZombie: members.some((m) => m.isZombie),
     });
   }
 

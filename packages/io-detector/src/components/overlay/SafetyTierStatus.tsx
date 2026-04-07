@@ -14,23 +14,29 @@ interface SafetyTierStatusProps {
   onToggle: VoidFunction;
 }
 
-/**
- * TODO(feat-003): implement
- *   - Display tierState.statusMessage
- *   - Show toggle button:
- *       label: areVisualsActive ? "Disable Visuals" : "Enable Visuals"
- *       onClick → onToggle (wires to toggleVisualOverlay in stores)
- *   - In Tier 3 with visuals OFF, show warning text per feat-003.md § d
- *   - Use className "io-safety-status"
- */
 export function SafetyTierStatus({
   tierState,
   areVisualsActive,
   onToggle,
 }: SafetyTierStatusProps): ReactNode {
-  // TODO(feat-003): implement
-  void tierState;
-  void areVisualsActive;
-  void onToggle;
-  return null;
+  const isDanger = tierState.tier === 3 && !areVisualsActive;
+
+  return (
+    <div className="io-safety-status">
+      <span className="io-safety-status__message">
+        {tierState.statusMessage}
+      </span>
+      <button
+        className={`io-safety-status__toggle${isDanger ? ' io-safety-status__toggle--danger' : ''}`}
+        onClick={onToggle}
+        title={
+          isDanger
+            ? 'Visuals disabled due to high load. Hard limit: 30 overlays.'
+            : undefined
+        }
+      >
+        {areVisualsActive ? 'Disable Visuals' : 'Enable Visuals'}
+      </button>
+    </div>
+  );
 }

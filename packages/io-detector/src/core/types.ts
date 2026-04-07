@@ -70,6 +70,8 @@ export interface ObserverRegistryPort {
     targetIndex: number,
     ratio: number,
   ) => void;
+  // FEAT-003: read all current ratios for Smart Queue classification
+  getRatios?: () => IntersectionRatioMap;
 }
 
 // ---------------------------------------------------------------------------
