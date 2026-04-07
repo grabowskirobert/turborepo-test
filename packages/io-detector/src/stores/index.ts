@@ -142,8 +142,6 @@ function markAsZombie(id: string): void {
 /**
  * Update intersection ratio for a specific observer target.
  * Key: "${observerId}::${targetIndex}"
- *
- * TODO(feat-002): call this from monkey-patch callback wrapper
  */
 export function updateRatio(
   observerId: string,
