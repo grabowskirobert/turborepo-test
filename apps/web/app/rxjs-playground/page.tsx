@@ -26,14 +26,6 @@ export default async function RxjsPlaygroundPage() {
             Każde demo: interaktywny przykład po lewej, kod źródłowy i live log
             po prawej.
           </p>
-          <div className="flex gap-3 mt-3 text-xs">
-            <a
-              href="/rxjs-chat"
-              className="text-purple-400 hover:text-purple-300 underline underline-offset-2 transition-colors"
-            >
-              → Chat (switchMap + SSE w akcji)
-            </a>
-          </div>
         </div>
 
         <div className="flex flex-col gap-8">

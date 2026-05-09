@@ -90,22 +90,19 @@ export function SubjectDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => handleNext('A')}
-          disabled={completed}
-          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-40 text-white text-sm rounded-lg font-mono transition-colors"
+          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
           next(&apos;A&apos;)
         </button>
         <button
           onClick={() => handleNext('B')}
-          disabled={completed}
-          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-40 text-white text-sm rounded-lg font-mono transition-colors"
+          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
           next(&apos;B&apos;)
         </button>
         <button
           onClick={() => handleNext('C')}
-          disabled={completed}
-          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 disabled:opacity-40 text-white text-sm rounded-lg font-mono transition-colors"
+          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
           next(&apos;C&apos;)
         </button>

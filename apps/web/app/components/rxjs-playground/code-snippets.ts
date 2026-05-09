@@ -1,123 +1,176 @@
 /**
  * Snippety kodu dla każdego dema RxJS.
  * Ten plik nie ma dyrektywy "use client" — może być importowany przez server components.
+ *
+ * WAŻNE: każdy snippet musi dokładnie odpowiadać temu co logowane jest w demie.
  */
 
+// ─── SUBJECT ──────────────────────────────────────────────────────────────────
+// Log: [subject$] next('A') →  /  [Sub1 next] A  /  [Sub2 next] A
+//      [subject$] complete() →  /  [Sub1] complete() ✓  /  [Sub2] complete() ✓
+//      [subject$] next('C') — IGNOROWANE (po complete)
 export const SUBJECT_CODE = `const subject$ = new Subject<string>();
 
-// Subskrypcja 1
-subject$.subscribe(v => console.log('Sub1:', v));
+// Dwie niezależne subskrypcje
+subject$.subscribe({
+  next: v => log('[Sub1 next]', v),       // zielona
+  complete: () => log('[Sub1] complete() ✓')
+});
+subject$.subscribe({
+  next: v => log('[Sub2 next]', v),       // niebieska
+  complete: () => log('[Sub2] complete() ✓')
+});
 
-// Subskrypcja 2 — osobna, niezależna
-subject$.subscribe(v => console.log('Sub2:', v));
+subject$.next('A');
+// → [subject$] next('A') →
+// → [Sub1 next] A
+// → [Sub2 next] A
 
-// Ręczne emitowanie wartości
-subject$.next('A');   // obie subskrypcje dostają 'A'
-subject$.next('B');   // obie dostają 'B'
-subject$.complete();  // obie kończą
+subject$.complete();
+// → [subject$] complete() →
+// → [Sub1] complete() ✓
+// → [Sub2] complete() ✓
 
-// Po complete() — wartości są ignorowane
-subject$.next('C');   // nic się nie dzieje`;
+subject$.next('C');
+// → [subject$] next('C') — IGNOROWANE (po complete)`;
 
+// ─── SWITCHMAP ────────────────────────────────────────────────────────────────
+// Log: [req#N] START → "query"
+//      [req#N] ANULOWANY przez switchMap ✗  (jeśli nowy przyszedł przed końcem)
+//      [req#N] ✓ odpowiedź: "query"          (jeśli dobiegł do końca)
+//      [req#N] ZAKOŃCZONY normalnie
 export const SWITCHMAP_CODE = `const click$ = new Subject<string>();
-let requestId = 0;
+let reqId = 0;
 
 click$.pipe(
   switchMap(query => {
-    const id = ++requestId;
+    const id = ++reqId;
+    log(\`[req#\${id}] START → "\${query}"\`);
 
-    // Symulacja HTTP request (3 sekundy)
+    let completed = false;
+
     return timer(3000).pipe(
-      map(() => \`Wynik dla: "\${query}" [req#\${id}]\`),
-      tap({
-        subscribe: () => log(\`req#\${id} START → "\${query}"\`),
-        finalize: () => log(\`req#\${id} CANCEL/DONE\`)
+      map(() => ({ id, query })),
+      map(val => { completed = true; return val; }),
+      finalize(() => {
+        if (completed) {
+          log(\`[req#\${id}] ZAKOŃCZONY normalnie\`);
+        } else {
+          // timer nie zdążył — switchMap nas anulował
+          log(\`[req#\${id}] ANULOWANY przez switchMap ✗\`);
+        }
       })
     );
   })
-).subscribe(result => log('✓ ' + result));
-
-// Szybkie kliknięcia:
-click$.next('kot');    // req#1 START
-click$.next('pies');   // req#1 CANCEL, req#2 START
-// ... po 3s: req#2 DONE → "Wynik dla pies"`;
-
-export const TAKEUNTIL_CODE = `const stop$ = new Subject<void>();
-
-// Interval emituje 0, 1, 2, 3... co sekundę
-interval(1000).pipe(
-  takeUntil(stop$)   // kończy gdy stop$ emituje
-).subscribe(tick => {
-  console.log('tick:', tick);
+).subscribe(({ id, query }) => {
+  log(\`[req#\${id}] ✓ odpowiedź: "\${query}"\`);
 });
 
-// Gdzie indziej w kodzie:
-stop$.next();   // strumień się kończy
-// (np. w cleanup useEffect, albo onClick "Stop")
+click$.next('kot');   // req#1 START
+click$.next('pies');  // req#1 ANULOWANY, req#2 START
+// po 3s → req#2 ✓ odpowiedź: "pies"`;
 
+// ─── TAKEUNTIL ────────────────────────────────────────────────────────────────
+// Log: [interval$] START — ticki co 1s
+//      [tick] 0 / 1 / 2 ...
+//      [stop$] next() → sygnał stop
+//      [interval$] ZAKOŃCZONY przez takeUntil ✓
+export const TAKEUNTIL_CODE = `const stop$ = new Subject<void>();
 
-// W React:
+interval(1000).pipe(
+  takeUntil(stop$)
+).subscribe({
+  next: tick => log('[tick]', tick),     // 0, 1, 2...
+  complete: () => log('[interval$] ZAKOŃCZONY przez takeUntil ✓')
+});
+
+// Kliknięcie "stop$.next()":
+stop$.next();
+// → [stop$] next() → sygnał stop
+// → [interval$] ZAKOŃCZONY przez takeUntil ✓
+
+// Wzorzec cleanup w React:
 useEffect(() => {
   const destroy$ = new Subject<void>();
-
-  someStream$.pipe(
-    takeUntil(destroy$)
-  ).subscribe(...);
-
-  return () => destroy$.next(); // cleanup!
+  someStream$.pipe(takeUntil(destroy$)).subscribe(...);
+  return () => destroy$.next(); // odpowiednik stop$.next()
 }, []);`;
 
+// ─── SCAN ─────────────────────────────────────────────────────────────────────
+// Log: [next] +12 zł (Kawa)
+//      [scan →] suma = 12 zł
+//      [next] +49 zł (Książka RxJS)
+//      [scan →] suma = 61 zł
 export const SCAN_CODE = `const addItem$ = new Subject<number>();
 
 addItem$.pipe(
   scan((total, price) => total + price, 0)
-  //     ^^^^^^^  akumulator (jak w Array.reduce)
-  //              drugi arg = wartość startowa
 ).subscribe(total => {
-  console.log('Suma koszyka:', total);
+  log('[scan →]', \`suma = \${total} zł\`);
 });
 
-addItem$.next(29);  // → 29
-addItem$.next(15);  // → 44
-addItem$.next(99);  // → 143
+// Kliknięcie "Kawa +12 zł":
+// → [next] +12 zł (Kawa)      ← przed next()
+addItem$.next(12);
+// → [scan →] suma = 12 zł     ← scan akumuluje
 
-// W chacie: scan((text, chunk) => text + chunk, '')
-// akumuluje słowa SSE w pełen tekst odpowiedzi`;
+// Kliknięcie "Książka RxJS +49 zł":
+// → [next] +49 zł (Książka RxJS)
+addItem$.next(49);
+// → [scan →] suma = 61 zł
 
+// scan NIE przechowuje historii — tylko (akumulator, nowaWartość) → wynik`;
+
+// ─── DEBOUNCETIME ─────────────────────────────────────────────────────────────
+// Log: [keystroke] "r" / "rx" / "rxj" / "rxjs"   (szary — każde naciśnięcie)
+//      [request →] fetchResults("rxjs")            (zielony — po 500ms ciszy)
 export const DEBOUNCETIME_CODE = `const input$ = new Subject<string>();
 
 input$.pipe(
-  debounceTime(500),        // czeka 500ms ciszy
-  distinctUntilChanged()    // ignoruje duplikaty
+  debounceTime(500),       // czeka 500ms ciszy
+  distinctUntilChanged()   // ignoruje duplikaty
 ).subscribe(query => {
-  // ten request wysyłany dopiero po 500ms ciszy
-  fetchResults(query);
+  log('[request →]', \`fetchResults("\${query}")\`);
 });
 
-// Szybkie pisanie:
-input$.next('r');       // reset timera
-input$.next('rx');      // reset timera
-input$.next('rxj');     // reset timera
-input$.next('rxjs');    // reset timera
+// Szybkie pisanie (każdy znak → [keystroke] w logu):
+input$.next('r');    // reset timera, brak emitu
+input$.next('rx');   // reset timera, brak emitu
+input$.next('rxj');  // reset timera, brak emitu
+input$.next('rxjs'); // reset timera, brak emitu
 // ...500ms ciszy...
-// → emituje tylko 'rxjs'  (1 request, nie 4!)`;
+// → [request →] fetchResults("rxjs")   // tylko 1 request!`;
 
+// ─── MERGE + COMBINALATEST ────────────────────────────────────────────────────
+// Log: [A$.next] A1        ← przed emit
+//      [merge ← A$] A1    ← merge przepuszcza od razu
+//      [B$.next] B1
+//      [merge ← B$] B1
+//      [combineLatest →] [A1, B1]   ← dopiero teraz, bo oba raz wyemitowały
 export const MERGE_CODE = `const a$ = new Subject<string>();
 const b$ = new Subject<string>();
 
-// merge — emituje gdy KTÓRYKOLWIEK zmieni wartość
+// merge — każde zdarzenie z obu strumieni osobno
 merge(a$, b$).subscribe(v => {
-  console.log('merge:', v);  // każde zdarzenie osobno
+  log('[merge ←]', v);  // natychmiast przy każdym next()
 });
 
-// combineLatest — emituje parę [lastA, lastB]
-// czeka aż OBA raz wyemitują
+// combineLatest — czeka aż OBA raz wyemitują,
+// potem przy każdej zmianie dowolnego
 combineLatest([a$, b$]).pipe(
-  map(([a, b]) => \`\${a} + \${b}\`)
+  map(([a, b]) => \`[\${a}, \${b}]\`)
 ).subscribe(combined => {
-  console.log('combineLatest:', combined);
+  log('[combineLatest →]', combined);
 });
 
-a$.next('X');  // merge: 'X'  | combineLatest: czeka na B
-b$.next('1');  // merge: '1'  | combineLatest: ['X','1'] ✓
-a$.next('Y');  // merge: 'Y'  | combineLatest: ['Y','1']`;
+a$.next('A1');
+// → [merge ← A$] A1
+// combineLatest: czeka na B$
+
+b$.next('B1');
+// → [merge ← B$] B1
+// → [combineLatest →] [A1, B1]  ← pierwszy emit!
+
+a$.next('A2');
+// → [merge ← A$] A2
+// → [combineLatest →] [A2, B1]  ← każda zmiana`;

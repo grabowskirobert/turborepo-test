@@ -8,14 +8,6 @@ const ROUTES = [
     tagColor: 'text-purple-400 bg-purple-400/10',
   },
   {
-    href: '/rxjs-chat',
-    label: 'RxJS Chat',
-    description:
-      'Chat streamowany przez SSE — switchMap, takeUntil i animacje w jednym scenariuszu.',
-    tag: 'demo',
-    tagColor: 'text-blue-400 bg-blue-400/10',
-  },
-  {
     href: '/io-detector',
     label: 'IO Detector',
     description:

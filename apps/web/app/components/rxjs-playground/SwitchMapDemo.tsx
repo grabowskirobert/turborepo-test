@@ -12,7 +12,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Subject, timer } from 'rxjs';
-import { switchMap, tap, finalize, map } from 'rxjs/operators';
+import { switchMap, finalize, map } from 'rxjs/operators';
 import { DemoShell, LogEntry, ts } from './DemoShell';
 
 export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
@@ -21,7 +21,8 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   const [reqCounter, setReqCounter] = useState(0);
   const click$ = useRef(new Subject<string>());
   const queryCounter = useRef(0);
-  const activeRef = useRef<number | null>(null);
+  // Ref przechowuje ID aktualnie aktywnego requestu — synchroniczny, bez race condition
+  const activeIdRef = useRef<number | null>(null);
 
   const addLog = (label: string, value: string, color?: string) => {
     setLogs((prev) => [...prev, { time: ts(), label, value, color }]);
@@ -32,32 +33,42 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
       .pipe(
         switchMap((query) => {
           const id = ++queryCounter.current;
+          // Ustawiamy aktywne ID synchronicznie — zanim cokolwiek zdąży się wykonać
+          activeIdRef.current = id;
           setReqCounter(id);
           setActiveReq(id);
-          activeRef.current = id;
-
           addLog(`req#${id}`, `START → "${query}"`, 'text-yellow-400');
 
-          return timer(3000).pipe(
-            map(() => ({ id, query })),
-            finalize(() => {
-              // finalize mówi nam czy request dobiegł końca czy został anulowany
-              // Sprawdzamy po aktywnym ID — jeśli inne jest już aktywne, to byliśmy anulowani
-              setActiveReq((current) => {
-                if (current !== id) {
+          // Flaga ustawiana przez subscriber — jeśli timer wyemituje, request się udał
+          let completed = false;
+
+          return timer(3000)
+            .pipe(
+              map(() => ({ id, query })),
+              finalize(() => {
+                // finalize odpala się zawsze: po next+complete LUB po unsubscribe (anulowanie).
+                // Rozróżniamy te dwa przypadki przez flagę `completed`:
+                // - jeśli true → timer zdążył wyemitować → normalny koniec
+                // - jeśli false → switchMap nas odsubskrybował zanim timer trafił → anulowanie
+                if (completed) {
+                  addLog(`req#${id}`, `ZAKOŃCZONY normalnie`, 'text-gray-500');
+                  setActiveReq(null);
+                  activeIdRef.current = null;
+                } else {
                   addLog(
                     `req#${id}`,
                     `ANULOWANY przez switchMap ✗`,
                     'text-red-400',
                   );
-                } else {
-                  addLog(`req#${id}`, `ZAKOŃCZONY normalnie`, 'text-gray-500');
-                  setActiveReq(null);
                 }
-                return current;
-              });
-            }),
-          );
+              }),
+            )
+            .pipe(
+              map((val) => {
+                completed = true;
+                return val;
+              }),
+            );
         }),
       )
       .subscribe(({ id, query }) => {
@@ -111,11 +122,6 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
       <p className="mt-3 text-xs text-gray-600">
         Łącznie zapytań:{' '}
         <span className="text-purple-400 font-mono">{reqCounter}</span>
-        {reqCounter > 1 && (
-          <span className="text-red-400 ml-2">
-            → {reqCounter - (activeReq ? 1 : 0)} anulowanych
-          </span>
-        )}
       </p>
     </DemoShell>
   );
