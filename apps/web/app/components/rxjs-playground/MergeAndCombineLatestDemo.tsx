@@ -84,7 +84,6 @@ export function MergeAndCombineLatestDemo({
 
   return (
     <DemoShell
-      title="merge + combineLatest"
       operatorName="merge / combineLatest"
       tagline="łączenie wielu strumieni w jeden"
       codeBlock={codeBlock}

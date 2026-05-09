@@ -76,7 +76,6 @@ export function SubjectDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
 
   return (
     <DemoShell
-      title="Subject"
       operatorName="Subject"
       tagline="gorący Observable z ręczną kontrolą"
       codeBlock={codeBlock}

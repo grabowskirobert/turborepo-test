@@ -65,7 +65,6 @@ export function TakeUntilDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
 
   return (
     <DemoShell
-      title="takeUntil"
       operatorName="takeUntil"
       tagline="kończy strumień gdy notifier$ emituje"
       codeBlock={codeBlock}

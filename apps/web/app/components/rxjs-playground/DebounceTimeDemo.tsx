@@ -52,7 +52,6 @@ export function DebounceTimeDemo({
 
   return (
     <DemoShell
-      title="debounceTime"
       operatorName="debounceTime"
       tagline="emituje dopiero po chwili ciszy — idealne do wyszukiwarek"
       codeBlock={codeBlock}

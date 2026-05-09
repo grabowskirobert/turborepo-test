@@ -65,7 +65,6 @@ export function ScanDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
 
   return (
     <DemoShell
-      title="scan"
       operatorName="scan"
       tagline="akumuluje wartości strumienia (jak reduce dla tablic)"
       codeBlock={codeBlock}

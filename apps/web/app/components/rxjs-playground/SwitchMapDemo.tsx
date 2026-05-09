@@ -86,7 +86,6 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
 
   return (
     <DemoShell
-      title="switchMap"
       operatorName="switchMap"
       tagline="anuluje poprzedni stream gdy pojawia się nowy"
       codeBlock={codeBlock}
