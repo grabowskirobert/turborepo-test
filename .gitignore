@@ -37,3 +37,6 @@ dist/
 
 # ide
 .idea
+
+# tmp
+/tmp
