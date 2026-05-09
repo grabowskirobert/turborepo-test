@@ -17,7 +17,6 @@ export interface LogEntry {
 }
 
 interface DemoShellProps {
-  title: string;
   operatorName: string;
   tagline: string;
   codeBlock: React.ReactNode; // highlighted HTML z server component
@@ -27,7 +26,6 @@ interface DemoShellProps {
 }
 
 export function DemoShell({
-  title,
   operatorName,
   tagline,
   codeBlock,

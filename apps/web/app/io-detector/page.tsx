@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { IODetector } from '@repo/io-detector';
 import { FadeInSection } from '../components/FadeInSection';
 import { IODebugFixtures } from '../components/IODebugFixtures';
@@ -10,12 +11,12 @@ export default function IODetectorPage() {
       <IntersectionTestBox />
       <main className="flex flex-col items-center justify-between min-h-screen p-24">
         <div className="w-full max-w-5xl">
-          <a
+          <Link
             href="/"
             className="text-xs text-gray-600 hover:text-gray-400 transition-colors mb-8 inline-block"
           >
             ← Strona główna
-          </a>
+          </Link>
           <h1 className="text-3xl font-bold text-white mb-2">IO Detector</h1>
           <p className="text-gray-500 text-sm mb-12">
             Scenariusze testowe dla{' '}
