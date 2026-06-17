@@ -16,9 +16,6 @@ import { DemoShell, LogEntry, ts } from './DemoShell';
 const ITEMS = [
   { name: 'Kawa', price: 12 },
   { name: 'Książka RxJS', price: 49 },
-  { name: 'Naklejka 🔥', price: 5 },
-  { name: 'Kurs online', price: 99 },
-  { name: 'Kubek', price: 29 },
 ];
 
 export function ScanDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
@@ -82,10 +79,9 @@ export function ScanDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
           <button
             key={item.name}
             onClick={() => addItem(item.name, item.price)}
-            className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs rounded-lg transition-colors"
+            className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs rounded-lg font-mono transition-colors"
           >
-            {item.name}{' '}
-            <span className="text-purple-400">+{item.price} zł</span>
+            addItem$.next({item.price})
           </button>
         ))}
       </div>
@@ -109,9 +105,9 @@ export function ScanDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
 
       <button
         onClick={reset}
-        className="mt-2 text-xs text-gray-600 hover:text-gray-400 transition-colors"
+        className="mt-3 inline-flex cursor-pointer rounded-lg bg-purple-900/60 px-3 py-1.5 text-xs font-semibold text-purple-100 transition-colors hover:bg-purple-800 hover:text-white"
       >
-        wyczyść koszyk
+        Reset
       </button>
     </DemoShell>
   );

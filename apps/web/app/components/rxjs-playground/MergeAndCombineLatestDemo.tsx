@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { Subject, combineLatest, merge } from 'rxjs';
+import { Subject, Subscription, combineLatest, merge } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DemoShell, LogEntry, ts } from './DemoShell';
 
@@ -25,8 +25,8 @@ export function MergeAndCombineLatestDemo({
 
   const a$ = useRef(new Subject<string>());
   const b$ = useRef(new Subject<string>());
-  const aCounter = useRef(0);
-  const bCounter = useRef(0);
+  const subscriptions = useRef<Subscription[]>([]);
+  const [emittedA2, setEmittedA2] = useState(false);
 
   const addMergeLog = (label: string, value: string, color?: string) => {
     setMergeLogs((prev) => [...prev, { time: ts(), label, value, color }]);
@@ -35,46 +35,84 @@ export function MergeAndCombineLatestDemo({
     setCombineLogs((prev) => [...prev, { time: ts(), label, value, color }]);
   };
 
-  useEffect(() => {
-    const mergeSub = merge(
-      a$.current.pipe(map((v) => ({ src: 'A', val: v }))),
-      b$.current.pipe(map((v) => ({ src: 'B', val: v }))),
-    ).subscribe(({ src, val }) => {
-      addMergeLog(
-        `merge ← ${src}$`,
-        val,
-        src === 'A' ? 'text-blue-400' : 'text-orange-400',
-      );
-    });
+  const subscribeStreams = () => {
+    subscriptions.current.forEach((sub) => sub.unsubscribe());
+    subscriptions.current = [];
 
-    const combineSub = combineLatest([a$.current, b$.current])
-      .pipe(map(([a, b]) => `[${a}, ${b}]`))
-      .subscribe((combined) => {
-        addCombineLog('combineLatest →', combined, 'text-green-400');
-      });
+    subscriptions.current.push(
+      merge(
+        a$.current.pipe(map((v) => ({ src: 'A', val: v }))),
+        b$.current.pipe(map((v) => ({ src: 'B', val: v }))),
+      ).subscribe(({ src, val }) => {
+        addMergeLog(
+          `merge ← ${src}$`,
+          val,
+          src === 'A' ? 'text-blue-400' : 'text-orange-400',
+        );
+      }),
+    );
+
+    subscriptions.current.push(
+      combineLatest([a$.current, b$.current])
+        .pipe(map(([a, b]) => `[${a}, ${b}]`))
+        .subscribe((combined) => {
+          addCombineLog('combineLatest →', combined, 'text-green-400');
+        }),
+    );
+  };
+
+  useEffect(() => {
+    subscriptions.current.push(
+      merge(
+        a$.current.pipe(map((v) => ({ src: 'A', val: v }))),
+        b$.current.pipe(map((v) => ({ src: 'B', val: v }))),
+      ).subscribe(({ src, val }) => {
+        addMergeLog(
+          `merge ← ${src}$`,
+          val,
+          src === 'A' ? 'text-blue-400' : 'text-orange-400',
+        );
+      }),
+    );
+
+    subscriptions.current.push(
+      combineLatest([a$.current, b$.current])
+        .pipe(map(([a, b]) => `[${a}, ${b}]`))
+        .subscribe((combined) => {
+          addCombineLog('combineLatest →', combined, 'text-green-400');
+        }),
+    );
 
     return () => {
-      mergeSub.unsubscribe();
-      combineSub.unsubscribe();
+      subscriptions.current.forEach((sub) => sub.unsubscribe());
     };
   }, []);
 
-  const emitA = () => {
-    const labels = ['A1', 'A2', 'A3', 'A4', 'A5'];
-    const val = labels[aCounter.current % labels.length]!;
-    aCounter.current++;
+  const emitA = (val: 'A1' | 'A2') => {
+    if (val === 'A2') setEmittedA2(true);
     setLastA(val);
     addMergeLog('A$.next', val, 'text-blue-300');
     a$.current.next(val);
   };
 
   const emitB = () => {
-    const labels = ['B1', 'B2', 'B3', 'B4', 'B5'];
-    const val = labels[bCounter.current % labels.length]!;
-    bCounter.current++;
+    const val = 'B1';
     setLastB(val);
     addMergeLog('B$.next', val, 'text-orange-300');
     b$.current.next(val);
+  };
+
+  const reset = () => {
+    subscriptions.current.forEach((sub) => sub.unsubscribe());
+    subscriptions.current = [];
+    a$.current = new Subject<string>();
+    b$.current = new Subject<string>();
+    setLastA(null);
+    setLastB(null);
+    setEmittedA2(false);
+    setMergeLogs([]);
+    setCombineLogs([]);
+    subscribeStreams();
   };
 
   // Połączone logi (merge + combine) do DemoShell — pokazujemy osobno
@@ -134,16 +172,29 @@ export function MergeAndCombineLatestDemo({
 
       <div className="flex gap-2">
         <button
-          onClick={emitA}
+          onClick={() => emitA('A1')}
           className="px-4 py-2 bg-blue-800 hover:bg-blue-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          A$.next()
+          A$.next(&apos;A1&apos;)
         </button>
         <button
           onClick={emitB}
           className="px-4 py-2 bg-orange-800 hover:bg-orange-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          B$.next()
+          B$.next(&apos;B1&apos;)
+        </button>
+        <button
+          onClick={() => emitA('A2')}
+          disabled={emittedA2}
+          className="px-4 py-2 bg-blue-800 hover:bg-blue-700 disabled:opacity-40 text-white text-sm rounded-lg font-mono transition-colors"
+        >
+          A$.next(&apos;A2&apos;)
+        </button>
+        <button
+          onClick={reset}
+          className="px-4 py-2 cursor-pointer bg-purple-900/60 hover:bg-purple-800 text-purple-100 hover:text-white text-sm rounded-lg font-semibold transition-colors"
+        >
+          Reset
         </button>
       </div>
     </DemoShell>

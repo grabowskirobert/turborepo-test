@@ -24,11 +24,11 @@ export function SubjectDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   useEffect(() => {
     const sub1 = subject$.current.subscribe({
       next: (v) => addLog('Sub1 next', v, 'text-green-400'),
-      complete: () => addLog('Sub1', 'complete() ✓', 'text-gray-500'),
+      complete: () => addLog('Sub1 complete', '✓', 'text-gray-500'),
     });
     const sub2 = subject$.current.subscribe({
       next: (v) => addLog('Sub2 next', v, 'text-blue-400'),
-      complete: () => addLog('Sub2', 'complete() ✓', 'text-gray-500'),
+      complete: () => addLog('Sub2 complete', '✓', 'text-gray-500'),
     });
     return () => {
       sub1.unsubscribe();
@@ -63,11 +63,11 @@ export function SubjectDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
     // re-subscribe
     const sub1 = subject$.current.subscribe({
       next: (v) => addLog('Sub1 next', v, 'text-green-400'),
-      complete: () => addLog('Sub1', 'complete() ✓', 'text-gray-500'),
+      complete: () => addLog('Sub1 complete', '✓', 'text-gray-500'),
     });
     const sub2 = subject$.current.subscribe({
       next: (v) => addLog('Sub2 next', v, 'text-blue-400'),
-      complete: () => addLog('Sub2', 'complete() ✓', 'text-gray-500'),
+      complete: () => addLog('Sub2 complete', '✓', 'text-gray-500'),
     });
     // Leak prevention — store refs (simplified for demo)
     void sub1;
@@ -91,32 +91,32 @@ export function SubjectDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
           onClick={() => handleNext('A')}
           className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          next(&apos;A&apos;)
+          subject$.next(&apos;A&apos;)
         </button>
         <button
           onClick={() => handleNext('B')}
           className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          next(&apos;B&apos;)
+          subject$.next(&apos;B&apos;)
         </button>
         <button
           onClick={() => handleNext('C')}
           className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          next(&apos;C&apos;)
+          subject$.next(&apos;C&apos;)
         </button>
         <button
           onClick={handleComplete}
           disabled={completed}
           className="px-4 py-2 bg-orange-800 hover:bg-orange-700 disabled:opacity-40 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          complete()
+          subject$.complete()
         </button>
         <button
           onClick={handleReset}
-          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-400 text-sm rounded-lg transition-colors"
+          className="px-4 py-2 cursor-pointer bg-purple-900/60 hover:bg-purple-800 text-purple-100 hover:text-white text-sm rounded-lg font-semibold transition-colors"
         >
-          reset
+          Reset
         </button>
       </div>
       {completed && (

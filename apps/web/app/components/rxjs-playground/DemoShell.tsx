@@ -81,9 +81,9 @@ export function DemoShell({
               {logs.length > 0 && (
                 <button
                   onClick={onClearLogs}
-                  className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                  className="cursor-pointer rounded-md bg-gray-800 px-2 py-1 text-xs font-semibold text-gray-200 transition-colors hover:bg-gray-700 hover:text-white"
                 >
-                  wyczyść
+                  Wyczyść
                 </button>
               )}
             </div>

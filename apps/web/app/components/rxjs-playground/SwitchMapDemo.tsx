@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { Subject, timer } from 'rxjs';
+import { Subject, Subscription, timer } from 'rxjs';
 import { switchMap, finalize, map } from 'rxjs/operators';
 import { DemoShell, LogEntry, ts } from './DemoShell';
 
@@ -20,6 +20,7 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   const [activeReq, setActiveReq] = useState<number | null>(null);
   const [reqCounter, setReqCounter] = useState(0);
   const click$ = useRef(new Subject<string>());
+  const subscriptionRef = useRef<Subscription | null>(null);
   const queryCounter = useRef(0);
   // Ref przechowuje ID aktualnie aktywnego requestu — synchroniczny, bez race condition
   const activeIdRef = useRef<number | null>(null);
@@ -29,7 +30,7 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const sub = click$.current
+    subscriptionRef.current = click$.current
       .pipe(
         switchMap((query) => {
           const id = ++queryCounter.current;
@@ -75,13 +76,60 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
         addLog(`req#${id}`, `✓ odpowiedź: "${query}"`, 'text-green-400');
       });
 
-    return () => sub.unsubscribe();
+    return () => subscriptionRef.current?.unsubscribe();
   }, []);
 
-  const sendQuery = () => {
-    const queries = ['kot', 'pies', 'ryba', 'żółw', 'papuga'];
-    const q = queries[queryCounter.current % queries.length]!;
-    click$.current.next(q);
+  const sendQuery = (query: string) => {
+    click$.current.next(query);
+  };
+
+  const reset = () => {
+    subscriptionRef.current?.unsubscribe();
+    click$.current = new Subject<string>();
+    queryCounter.current = 0;
+    activeIdRef.current = null;
+    setActiveReq(null);
+    setReqCounter(0);
+    setLogs([]);
+    subscriptionRef.current = click$.current
+      .pipe(
+        switchMap((query) => {
+          const id = ++queryCounter.current;
+          activeIdRef.current = id;
+          setReqCounter(id);
+          setActiveReq(id);
+          addLog(`req#${id}`, `START → "${query}"`, 'text-yellow-400');
+
+          let completed = false;
+
+          return timer(3000)
+            .pipe(
+              map(() => ({ id, query })),
+              finalize(() => {
+                if (completed) {
+                  addLog(`req#${id}`, `ZAKOŃCZONY normalnie`, 'text-gray-500');
+                  setActiveReq(null);
+                  activeIdRef.current = null;
+                } else {
+                  addLog(
+                    `req#${id}`,
+                    `ANULOWANY przez switchMap ✗`,
+                    'text-red-400',
+                  );
+                }
+              }),
+            )
+            .pipe(
+              map((val) => {
+                completed = true;
+                return val;
+              }),
+            );
+        }),
+      )
+      .subscribe(({ id, query }) => {
+        addLog(`req#${id}`, `✓ odpowiedź: "${query}"`, 'text-green-400');
+      });
   };
 
   return (
@@ -111,10 +159,22 @@ export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
 
       <div className="flex gap-2 flex-wrap">
         <button
-          onClick={sendQuery}
+          onClick={() => sendQuery('kot')}
           className="px-4 py-2 bg-purple-700 hover:bg-purple-600 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          click$.next() → nowe zapytanie
+          click$.next(&apos;kot&apos;)
+        </button>
+        <button
+          onClick={() => sendQuery('pies')}
+          className="px-4 py-2 bg-purple-700 hover:bg-purple-600 text-white text-sm rounded-lg font-mono transition-colors"
+        >
+          click$.next(&apos;pies&apos;)
+        </button>
+        <button
+          onClick={reset}
+          className="px-4 py-2 cursor-pointer bg-purple-900/60 hover:bg-purple-800 text-purple-100 hover:text-white text-sm rounded-lg font-semibold transition-colors"
+        >
+          Reset
         </button>
       </div>
 

@@ -55,6 +55,15 @@ export function TakeUntilDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
     stop$.current.next();
   };
 
+  const reset = () => {
+    stop$.current.next();
+    stop$.current.complete();
+    stop$.current = new Subject<void>();
+    tickRef.current = 0;
+    setRunning(false);
+    setLogs([]);
+  };
+
   // Cleanup przy unmount — dokładnie ten sam wzorzec co w produkcji
   useEffect(() => {
     return () => {
@@ -94,7 +103,7 @@ export function TakeUntilDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
           disabled={running}
           className="px-4 py-2 bg-green-800 hover:bg-green-700 disabled:opacity-40 text-white text-sm rounded-lg font-mono transition-colors"
         >
-          interval(1000).pipe(takeUntil...)
+          interval(1000).pipe(takeUntil(stop$))
         </button>
         <button
           onClick={stop}
@@ -102,6 +111,12 @@ export function TakeUntilDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
           className="px-4 py-2 bg-red-700 hover:bg-red-600 disabled:opacity-40 text-white text-sm rounded-lg font-mono transition-colors"
         >
           stop$.next()
+        </button>
+        <button
+          onClick={reset}
+          className="px-4 py-2 cursor-pointer bg-purple-900/60 hover:bg-purple-800 text-purple-100 hover:text-white text-sm rounded-lg font-semibold transition-colors"
+        >
+          Reset
         </button>
       </div>
     </DemoShell>
