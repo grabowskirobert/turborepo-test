@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { IODetector } from '@repo/io-detector';
 import { FadeInSection } from '../components/FadeInSection';
 import { IODebugFixtures } from '../components/IODebugFixtures';
 import { IntersectionTestBox } from '../components/IntersectionTestBox';
@@ -7,7 +6,6 @@ import { IntersectionTestBox } from '../components/IntersectionTestBox';
 export default function IODetectorPage() {
   return (
     <>
-      <IODetector />
       <IntersectionTestBox />
       <main className="flex flex-col items-center justify-between min-h-screen p-24">
         <div className="w-full max-w-5xl">
