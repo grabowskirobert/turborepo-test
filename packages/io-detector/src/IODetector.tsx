@@ -25,13 +25,13 @@ import {
 // Singleton enforcement - module-level instance tracking
 let activeInstanceId: symbol | null = null;
 
-interface IODetectorInstance {
+export interface IODetectorInstance {
   id: symbol;
   registry: ObserverRegistryPort;
   destroy: VoidFunction;
 }
 
-function createInstance(): IODetectorInstance {
+export function createIODetectorInstance(): IODetectorInstance {
   const id = Symbol('io-detector-instance');
 
   // Destroy previous instance if exists (HMR safety)
@@ -104,7 +104,7 @@ export function IODetector(): ReactNode {
       return;
     }
 
-    instanceRef.current = createInstance();
+    instanceRef.current = createIODetectorInstance();
     setRegistry(instanceRef.current.registry);
 
     console.debug('[IODetector] Mounted and active.');
@@ -117,7 +117,16 @@ export function IODetector(): ReactNode {
     };
   }, []);
 
-  // Render UI in isolated Shadow DOM
+  if (!registry) return null;
+
+  return <IODetectorView registry={registry} />;
+}
+
+interface IODetectorViewProps {
+  registry: ObserverRegistryPort;
+}
+
+export function IODetectorView({ registry }: IODetectorViewProps): ReactNode {
   return (
     <ShadowRoot>
       <StrictMode>

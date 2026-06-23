@@ -11,28 +11,18 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, 'src/auto-init.ts'),
       name: 'IODetector',
       fileName: 'io-detector',
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
-      output: {
-        banner: `'use client';`,
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-        },
-      },
+      external: [],
     },
     sourcemap: true,
-    minify: false,
+    minify: 'esbuild',
   },
   define: {
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
-    'import.meta.env.DEV': JSON.stringify(
-      process.env.NODE_ENV !== 'production',
-    ),
+    'process.env.NODE_ENV': JSON.stringify('production'),
   },
 });

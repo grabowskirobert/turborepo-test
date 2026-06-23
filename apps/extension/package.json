@@ -1,28 +1,26 @@
 {
-  "name": "@repo/io-detector",
+  "name": "extension",
   "version": "0.0.1",
   "type": "module",
-  "sideEffects": true,
-  "files": [
-    "dist"
-  ],
+  "private": true,
   "scripts": {
     "build": "vite build",
-    "dev": "vite build --watch",
+    "dev": "vite build --watch --mode development",
     "check-types": "tsc --noEmit",
     "lint": "eslint src --max-warnings 0"
   },
   "dependencies": {
-    "nanostores": "^0.11.0",
-    "@nanostores/react": "^0.8.0",
+    "@repo/io-detector": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "^2.4.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/chrome": "^0.1.42",
     "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.1.0",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^9.39.2",
     "typescript": "5.9.3",
