@@ -10,8 +10,8 @@
 import type { ReactNode } from 'react';
 import type { ObserverMetadata } from '@/core';
 import { computeSelector } from '@/core';
-import { Thumbnail } from './Thumbnail';
-import { useHighlight, useInspect } from '@/hooks/useVisualOverlay';
+import { Thumbnail } from './thumbnail';
+import { useHighlight, useInspect } from '@/hooks/use-visual-overlay';
 import { setForceShowId } from '@/stores';
 
 interface InstanceRowProps {

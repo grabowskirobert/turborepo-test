@@ -12,7 +12,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 export function DebounceTimeDemo({
   codeBlock,

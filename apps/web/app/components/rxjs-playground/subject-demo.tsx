@@ -10,7 +10,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Subject } from 'rxjs';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 export function SubjectDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   const [logs, setLogs] = useState<LogEntry[]>([]);

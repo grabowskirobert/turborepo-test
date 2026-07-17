@@ -13,7 +13,7 @@ import {
   createIODetectorInstance,
   IODetectorView,
   type IODetectorInstance,
-} from './IODetector';
+} from './io-detector';
 
 declare global {
   interface Window {

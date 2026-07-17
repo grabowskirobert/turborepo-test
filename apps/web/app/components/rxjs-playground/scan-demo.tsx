@@ -11,7 +11,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Subject } from 'rxjs';
 import { scan } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 const ITEMS = [
   { name: 'Kawa', price: 12 },

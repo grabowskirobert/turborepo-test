@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { FadeInSection } from '../components/FadeInSection';
-import { IODebugFixtures } from '../components/IODebugFixtures';
-import { IntersectionTestBox } from '../components/IntersectionTestBox';
+import { FadeInSection } from '../components/fade-in-section';
+import { IODebugFixtures } from '../components/io-debug-fixtures';
+import { IntersectionTestBox } from '../components/intersection-test-box';
 
 export default function IODetectorPage() {
   return (

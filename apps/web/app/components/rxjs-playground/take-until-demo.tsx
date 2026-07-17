@@ -12,7 +12,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Subject, interval } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 export function TakeUntilDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   const [logs, setLogs] = useState<LogEntry[]>([]);

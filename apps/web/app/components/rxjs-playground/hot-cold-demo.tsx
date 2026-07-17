@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 export function HotColdDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   const [logs, setLogs] = useState<LogEntry[]>([]);

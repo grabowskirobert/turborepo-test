@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { concat, merge, of } from 'rxjs';
 import { concatMap, delay } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 export function ConcatMergeDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   const [logs, setLogs] = useState<LogEntry[]>([]);

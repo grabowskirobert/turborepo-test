@@ -11,7 +11,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Subject, Subscription, combineLatest, merge } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 export function MergeAndCombineLatestDemo({
   codeBlock,

@@ -1,4 +1,4 @@
-import { CodeBlock } from '../components/rxjs-playground/CodeBlock';
+import { CodeBlock } from '../components/rxjs-playground/code-block';
 import {
   BEHAVIOR_SUBJECT_CODE,
   CONCAT_MERGE_CODE,
@@ -13,18 +13,18 @@ import {
   MERGE_CODE,
   THROTTLE_DEBOUNCE_CODE,
 } from '../components/rxjs-playground/code-snippets';
-import { BehaviorSubjectDemo } from '../components/rxjs-playground/BehaviorSubjectDemo';
-import { SubjectDemo } from '../components/rxjs-playground/SubjectDemo';
-import { SwitchMapDemo } from '../components/rxjs-playground/SwitchMapDemo';
-import { TakeUntilDemo } from '../components/rxjs-playground/TakeUntilDemo';
-import { ScanDemo } from '../components/rxjs-playground/ScanDemo';
-import { DebounceTimeDemo } from '../components/rxjs-playground/DebounceTimeDemo';
-import { MergeAndCombineLatestDemo } from '../components/rxjs-playground/MergeAndCombineLatestDemo';
-import { HotColdDemo } from '../components/rxjs-playground/HotColdDemo';
-import { MappingOperatorsDemo } from '../components/rxjs-playground/MappingOperatorsDemo';
-import { ConcatMergeDemo } from '../components/rxjs-playground/ConcatMergeDemo';
-import { ThrottleDebounceDemo } from '../components/rxjs-playground/ThrottleDebounceDemo';
-import { CustomOperatorDemo } from '../components/rxjs-playground/CustomOperatorDemo';
+import { BehaviorSubjectDemo } from '../components/rxjs-playground/behavior-subject-demo';
+import { SubjectDemo } from '../components/rxjs-playground/subject-demo';
+import { SwitchMapDemo } from '../components/rxjs-playground/switch-map-demo';
+import { TakeUntilDemo } from '../components/rxjs-playground/take-until-demo';
+import { ScanDemo } from '../components/rxjs-playground/scan-demo';
+import { DebounceTimeDemo } from '../components/rxjs-playground/debounce-time-demo';
+import { MergeAndCombineLatestDemo } from '../components/rxjs-playground/merge-and-combine-latest-demo';
+import { HotColdDemo } from '../components/rxjs-playground/hot-cold-demo';
+import { MappingOperatorsDemo } from '../components/rxjs-playground/mapping-operators-demo';
+import { ConcatMergeDemo } from '../components/rxjs-playground/concat-merge-demo';
+import { ThrottleDebounceDemo } from '../components/rxjs-playground/throttle-debounce-demo';
+import { CustomOperatorDemo } from '../components/rxjs-playground/custom-operator-demo';
 
 export default async function RxjsPlaygroundPage() {
   return (

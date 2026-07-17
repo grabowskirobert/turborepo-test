@@ -22,8 +22,8 @@
  */
 import type { ReactNode } from 'react';
 import type { OverlayRect } from '@/core';
-import { RootMarginZone } from './RootMarginZone';
-import { IntersectionHighlight } from './IntersectionHighlight';
+import { RootMarginZone } from './root-margin-zone';
+import { IntersectionHighlight } from './intersection-highlight';
 
 interface OverlayItemProps {
   overlay: OverlayRect;

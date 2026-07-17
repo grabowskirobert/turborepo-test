@@ -13,7 +13,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Subject, Subscription, timer } from 'rxjs';
 import { switchMap, finalize, map } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 export function SwitchMapDemo({ codeBlock }: { codeBlock: React.ReactNode }) {
   const [logs, setLogs] = useState<LogEntry[]>([]);

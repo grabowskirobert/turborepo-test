@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Observable, Subject, UnaryFunction, pipe } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 function doubleEvens(): UnaryFunction<Observable<number>, Observable<number>> {
   return pipe(

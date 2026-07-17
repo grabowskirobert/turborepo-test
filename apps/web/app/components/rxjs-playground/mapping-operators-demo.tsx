@@ -9,7 +9,7 @@ import {
   mergeMap,
   switchMap,
 } from 'rxjs/operators';
-import { DemoShell, LogEntry, ts } from './DemoShell';
+import { DemoShell, LogEntry, ts } from './demo-shell';
 
 const VALUES = ['A', 'B', 'C'];
 

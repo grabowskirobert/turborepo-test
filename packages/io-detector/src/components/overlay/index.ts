@@ -1,4 +1,4 @@
-export { RootMarginZone } from './RootMarginZone';
-export { IntersectionHighlight } from './IntersectionHighlight';
-export { OverlayItem } from './OverlayItem';
-export { SafetyTierStatus } from './SafetyTierStatus';
+export { RootMarginZone } from './root-margin-zone';
+export { IntersectionHighlight } from './intersection-highlight';
+export { OverlayItem } from './overlay-item';
+export { SafetyTierStatus } from './safety-tier-status';
