@@ -5,6 +5,12 @@
  */
 import { useCallback, useEffect, useRef } from 'react';
 import type React from 'react';
+import {
+  clearTargetHighlight,
+  flashTarget,
+  highlightTarget,
+  inspectTarget,
+} from '@/integration/dom-target-effects';
 
 // ---------------------------------------------------------------------------
 // useHighlight
@@ -19,26 +25,17 @@ export function useHighlight(
   isZombie: boolean,
 ): { onMouseEnter: () => void; onMouseLeave: () => void } {
   const onMouseEnter = useCallback(() => {
-    if (!isZombie && target && target.isConnected) {
-      (target as HTMLElement).style.outline = '2px solid #7c3aed';
-      (target as HTMLElement).style.outlineOffset = '2px';
-    }
+    if (!isZombie) highlightTarget(target);
   }, [target, isZombie]);
 
   const onMouseLeave = useCallback(() => {
-    if (target && target.isConnected) {
-      (target as HTMLElement).style.outline = '';
-      (target as HTMLElement).style.outlineOffset = '';
-    }
+    clearTargetHighlight(target);
   }, [target]);
 
   // Cleanup outline on unmount to avoid ghost styles on the host page
   useEffect(() => {
     return () => {
-      if (target && target.isConnected) {
-        (target as HTMLElement).style.outline = '';
-        (target as HTMLElement).style.outlineOffset = '';
-      }
+      clearTargetHighlight(target);
     };
   }, [target]);
 
@@ -75,20 +72,15 @@ export function useInspect(
       if (!target || !target.isConnected) return;
 
       if (event.shiftKey) {
-        console.log('[IO-Detector] Target Element:', target);
+        inspectTarget(target);
         return;
       }
-
-      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      target.setAttribute('data-io-flash', '');
 
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
       }
-      timeoutRef.current = setTimeout(() => {
-        target.removeAttribute('data-io-flash');
-        timeoutRef.current = null;
-      }, 800);
+
+      timeoutRef.current = flashTarget(target);
     },
     [target],
   );

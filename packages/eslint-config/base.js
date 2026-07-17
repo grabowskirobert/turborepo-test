@@ -7,6 +7,67 @@ import onlyWarn from 'eslint-plugin-only-warn';
 
 const kebabCaseSegment = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+const legacyImportFixes = new Map([
+  ['@/components', '@/presentation/components'],
+  ['@/hooks', '@/presentation/hooks'],
+  ['@/stores', '@/core/store'],
+]);
+
+function normalizePath(filePath) {
+  return filePath.split(path.sep).join('/');
+}
+
+function getSourceLayer(filename) {
+  const normalized = normalizePath(filename);
+  const layerMatch = normalized.match(
+    /(?:packages\/io-detector|apps\/io-detector-devtools-extension)\/src\/(domain|core|integration|presentation)(?:\/|$)/,
+  );
+
+  return layerMatch?.[1] ?? null;
+}
+
+function getImportLayer(importPath) {
+  const aliasMatch = importPath.match(
+    /^@\/(domain|core|integration|presentation)(?:\/|$)/,
+  );
+  if (aliasMatch) return aliasMatch[1];
+
+  const relativeMatch = importPath.match(
+    /(?:^|\/)\.\.\/(domain|core|integration|presentation)(?:\/|$)/,
+  );
+  if (relativeMatch) return relativeMatch[1];
+
+  return null;
+}
+
+function getLegacyImportFix(importPath) {
+  for (const [from, to] of legacyImportFixes) {
+    if (importPath === from || importPath.startsWith(`${from}/`)) {
+      return `${to}${importPath.slice(from.length)}`;
+    }
+  }
+
+  return null;
+}
+
+function isForbiddenLayerImport(sourceLayer, importLayer) {
+  if (!sourceLayer || !importLayer) return false;
+
+  if (sourceLayer === 'domain') {
+    return ['core', 'integration', 'presentation'].includes(importLayer);
+  }
+
+  if (sourceLayer === 'core') {
+    return importLayer === 'presentation';
+  }
+
+  if (sourceLayer === 'integration') {
+    return importLayer === 'presentation';
+  }
+
+  return false;
+}
+
 const filenameRulesPlugin = {
   rules: {
     'kebab-case': {
@@ -50,6 +111,55 @@ const filenameRulesPlugin = {
         };
       },
     },
+    'layer-boundaries': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description: 'Prevent forbidden imports between architecture layers.',
+        },
+        messages: {
+          forbiddenLayerImport:
+            'Layer "{{ sourceLayer }}" must not import from "{{ importLayer }}".',
+          legacyImport:
+            'Use "{{ fixedImport }}" instead of legacy import "{{ importPath }}".',
+        },
+        fixable: 'code',
+        schema: [],
+      },
+      create(context) {
+        return {
+          ImportDeclaration(node) {
+            const importPath = node.source.value;
+            if (typeof importPath !== 'string') return;
+
+            const fixedImport = getLegacyImportFix(importPath);
+            if (fixedImport) {
+              context.report({
+                node: node.source,
+                messageId: 'legacyImport',
+                data: { importPath, fixedImport },
+                fix: (fixer) =>
+                  fixer.replaceText(node.source, `'${fixedImport}'`),
+              });
+              return;
+            }
+
+            const sourceLayer = getSourceLayer(
+              context.filename ?? context.getFilename(),
+            );
+            const importLayer = getImportLayer(importPath);
+
+            if (isForbiddenLayerImport(sourceLayer, importLayer)) {
+              context.report({
+                node: node.source,
+                messageId: 'forbiddenLayerImport',
+                data: { sourceLayer, importLayer },
+              });
+            }
+          },
+        };
+      },
+    },
   },
 };
 
@@ -69,6 +179,7 @@ export const config = [
     },
     rules: {
       'filename/kebab-case': 'error',
+      'filename/layer-boundaries': 'error',
       'turbo/no-undeclared-env-vars': 'warn',
     },
   },
