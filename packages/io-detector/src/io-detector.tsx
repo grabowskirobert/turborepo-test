@@ -14,13 +14,13 @@ import {
   stopZombiePolling,
 } from './core';
 import type { ObserverRegistryPort } from './core';
-import { resetStores, createRegistryAdapter } from './stores';
+import { resetStores, createRegistryAdapter } from './core/store';
 import {
   ShadowRoot,
   ErrorBoundary,
   DetectorUI,
   VisualOverlay,
-} from './components';
+} from './presentation/components';
 
 // Singleton enforcement - module-level instance tracking
 let activeInstanceId: symbol | null = null;

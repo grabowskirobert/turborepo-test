@@ -14,8 +14,8 @@ export type {
   SmartQueueEntry,
   OverlayRect,
   VisualOverlayConfig,
-} from './types';
-export { MAX_VISIBLE_OVERLAYS, LOOP_A_INTERVAL_MS } from './types';
+} from '../domain/types';
+export { MAX_VISIBLE_OVERLAYS, LOOP_A_INTERVAL_MS } from '../domain/types';
 export {
   initMonkeyPatch,
   destroyMonkeyPatch,
@@ -29,7 +29,7 @@ export { computeSelector } from './selector';
 // FEAT-003
 export { determineSafetyTier } from './safety-tiers';
 export { buildSmartQueue } from './smart-queue';
-export type { LoopAOptions } from './visual-overlay';
+export type { LoopAOptions } from '../integration/visual-overlay';
 export {
   startLoopA,
   stopLoopA,
@@ -37,4 +37,4 @@ export {
   stopLoopB,
   isElementInViewport,
   setVisibleIds,
-} from './visual-overlay';
+} from '../integration/visual-overlay';

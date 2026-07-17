@@ -5,7 +5,7 @@
  * mounts the <IODetector /> React component into a fresh host element
  * and exposes a destroy handle via `window.__IO_DETECTOR__`.
  *
- * Used by the Chrome extension launcher (apps/extension).
+ * Used by the DevTools extension launcher (apps/io-detector-devtools-extension).
  */
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';

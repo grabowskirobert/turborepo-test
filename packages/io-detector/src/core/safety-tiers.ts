@@ -7,7 +7,11 @@
  *
  * @see feat-003.md § d. The "Three-Tier Safety System"
  */
-import type { ObserverMetadata, SafetyTier, SafetyTierState } from './types';
+import type {
+  ObserverMetadata,
+  SafetyTier,
+  SafetyTierState,
+} from '../domain/types';
 
 // ---------------------------------------------------------------------------
 // Thresholds

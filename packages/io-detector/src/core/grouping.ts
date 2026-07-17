@@ -10,7 +10,7 @@ import type {
   ObserverMetadata,
   ObserverGroup,
   ObserverFingerprint,
-} from './types';
+} from '../domain/types';
 import { resolveGroupName } from './naming';
 
 // ---------------------------------------------------------------------------

@@ -8,7 +8,7 @@
 chrome.devtools.panels.create(
   'IO Detector',
   'icons/32.png',
-  'src/panel.html',
+  'src/devtools-panel.html',
   () => {
     /* panel created */
   },

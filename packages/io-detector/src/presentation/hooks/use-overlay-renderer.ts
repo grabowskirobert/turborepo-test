@@ -18,7 +18,7 @@ import {
   $visualOverlayConfig,
   updateVisibleOverlayIds,
   updateOverlayRects,
-} from '@/stores';
+} from '@/core/store';
 
 interface OverlayRendererState {
   /** Current overlay rects computed by Loop B each frame. */

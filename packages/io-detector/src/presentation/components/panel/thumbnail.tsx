@@ -7,7 +7,7 @@
  * @see feat-002.md § C.1 Thumbnail (Strict)
  */
 import type { ReactNode } from 'react';
-import { incrementThumbnailCount } from '@/stores';
+import { incrementThumbnailCount } from '@/core/store';
 
 interface ThumbnailProps {
   target: Element;

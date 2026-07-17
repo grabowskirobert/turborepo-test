@@ -16,8 +16,8 @@ import type {
   IntersectionRatioMap,
   SmartQueueEntry,
   SmartQueuePriority,
-} from './types';
-import { MAX_VISIBLE_OVERLAYS } from './types';
+} from '../domain/types';
+import { MAX_VISIBLE_OVERLAYS } from '../domain/types';
 
 // ---------------------------------------------------------------------------
 // parseRootMarginPx (private)

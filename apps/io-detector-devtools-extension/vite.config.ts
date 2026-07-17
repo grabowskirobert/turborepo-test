@@ -40,7 +40,7 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       input: {
-        panel: resolve(__dirname, 'src/panel.html'),
+        'devtools-panel': resolve(__dirname, 'src/devtools-panel.html'),
       },
     },
   },

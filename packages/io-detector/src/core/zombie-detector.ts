@@ -3,7 +3,7 @@
  * Polls observer registry to detect "zombie" observers - those observing
  * elements that have been removed from DOM (memory leaks)
  */
-import type { ObserverMetadata, ObserverRegistryPort } from './types';
+import type { ObserverMetadata, ObserverRegistryPort } from '../domain/types';
 
 let pollingIntervalId: ReturnType<typeof setInterval> | null = null;
 let registryPort: ObserverRegistryPort | null = null;

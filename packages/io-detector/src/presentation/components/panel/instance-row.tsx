@@ -11,8 +11,11 @@ import type { ReactNode } from 'react';
 import type { ObserverMetadata } from '@/core';
 import { computeSelector } from '@/core';
 import { Thumbnail } from './thumbnail';
-import { useHighlight, useInspect } from '@/hooks/use-visual-overlay';
-import { setForceShowId } from '@/stores';
+import {
+  useHighlight,
+  useInspect,
+} from '@/presentation/hooks/use-visual-overlay';
+import { setForceShowId } from '@/core/store';
 
 interface InstanceRowProps {
   observer: ObserverMetadata;

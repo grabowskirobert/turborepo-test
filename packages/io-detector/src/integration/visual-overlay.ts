@@ -15,10 +15,10 @@ import type {
   OverlayRect,
   SafetyTierState,
   VisualOverlayConfig,
-} from './types';
-import { LOOP_A_INTERVAL_MS } from './types';
-import { determineSafetyTier } from './safety-tiers';
-import { buildSmartQueue } from './smart-queue';
+} from '../domain/types';
+import { LOOP_A_INTERVAL_MS } from '../domain/types';
+import { determineSafetyTier } from '../core/safety-tiers';
+import { buildSmartQueue } from '../core/smart-queue';
 
 // ---------------------------------------------------------------------------
 // Module state

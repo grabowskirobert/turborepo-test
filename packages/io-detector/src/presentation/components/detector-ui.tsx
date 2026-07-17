@@ -8,7 +8,7 @@
  */
 import { useStore } from '@nanostores/react';
 import type { ReactNode } from 'react';
-import { $observers, $uiConfig } from '@/stores';
+import { $observers, $uiConfig } from '@/core/store';
 import { groupObservers } from '@/core';
 import { EmptyState, ObserverGroupRow } from './panel';
 

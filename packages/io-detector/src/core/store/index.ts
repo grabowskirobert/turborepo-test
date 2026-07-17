@@ -11,7 +11,7 @@ import type {
   SafetyTierState,
   VisualOverlayConfig,
   OverlayRect,
-} from '@/core';
+} from '@/domain/types';
 
 /**
  * Registry of active IntersectionObserver instances

@@ -26,8 +26,8 @@
  */
 import type { ReactNode } from 'react';
 import type { ObserverRegistryPort, OverlayRect } from '@/core';
-import { useOverlayRenderer } from '@/hooks/use-overlay-renderer';
-import { toggleVisualOverlay } from '@/stores';
+import { useOverlayRenderer } from '@/presentation/hooks/use-overlay-renderer';
+import { toggleVisualOverlay } from '@/core/store';
 import {
   RootMarginZone,
   IntersectionHighlight,

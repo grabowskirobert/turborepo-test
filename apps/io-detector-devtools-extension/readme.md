@@ -1,4 +1,4 @@
-# IO Detector — Chrome Extension
+# IO Detector — DevTools Extension
 
 DevTools-integrated launcher for [`@repo/io-detector`](../../packages/io-detector). Adds an **IO Detector** tab to Chrome DevTools with a single ON/OFF toggle. When enabled, the inspected page is reloaded with the detector bundle injected before page scripts run, so `IntersectionObserver` is patched before the app creates observers.
 
@@ -8,17 +8,17 @@ DevTools-integrated launcher for [`@repo/io-detector`](../../packages/io-detecto
 # From repo root
 pnpm install
 pnpm --filter @repo/io-detector build   # produces packages/io-detector/dist/io-detector.js
-pnpm --filter extension build           # produces apps/extension/dist/
+pnpm --filter io-detector-devtools-extension build # produces apps/io-detector-devtools-extension/dist/
 
 # Watch mode (turbo dev or per-app)
-pnpm --filter extension dev
+pnpm --filter io-detector-devtools-extension dev
 ```
 
 Load in Chrome:
 
 1. Open `chrome://extensions/`
 2. Enable **Developer mode**
-3. **Load unpacked** → select `apps/extension/dist/`
+3. **Load unpacked** → select `apps/io-detector-devtools-extension/dist/`
 4. Open DevTools on any page → **IO Detector** tab → click **Turn ON**
 
 After code changes: rebuild and hit the reload button on the extension card in `chrome://extensions/`. DevTools panel reload follows automatically on next open.

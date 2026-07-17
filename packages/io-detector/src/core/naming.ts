@@ -9,7 +9,7 @@
  *
  * @see feat-002.md § B. Smart Naming & Aggregation
  */
-import type { ObserverMetadata } from './types';
+import type { ObserverMetadata } from '../domain/types';
 
 // ---------------------------------------------------------------------------
 // Private helpers — one per fallback level

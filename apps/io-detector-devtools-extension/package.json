@@ -1,5 +1,5 @@
 {
-  "name": "extension",
+  "name": "io-detector-devtools-extension",
   "version": "0.0.1",
   "type": "module",
   "private": true,

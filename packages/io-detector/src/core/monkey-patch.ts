@@ -4,7 +4,7 @@
  *
  * This module is pure TypeScript - no React dependencies
  */
-import type { ObserverMetadata, ObserverRegistryPort } from './types';
+import type { ObserverMetadata, ObserverRegistryPort } from '../domain/types';
 
 // Store original IntersectionObserver for restoration
 let OriginalIntersectionObserver: typeof IntersectionObserver | null = null;

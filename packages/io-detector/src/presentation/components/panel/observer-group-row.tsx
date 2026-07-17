@@ -11,7 +11,7 @@
 import type { ReactNode } from 'react';
 import { useStore } from '@nanostores/react';
 import type { ObserverGroup } from '@/core';
-import { $uiConfig, $intersectionRatios } from '@/stores';
+import { $uiConfig, $intersectionRatios } from '@/core/store';
 import { InstanceRow } from '.';
 
 interface ObserverGroupRowProps {
