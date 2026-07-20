@@ -1,0 +1,6 @@
+schema: spec-driven
+
+rules:
+  design:
+    - Always create specs artifacts BEFORE starting design.md
+    - Always let the user review the specs before starting design.md
