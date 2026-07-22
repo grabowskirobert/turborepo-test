@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getNotesStore } from '../../../core/store';
 import type { Folder, Note } from '../../../domain/types';
@@ -11,7 +11,7 @@ export default function ArchivePage() {
   const [archivedFolders, setArchivedFolders] = useState<Folder[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     const [notes, folders] = await Promise.all([
       store.getArchivedNotes(),
@@ -20,12 +20,11 @@ export default function ArchivePage() {
     setArchivedNotes(notes);
     setArchivedFolders(folders);
     setLoading(false);
-  }
+  }, [store]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   async function handleRestoreNote(id: string) {
     await store.restoreNote(id);
