@@ -29,8 +29,7 @@ export function Sidebar() {
 
   async function handleSelectFolder(folderId: FolderId) {
     if (state.activeFolderId === folderId) return;
-    setState((s) => ({ ...s, activeFolderId: folderId }));
-    await store.loadNotes(folderId);
+    await store.selectFolder(folderId);
   }
 
   async function handleArchiveNote(note: Note) {

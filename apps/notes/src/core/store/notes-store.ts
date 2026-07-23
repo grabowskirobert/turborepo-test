@@ -59,6 +59,11 @@ export class NotesStore {
     });
   }
 
+  async selectFolder(folderId: FolderId): Promise<void> {
+    this.setState({ activeFolderId: folderId });
+    await this.loadNotes(folderId);
+  }
+
   async selectNote(noteId: NoteId): Promise<void> {
     await this.flushPendingSave();
     const note = await this.repo.getNoteById(noteId);
