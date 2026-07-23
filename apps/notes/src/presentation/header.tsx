@@ -13,18 +13,18 @@ export function Header() {
   }
 
   return (
-    <header className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
-      <span className="font-semibold text-gray-800">Notes</span>
+    <header className="flex items-center justify-between px-4 py-2 border-b border-zinc-700 bg-zinc-900">
+      <span className="font-semibold text-zinc-100">Notes</span>
       <div className="flex items-center gap-4">
         <Link
           href="/notes/archive"
-          className="text-sm text-gray-500 hover:text-gray-800"
+          className="text-sm text-zinc-400 hover:text-zinc-200"
         >
           Archive
         </Link>
         <button
           onClick={signOut}
-          className="text-sm text-gray-500 hover:text-gray-800"
+          className="text-sm text-zinc-400 hover:text-zinc-200"
         >
           Sign out
         </button>

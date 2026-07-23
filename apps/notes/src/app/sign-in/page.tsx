@@ -26,13 +26,13 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white rounded-lg shadow p-8 w-full max-w-sm">
-        <h1 className="text-xl font-semibold text-gray-800 mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-zinc-900">
+      <div className="bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl p-8 w-full max-w-sm">
+        <h1 className="text-xl font-semibold text-zinc-100 mb-6">
           Sign in to Notes
         </h1>
         {sent ? (
-          <p className="text-green-600 text-sm">
+          <p className="text-green-400 text-sm">
             Check your email for a magic link.
           </p>
         ) : (
@@ -43,9 +43,9 @@ export default function SignInPage() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-zinc-900 border border-zinc-600 rounded px-3 py-2 text-sm text-zinc-100 outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-zinc-500"
             />
-            {error && <p className="text-red-500 text-xs">{error}</p>}
+            {error && <p className="text-red-400 text-xs">{error}</p>}
             <button
               type="submit"
               disabled={loading}

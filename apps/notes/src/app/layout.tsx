@@ -18,7 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={geist.className} suppressHydrationWarning>
+      <body
+        className={`${geist.className} bg-zinc-900`}
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>

@@ -27,6 +27,14 @@ function toNote(row: Record<string, unknown>): Note {
 export class SupabaseNoteRepository implements NoteRepository {
   constructor(private supabase: SupabaseClient) {}
 
+  private async getUserId(): Promise<string> {
+    const {
+      data: { user },
+    } = await this.supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+    return user.id;
+  }
+
   async getFolders(): Promise<Folder[]> {
     const { data, error } = await this.supabase
       .from('folders')
@@ -38,9 +46,10 @@ export class SupabaseNoteRepository implements NoteRepository {
   }
 
   async createFolder(name: string): Promise<Folder> {
+    const ownerId = await this.getUserId();
     const { data, error } = await this.supabase
       .from('folders')
-      .insert({ name })
+      .insert({ name, owner_id: ownerId })
       .select()
       .single();
     if (error) throw error;
@@ -80,9 +89,10 @@ export class SupabaseNoteRepository implements NoteRepository {
   }
 
   async createNote(folderId: FolderId, title: string): Promise<Note> {
+    const ownerId = await this.getUserId();
     const { data, error } = await this.supabase
       .from('notes')
-      .insert({ folder_id: folderId, title })
+      .insert({ folder_id: folderId, title, owner_id: ownerId })
       .select()
       .single();
     if (error) throw error;
