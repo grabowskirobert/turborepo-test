@@ -12,12 +12,12 @@ export function CodeBlock({ language, children }: CodeBlockProps) {
   useEffect(() => {
     const lang = language && language !== '' ? language : 'text';
     import('shiki').then(({ createHighlighter }) => {
-      createHighlighter({ themes: ['github-light'], langs: [lang] }).then(
+      createHighlighter({ themes: ['github-dark'], langs: [lang] }).then(
         (highlighter) => {
           try {
             const highlighted = highlighter.codeToHtml(children, {
               lang,
-              theme: 'github-light',
+              theme: 'github-dark',
             });
             setHtml(highlighted);
           } catch {
@@ -30,11 +30,16 @@ export function CodeBlock({ language, children }: CodeBlockProps) {
 
   if (!html) {
     return (
-      <pre className="bg-gray-100 rounded p-3 overflow-x-auto">
+      <pre className="bg-zinc-800 rounded p-3 overflow-x-auto text-zinc-300">
         <code>{children}</code>
       </pre>
     );
   }
 
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <div
+      className="rounded overflow-x-auto [&>pre]:p-4 [&>pre]:rounded [&>pre]:m-0"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
 }

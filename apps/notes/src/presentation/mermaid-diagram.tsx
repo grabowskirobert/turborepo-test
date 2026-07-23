@@ -15,7 +15,18 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
     let cancelled = false;
 
     import('mermaid').then(({ default: mermaid }) => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        themeVariables: {
+          background: '#27272a',
+          primaryColor: '#3f3f46',
+          primaryTextColor: '#e4e4e7',
+          lineColor: '#71717a',
+          secondaryColor: '#3f3f46',
+          tertiaryColor: '#3f3f46',
+        },
+      });
       const id = 'mermaid-' + Math.random().toString(36).slice(2);
       mermaid
         .render(id, code)
@@ -42,11 +53,15 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
 
   if (error) {
     return (
-      <div className="text-red-500 text-sm p-2 border border-red-200 rounded">
+      <div className="text-red-400 text-xs p-3 bg-red-950/40 border border-red-800/50 rounded font-mono">
         {error}
       </div>
     );
   }
 
-  return <div ref={ref} />;
+  return (
+    <div className="not-prose my-4 flex justify-center rounded-lg bg-zinc-800/60 border border-zinc-700 p-4">
+      <div ref={ref} className="[&>svg]:max-w-full" />
+    </div>
+  );
 }
