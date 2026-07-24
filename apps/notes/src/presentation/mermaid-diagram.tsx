@@ -19,7 +19,7 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
         startOnLoad: false,
         theme: 'dark',
         themeVariables: {
-          background: '#27272a',
+          background: '#18181b',
           primaryColor: '#3f3f46',
           primaryTextColor: '#e4e4e7',
           lineColor: '#71717a',
@@ -60,8 +60,8 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
   }
 
   return (
-    <div className="not-prose my-4 flex justify-center rounded-lg bg-zinc-800/60 border border-zinc-700 p-4">
-      <div ref={ref} className="[&>svg]:max-w-full" />
+    <div className="not-prose overflow-x-auto py-2">
+      <div ref={ref} className="[&>svg]:max-w-full [&>svg]:h-auto" />
     </div>
   );
 }

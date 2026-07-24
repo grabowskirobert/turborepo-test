@@ -1,3 +1,29 @@
 @import 'tailwindcss';
 @import '@repo/tailwind-config';
 @plugin "@tailwindcss/typography";
+
+@layer base {
+  /* Inline code: compact sizing, vivid color, no backtick pseudo-elements */
+  .prose
+    :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)):not(
+      pre > code
+    ) {
+    color: oklch(82% 0.14 160); /* ~emerald-300 */
+    background-color: rgb(39 39 42 / 0.6); /* zinc-800/60 */
+    padding: 0.1em 0.35em;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-weight: 400;
+  }
+
+  .prose
+    :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)):not(
+      pre > code
+    )::before,
+  .prose
+    :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *)):not(
+      pre > code
+    )::after {
+    content: none;
+  }
+}

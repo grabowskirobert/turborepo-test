@@ -25,10 +25,18 @@ function makeInitialState(): NotesState {
   };
 }
 
+interface CachedNote {
+  title: string;
+  markdown: string;
+  folderId: FolderId;
+}
+
 export class NotesStore {
   private state: NotesState = makeInitialState();
   private listeners = new Set<Listener>();
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  private noteCache = new Map<NoteId, CachedNote>();
+  private prefetchingIds = new Set<NoteId>();
 
   constructor(private repo: NoteRepository) {}
 
@@ -64,10 +72,42 @@ export class NotesStore {
     await this.loadNotes(folderId);
   }
 
+  async prefetchNote(noteId: NoteId): Promise<void> {
+    if (this.noteCache.has(noteId) || this.prefetchingIds.has(noteId)) return;
+    this.prefetchingIds.add(noteId);
+    try {
+      const note = await this.repo.getNoteById(noteId);
+      if (note) {
+        this.noteCache.set(noteId, {
+          title: note.title,
+          markdown: note.markdown,
+          folderId: note.folderId,
+        });
+      }
+    } finally {
+      this.prefetchingIds.delete(noteId);
+    }
+  }
+
   async selectNote(noteId: NoteId): Promise<void> {
     await this.flushPendingSave();
+    const cached = this.noteCache.get(noteId);
+    if (cached) {
+      this.setState({
+        activeNoteId: noteId,
+        activeFolderId: cached.folderId,
+        activeNoteContent: { title: cached.title, markdown: cached.markdown },
+        dirty: false,
+      });
+      return;
+    }
     const note = await this.repo.getNoteById(noteId);
     if (!note) return;
+    this.noteCache.set(noteId, {
+      title: note.title,
+      markdown: note.markdown,
+      folderId: note.folderId,
+    });
     this.setState({
       activeNoteId: noteId,
       activeFolderId: note.folderId,
@@ -88,12 +128,15 @@ export class NotesStore {
 
   async editTitle(title: string): Promise<void> {
     if (!this.state.activeNoteId) return;
+    const noteId = this.state.activeNoteId;
     this.setState({
       activeNoteContent: this.state.activeNoteContent
         ? { ...this.state.activeNoteContent, title }
         : null,
     });
-    await this.repo.updateNoteTitle(this.state.activeNoteId, title);
+    await this.repo.updateNoteTitle(noteId, title);
+    const cached = this.noteCache.get(noteId);
+    if (cached) this.noteCache.set(noteId, { ...cached, title });
     if (this.state.activeFolderId) {
       await this.loadNotes(this.state.activeFolderId);
     }
@@ -119,6 +162,12 @@ export class NotesStore {
       activeNoteId,
       activeNoteContent.markdown,
     );
+    const cached = this.noteCache.get(activeNoteId);
+    if (cached)
+      this.noteCache.set(activeNoteId, {
+        ...cached,
+        markdown: activeNoteContent.markdown,
+      });
     this.setState({ dirty: false });
   }
 
@@ -150,6 +199,7 @@ export class NotesStore {
 
   async archiveNote(id: NoteId): Promise<void> {
     await this.repo.archiveNote(id);
+    this.noteCache.delete(id);
     if (this.state.activeFolderId) {
       await this.loadNotes(this.state.activeFolderId);
     }
