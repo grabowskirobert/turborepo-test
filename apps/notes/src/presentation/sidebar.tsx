@@ -86,7 +86,7 @@ export function Sidebar() {
                       {isExpanded ? '▾' : '▸'}
                     </span>
                     <span
-                      className={`text-sm font-semibold truncate ${hasActiveNote ? 'text-zinc-100' : 'text-zinc-200'}`}
+                      className={`text-base font-semibold truncate ${hasActiveNote ? 'text-zinc-100' : 'text-zinc-200'}`}
                       onDoubleClick={(e) => {
                         e.stopPropagation();
                         setModal({ kind: 'rename-folder', folder });
@@ -95,7 +95,7 @@ export function Sidebar() {
                       {folder.name}
                     </span>
                   </span>
-                  <span className="hidden group-hover:flex items-center gap-0.5 shrink-0">
+                  <span className="flex opacity-0 group-hover:opacity-100 items-center gap-0.5 shrink-0 transition-opacity">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -139,7 +139,7 @@ export function Sidebar() {
                             e.stopPropagation();
                             setModal({ kind: 'archive-note', note });
                           }}
-                          className="hidden group-hover:flex text-zinc-500 hover:text-red-400 text-xs w-5 h-5 items-center justify-center rounded transition-colors shrink-0"
+                          className="flex opacity-0 group-hover:opacity-100 text-zinc-500 hover:text-red-400 text-xs w-5 h-5 items-center justify-center rounded transition-opacity shrink-0"
                           title="Archive note"
                         >
                           ✕

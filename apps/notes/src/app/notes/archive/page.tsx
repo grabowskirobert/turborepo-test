@@ -6,6 +6,8 @@ import type { Folder, Note } from '../../../domain/types';
 import { Header } from '../../../presentation/header';
 import { ConfirmModal } from '../../../presentation/confirm-modal';
 
+const PAGE_SIZE = 20;
+
 type PendingDelete =
   | { kind: 'note'; id: string }
   | { kind: 'folder'; id: string }
@@ -17,6 +19,7 @@ export default function ArchivePage() {
   const [archivedFolders, setArchivedFolders] = useState<Folder[]>([]);
   const [loading, setLoading] = useState(true);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete>(null);
+  const [notesPage, setNotesPage] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -26,6 +29,7 @@ export default function ArchivePage() {
     ]);
     setArchivedNotes(notes);
     setArchivedFolders(folders);
+    setNotesPage(0);
     setLoading(false);
   }, [store]);
 
@@ -53,6 +57,12 @@ export default function ArchivePage() {
     setPendingDelete(null);
     await load();
   }
+
+  const notePageCount = Math.ceil(archivedNotes.length / PAGE_SIZE);
+  const pagedNotes = archivedNotes.slice(
+    notesPage * PAGE_SIZE,
+    (notesPage + 1) * PAGE_SIZE,
+  );
 
   return (
     <div className="flex flex-col h-screen bg-zinc-900">
@@ -104,15 +114,28 @@ export default function ArchivePage() {
                 ))}
               </ul>
             </section>
+
             <section>
-              <h2 className="text-xs font-medium text-zinc-500 uppercase tracking-wide mb-3">
-                Archived Notes
-              </h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-xs font-medium text-zinc-500 uppercase tracking-wide">
+                  Archived Notes
+                  {archivedNotes.length > 0 && (
+                    <span className="ml-2 text-zinc-600 normal-case">
+                      ({archivedNotes.length})
+                    </span>
+                  )}
+                </h2>
+                {notePageCount > 1 && (
+                  <span className="text-xs text-zinc-500">
+                    Page {notesPage + 1} of {notePageCount}
+                  </span>
+                )}
+              </div>
               {archivedNotes.length === 0 && (
                 <p className="text-zinc-600 text-sm">No archived notes.</p>
               )}
               <ul className="space-y-2">
-                {archivedNotes.map((note) => (
+                {pagedNotes.map((note) => (
                   <li
                     key={note.id}
                     className="flex items-center justify-between p-3 border border-zinc-700 rounded bg-zinc-800"
@@ -137,6 +160,26 @@ export default function ArchivePage() {
                   </li>
                 ))}
               </ul>
+              {notePageCount > 1 && (
+                <div className="flex items-center justify-between mt-4">
+                  <button
+                    onClick={() => setNotesPage((p) => Math.max(0, p - 1))}
+                    disabled={notesPage === 0}
+                    className="text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    ← Previous
+                  </button>
+                  <button
+                    onClick={() =>
+                      setNotesPage((p) => Math.min(notePageCount - 1, p + 1))
+                    }
+                    disabled={notesPage === notePageCount - 1}
+                    className="text-xs text-zinc-400 hover:text-zinc-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
             </section>
           </>
         )}
