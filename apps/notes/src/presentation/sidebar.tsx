@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getNotesStore } from '../core/store';
 import type { NotesState } from '../core/store/notes-store';
-import type { Folder, FolderId, Note } from '../domain/types';
+import type { Folder, FolderId, Note } from '../domain/types'; // FolderId used by ModalState + expandedFolderIds
 import { InputModal } from './input-modal';
 import { ConfirmModal } from './confirm-modal';
 
@@ -10,7 +10,6 @@ type ModalState =
   | { kind: 'none' }
   | { kind: 'new-folder' }
   | { kind: 'rename-folder'; folder: Folder }
-  | { kind: 'new-note'; folderId: FolderId }
   | { kind: 'archive-folder'; folder: Folder }
   | { kind: 'archive-note'; note: Note };
 
@@ -117,9 +116,13 @@ export function Sidebar() {
                     </span>
                     <span className="flex opacity-0 group-hover:opacity-100 items-center gap-0.5 shrink-0 transition-opacity">
                       <button
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           e.stopPropagation();
-                          setModal({ kind: 'new-note', folderId: folder.id });
+                          const note = await store.createNote(
+                            folder.id,
+                            'Untitled',
+                          );
+                          await store.selectNote(note.id);
                         }}
                         className="text-zinc-400 hover:text-zinc-100 text-base w-6 h-6 flex items-center justify-center rounded hover:bg-zinc-700 transition-colors"
                         title="New note"
@@ -195,21 +198,6 @@ export function Sidebar() {
             closeModal();
             if (name !== modal.folder.name)
               await store.renameFolder(modal.folder.id, name);
-          }}
-          onCancel={closeModal}
-        />
-      )}
-
-      {modal.kind === 'new-note' && (
-        <InputModal
-          title="New note"
-          placeholder="Note title"
-          defaultValue="Untitled"
-          onConfirm={async (title) => {
-            const folderId = modal.folderId;
-            closeModal();
-            const note = await store.createNote(folderId, title);
-            await store.selectNote(note.id);
           }}
           onCancel={closeModal}
         />

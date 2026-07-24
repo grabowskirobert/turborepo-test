@@ -26,24 +26,29 @@ export function CodeBlock({ language, children }: CodeBlockProps) {
     let active = true;
 
     getHighlighter().then(async (hl) => {
-      const loaded = hl.getLoadedLanguages();
-      if (!loaded.includes(lang)) {
+      // Load language if not already available. Shiki aliases (js → javascript,
+      // ts → typescript, etc.) are accepted by loadLanguage but stored under
+      // their canonical name — so we never check getLoadedLanguages() after this;
+      // we always pass the original `lang` to codeToHtml and let it resolve.
+      if (!hl.getLoadedLanguages().includes(lang)) {
         try {
           await hl.loadLanguage(lang as BundledLanguage);
         } catch {
-          // Unknown language — will fall back to 'text'
+          // Unknown language; codeToHtml will also fail, caught below.
         }
       }
       if (!active) return;
       try {
-        const langToUse = hl.getLoadedLanguages().includes(lang)
-          ? lang
-          : 'text';
-        setHtml(
-          hl.codeToHtml(children, { lang: langToUse, theme: 'github-dark' }),
-        );
+        setHtml(hl.codeToHtml(children, { lang, theme: 'github-dark' }));
       } catch {
-        setHtml(`<pre><code>${children}</code></pre>`);
+        // lang alias not accepted by codeToHtml either — fall back to plain text
+        try {
+          setHtml(
+            hl.codeToHtml(children, { lang: 'text', theme: 'github-dark' }),
+          );
+        } catch {
+          setHtml(`<pre><code>${children}</code></pre>`);
+        }
       }
     });
 
