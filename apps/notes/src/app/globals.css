@@ -20,3 +20,8 @@
 .prose code:not(pre code)::after {
   content: none;
 }
+
+/* First element of the first block should sit flush at the top */
+.prose > div:first-child > *:first-child {
+  margin-top: 0;
+}

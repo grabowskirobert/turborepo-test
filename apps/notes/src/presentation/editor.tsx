@@ -182,7 +182,7 @@ export function Editor() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-zinc-900">
-      <div className="border-b border-zinc-700 px-4 py-2">
+      <div className="flex items-center h-12 border-b border-zinc-700 px-4">
         <input
           className="w-full text-xl font-semibold outline-none bg-transparent text-zinc-100 placeholder:text-zinc-600"
           value={state.activeNoteContent.title}
