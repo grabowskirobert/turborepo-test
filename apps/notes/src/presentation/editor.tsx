@@ -113,7 +113,7 @@ function EditableBlock({
 
   return (
     <div
-      className={`cursor-pointer rounded -mx-2 px-2 transition-colors ${
+      className={`cursor-pointer rounded -mx-2 px-2 transition-colors select-none ${
         isSelected
           ? 'bg-emerald-900/25 ring-1 ring-inset ring-emerald-500/30'
           : 'hover:bg-zinc-800/40'
@@ -222,6 +222,7 @@ export function Editor() {
     if (editingBlockIndex === index) return;
 
     if (e.shiftKey && selectionAnchor !== null) {
+      e.preventDefault();
       const min = Math.min(selectionAnchor, index);
       const max = Math.max(selectionAnchor, index);
       setSelectedIndices(
