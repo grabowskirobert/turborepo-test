@@ -197,19 +197,25 @@ export class NotesStore {
     return note;
   }
 
-  async archiveNote(id: NoteId): Promise<void> {
-    await this.repo.archiveNote(id);
+  archiveNote(id: NoteId): void {
+    // Optimistically remove from all loaded folder lists and clear active state
+    const notesByFolder = Object.fromEntries(
+      Object.entries(this.state.notesByFolder).map(([fid, notes]) => [
+        fid,
+        notes.filter((n) => n.id !== id),
+      ]),
+    );
     this.noteCache.delete(id);
-    if (this.state.activeFolderId) {
-      await this.loadNotes(this.state.activeFolderId);
-    }
-    if (this.state.activeNoteId === id) {
-      this.setState({
-        activeNoteId: null,
-        activeNoteContent: null,
-        dirty: false,
-      });
-    }
+    this.setState({
+      notesByFolder,
+      ...(this.state.activeNoteId === id
+        ? { activeNoteId: null, activeNoteContent: null, dirty: false }
+        : {}),
+    });
+    // Persist in background; reload on failure
+    this.repo.archiveNote(id).catch(() => {
+      if (this.state.activeFolderId) this.loadNotes(this.state.activeFolderId);
+    });
   }
 
   async archiveFolder(id: FolderId): Promise<void> {
@@ -236,6 +242,10 @@ export class NotesStore {
 
   async permanentDeleteNote(id: NoteId): Promise<void> {
     await this.repo.permanentDeleteNote(id);
+  }
+
+  async permanentDeleteNotes(ids: NoteId[]): Promise<void> {
+    await Promise.all(ids.map((id) => this.repo.permanentDeleteNote(id)));
   }
 
   async permanentDeleteFolder(id: FolderId): Promise<void> {

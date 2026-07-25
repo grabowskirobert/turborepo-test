@@ -222,10 +222,10 @@ export function Sidebar() {
         <ConfirmModal
           message={`Archive note "${modal.note.title}"?`}
           confirmLabel="Archive"
-          onConfirm={async () => {
+          onConfirm={() => {
             const note = modal.note;
             closeModal();
-            await store.archiveNote(note.id);
+            store.archiveNote(note.id);
           }}
           onCancel={closeModal}
         />
