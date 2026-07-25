@@ -50,17 +50,21 @@ function joinBlocks(blocks: string[]): string {
 interface EditableBlockProps {
   content: string;
   isEditing: boolean;
-  onEdit: () => void;
+  isSelected: boolean;
+  onClick: (e: React.MouseEvent) => void;
   onImmediate: (value: string) => void;
   onBlur: (value: string) => void;
+  onEscape: (currentValue: string) => void;
 }
 
 function EditableBlock({
   content,
   isEditing,
-  onEdit,
+  isSelected,
+  onClick,
   onImmediate,
   onBlur,
+  onEscape,
 }: EditableBlockProps) {
   const [localValue, setLocalValue] = useState(content);
   const taRef = useRef<HTMLTextAreaElement>(null);
@@ -93,6 +97,12 @@ function EditableBlock({
             e.target.style.height = 'auto';
             e.target.style.height = e.target.scrollHeight + 'px';
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              e.preventDefault();
+              onEscape(localValue);
+            }
+          }}
           onBlur={() => onBlur(localValue)}
         />
       </div>
@@ -103,8 +113,12 @@ function EditableBlock({
 
   return (
     <div
-      className="cursor-text rounded -mx-2 px-2 hover:bg-zinc-800/40 transition-colors"
-      onClick={onEdit}
+      className={`cursor-pointer rounded -mx-2 px-2 transition-colors ${
+        isSelected
+          ? 'bg-emerald-900/25 ring-1 ring-inset ring-emerald-500/30'
+          : 'hover:bg-zinc-800/40'
+      }`}
+      onClick={onClick}
     >
       <MarkdownPreview markdown={content} />
     </div>
@@ -122,6 +136,12 @@ export function Editor() {
   const [editingBlockIndex, setEditingBlockIndex] = useState<number | null>(
     null,
   );
+  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
+    new Set(),
+  );
+  const [selectionAnchor, setSelectionAnchor] = useState<number | null>(null);
+  // Prevents handleBlockBlur from double-processing when Escape already handled it
+  const escapedRef = useRef(false);
 
   useEffect(() => store.subscribe(setState), [store]);
 
@@ -139,10 +159,111 @@ export function Editor() {
       prevNoteIdRef.current = activeNoteId;
       setBlocks(splitBlocks(state.activeNoteContent?.markdown ?? ''));
       setEditingBlockIndex(null);
+      setSelectedIndices(new Set());
+      setSelectionAnchor(null);
     }
   }, [activeNoteId, state.activeNoteContent?.markdown]);
 
   useUnloadGuard(state.dirty);
+
+  // Global keyboard handler for block-level operations
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const target = e.target as HTMLElement;
+      const inField =
+        target.tagName === 'TEXTAREA' || target.tagName === 'INPUT';
+
+      // Cmd+A: select all blocks when not in a text field
+      if ((e.metaKey || e.ctrlKey) && e.key === 'a' && !inField) {
+        e.preventDefault();
+        setSelectedIndices(
+          new Set(Array.from({ length: blocks.length }, (_, i) => i)),
+        );
+        setSelectionAnchor(0);
+        setEditingBlockIndex(null);
+        return;
+      }
+
+      if (inField || selectedIndices.size === 0) return;
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        const newBlocks = blocks.filter((_, i) => !selectedIndices.has(i));
+        setBlocks(newBlocks);
+        setSelectedIndices(new Set());
+        setSelectionAnchor(null);
+        store.editMarkdown(joinBlocks(newBlocks));
+      } else if (e.key === 'Escape') {
+        setSelectedIndices(new Set());
+        setSelectionAnchor(null);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const idx = Math.min(...selectedIndices);
+        setSelectedIndices(new Set());
+        setEditingBlockIndex(idx);
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [blocks, selectedIndices, store]);
+
+  function applyBlockEdit(index: number, value: string): string[] {
+    const subBlocks = splitBlocks(value);
+    if (subBlocks.length === 0) return blocks.filter((_, i) => i !== index);
+    return [
+      ...blocks.slice(0, index),
+      ...subBlocks,
+      ...blocks.slice(index + 1),
+    ];
+  }
+
+  function handleBlockClick(index: number, e: React.MouseEvent) {
+    if (editingBlockIndex === index) return;
+
+    if (e.shiftKey && selectionAnchor !== null) {
+      const min = Math.min(selectionAnchor, index);
+      const max = Math.max(selectionAnchor, index);
+      setSelectedIndices(
+        new Set(Array.from({ length: max - min + 1 }, (_, i) => min + i)),
+      );
+      setEditingBlockIndex(null);
+    } else if (e.metaKey || e.ctrlKey) {
+      setEditingBlockIndex(null);
+      setSelectedIndices((prev) => {
+        const next = new Set(prev);
+        if (next.has(index)) next.delete(index);
+        else next.add(index);
+        return next;
+      });
+      setSelectionAnchor(index);
+    } else if (selectedIndices.size > 0) {
+      // In selection mode: single click replaces selection (doesn't enter edit)
+      setSelectedIndices(new Set([index]));
+      setSelectionAnchor(index);
+    } else {
+      // Normal: enter edit mode
+      setSelectedIndices(new Set());
+      setSelectionAnchor(index);
+      setEditingBlockIndex(index);
+    }
+  }
+
+  function handleBlockEscape(index: number, currentValue: string) {
+    escapedRef.current = true;
+    const newBlocks = applyBlockEdit(index, currentValue);
+    setBlocks(newBlocks);
+    store.editMarkdown(joinBlocks(newBlocks));
+    setEditingBlockIndex(null);
+    // Select the block at this position (or clear if it was deleted)
+    if (newBlocks.length > index) {
+      setSelectedIndices(new Set([index]));
+      setSelectionAnchor(index);
+    } else {
+      setSelectedIndices(new Set());
+      setSelectionAnchor(null);
+    }
+  }
 
   function handleBlockImmediate(index: number, value: string) {
     const tempBlocks = blocks.map((b, i) => (i === index ? value : b));
@@ -150,20 +271,19 @@ export function Editor() {
   }
 
   function handleBlockBlur(index: number, value: string) {
-    setEditingBlockIndex(null);
-    const subBlocks = splitBlocks(value);
-    let newBlocks: string[];
-    if (subBlocks.length === 0) {
-      newBlocks = blocks.filter((_, i) => i !== index);
-    } else {
-      newBlocks = [
-        ...blocks.slice(0, index),
-        ...subBlocks,
-        ...blocks.slice(index + 1),
-      ];
+    if (escapedRef.current) {
+      escapedRef.current = false;
+      return;
     }
+    setEditingBlockIndex(null);
+    const newBlocks = applyBlockEdit(index, value);
     setBlocks(newBlocks);
     store.editMarkdown(joinBlocks(newBlocks));
+  }
+
+  function clearSelection() {
+    setSelectedIndices(new Set());
+    setSelectionAnchor(null);
   }
 
   function addBlock() {
@@ -194,6 +314,7 @@ export function Editor() {
                 : null,
             }));
           }}
+          onFocus={clearSelection}
           onBlur={(e) => store.editTitle(e.target.value)}
           placeholder="Note title"
         />
@@ -208,20 +329,33 @@ export function Editor() {
             Click to start writing…
           </p>
         ) : (
-          <div className="prose prose-invert max-w-none prose-headings:text-zinc-100 prose-p:text-zinc-300 prose-strong:text-zinc-100 prose-code:text-zinc-200 prose-li:text-zinc-300 prose-blockquote:text-zinc-400 prose-hr:border-zinc-700 prose-a:text-blue-400">
+          <div
+            className="prose prose-invert max-w-none prose-headings:text-zinc-100 prose-p:text-zinc-300 prose-strong:text-zinc-100 prose-code:text-zinc-200 prose-li:text-zinc-300 prose-blockquote:text-zinc-400 prose-hr:border-zinc-700 prose-a:text-blue-400"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) clearSelection();
+            }}
+          >
             {blocks.map((block, i) => (
               <EditableBlock
                 key={i}
                 content={block}
                 isEditing={editingBlockIndex === i}
-                onEdit={() => setEditingBlockIndex(i)}
+                isSelected={selectedIndices.has(i)}
+                onClick={(e) => handleBlockClick(i, e)}
                 onImmediate={(v) => handleBlockImmediate(i, v)}
                 onBlur={(v) => handleBlockBlur(i, v)}
+                onEscape={(v) => handleBlockEscape(i, v)}
               />
             ))}
           </div>
         )}
-        <div className="min-h-16 cursor-text" onClick={addBlock} />
+        <div
+          className="min-h-16 cursor-text"
+          onClick={() => {
+            if (selectedIndices.size > 0) clearSelection();
+            else addBlock();
+          }}
+        />
       </div>
     </div>
   );
