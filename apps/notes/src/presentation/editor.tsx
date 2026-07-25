@@ -239,14 +239,19 @@ export function Editor() {
       });
       setSelectionAnchor(index);
     } else if (selectedIndices.size > 0) {
-      // In selection mode: single click replaces selection (doesn't enter edit)
+      if (selectedIndices.size === 1 && selectedIndices.has(index)) {
+        // Second click on the sole selected block → enter edit mode
+        setSelectedIndices(new Set());
+        setEditingBlockIndex(index);
+      } else {
+        // Different block or multi-selection → replace selection
+        setSelectedIndices(new Set([index]));
+        setSelectionAnchor(index);
+      }
+    } else {
+      // First click: select the block
       setSelectedIndices(new Set([index]));
       setSelectionAnchor(index);
-    } else {
-      // Normal: enter edit mode
-      setSelectedIndices(new Set());
-      setSelectionAnchor(index);
-      setEditingBlockIndex(index);
     }
   }
 
