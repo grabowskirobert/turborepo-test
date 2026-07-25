@@ -208,7 +208,7 @@ export function Editor() {
             Click to start writing…
           </p>
         ) : (
-          <div className="prose prose-invert max-w-none prose-headings:text-zinc-100 prose-p:text-zinc-300 prose-strong:text-zinc-100 prose-code:text-zinc-200 prose-li:text-zinc-300 prose-blockquote:text-zinc-400 prose-blockquote:border-zinc-600 prose-hr:border-zinc-700 prose-a:text-blue-400">
+          <div className="prose prose-invert max-w-none prose-headings:text-zinc-100 prose-p:text-zinc-300 prose-strong:text-zinc-100 prose-code:text-zinc-200 prose-li:text-zinc-300 prose-blockquote:text-zinc-400 prose-hr:border-zinc-700 prose-a:text-blue-400">
             {blocks.map((block, i) => (
               <EditableBlock
                 key={i}

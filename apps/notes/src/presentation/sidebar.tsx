@@ -101,7 +101,9 @@ export function Sidebar() {
                     onClick={() => handleToggleFolder(folder.id)}
                   >
                     <span className="flex items-center gap-1.5 flex-1 min-w-0">
-                      <span className="text-zinc-500 text-xs w-3 shrink-0">
+                      <span
+                        className={`text-xs w-3 shrink-0 ${hasActiveNote ? 'text-emerald-400' : 'text-zinc-500'}`}
+                      >
                         {isExpanded ? '▾' : '▸'}
                       </span>
                       <span
@@ -146,10 +148,10 @@ export function Sidebar() {
                       {(state.notesByFolder[folder.id] ?? []).map((note) => (
                         <li
                           key={note.id}
-                          className={`flex items-center justify-between pl-8 pr-2 py-1.5 cursor-pointer group ${
+                          className={`flex items-center justify-between pl-7 pr-2 py-1.5 cursor-pointer group border-l-2 ${
                             state.activeNoteId === note.id
-                              ? 'bg-zinc-700'
-                              : 'hover:bg-zinc-800'
+                              ? 'bg-zinc-700 border-emerald-400'
+                              : 'hover:bg-zinc-800 border-transparent'
                           }`}
                           onClick={() => store.selectNote(note.id)}
                           onMouseEnter={() => store.prefetchNote(note.id)}

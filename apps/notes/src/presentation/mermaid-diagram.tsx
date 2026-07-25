@@ -60,7 +60,10 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
   }
 
   return (
-    <div className="not-prose overflow-x-auto py-2">
+    <div
+      className="not-prose overflow-x-auto py-2 border-l-2 pl-4"
+      style={{ borderColor: 'oklch(82% 0.14 160 / 0.4)' }}
+    >
       <div ref={ref} className="[&>svg]:max-w-full [&>svg]:h-auto" />
     </div>
   );

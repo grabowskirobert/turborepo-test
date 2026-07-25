@@ -25,3 +25,8 @@
 .prose > div:first-child > *:first-child {
   margin-top: 0;
 }
+
+/* Accent green on blockquote left bar */
+.prose blockquote {
+  border-left-color: oklch(82% 0.14 160);
+}
