@@ -142,6 +142,8 @@ export function Editor() {
   const [selectionAnchor, setSelectionAnchor] = useState<number | null>(null);
   // Prevents handleBlockBlur from double-processing when Escape already handled it
   const escapedRef = useRef(false);
+  // Undo stack for block deletions (not for in-block typing, which has native undo)
+  const undoStackRef = useRef<string[][]>([]);
 
   useEffect(() => store.subscribe(setState), [store]);
 
@@ -161,6 +163,7 @@ export function Editor() {
       setEditingBlockIndex(null);
       setSelectedIndices(new Set());
       setSelectionAnchor(null);
+      undoStackRef.current = [];
     }
   }, [activeNoteId, state.activeNoteContent?.markdown]);
 
@@ -184,10 +187,25 @@ export function Editor() {
         return;
       }
 
+      // Cmd+Z: undo the last block deletion
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !inField) {
+        if (undoStackRef.current.length > 0) {
+          e.preventDefault();
+          const prev = undoStackRef.current[undoStackRef.current.length - 1]!;
+          undoStackRef.current = undoStackRef.current.slice(0, -1);
+          setBlocks(prev);
+          setSelectedIndices(new Set());
+          setSelectionAnchor(null);
+          store.editMarkdown(joinBlocks(prev));
+        }
+        return;
+      }
+
       if (inField || selectedIndices.size === 0) return;
 
       if (e.key === 'Delete' || e.key === 'Backspace') {
         e.preventDefault();
+        undoStackRef.current = [...undoStackRef.current, blocks];
         const newBlocks = blocks.filter((_, i) => !selectedIndices.has(i));
         setBlocks(newBlocks);
         setSelectedIndices(new Set());
