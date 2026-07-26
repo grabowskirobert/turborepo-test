@@ -4,8 +4,35 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
+import type { Root } from 'mdast';
 import { CodeBlock } from './code-block';
 import { MermaidDiagram } from './mermaid-diagram';
+
+// Converts <br> / <br /> html nodes inside table cells to mdast `break` nodes
+// so mdast-util-to-hast emits a real <br> element (raw html nodes in table
+// cells are not reliably processed by rehype-raw).
+function remarkTableBr() {
+  return (tree: Root) => {
+    const queue: { node: unknown }[] = [{ node: tree }];
+    while (queue.length) {
+      const { node } = queue.shift()!;
+      const n = node as { type: string; children?: unknown[]; value?: string };
+      if (n.type === 'tableCell' && n.children) {
+        n.children = n.children.map((child) => {
+          const c = child as { type: string; value?: string };
+          if (
+            c.type === 'html' &&
+            /^<br\s*\/?>$/i.test((c.value ?? '').trim())
+          ) {
+            return { type: 'break' };
+          }
+          return child;
+        });
+      }
+      if (n.children) queue.push(...n.children.map((c) => ({ node: c })));
+    }
+  };
+}
 
 interface MarkdownPreviewProps {
   markdown: string;
@@ -16,7 +43,7 @@ export const MarkdownPreview = memo(function MarkdownPreview({
 }: MarkdownPreviewProps) {
   return (
     <ReactMarkdown
-      remarkPlugins={[remarkGfm, remarkBreaks]}
+      remarkPlugins={[remarkGfm, remarkTableBr, remarkBreaks]}
       rehypePlugins={[rehypeRaw]}
       components={{
         // Intercept <pre> so we can render CodeBlock without a nested <pre> wrapper.
