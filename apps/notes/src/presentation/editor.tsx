@@ -1,158 +1,68 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useEditor, EditorContent } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/react/menus';
+import StarterKit from '@tiptap/starter-kit';
+import {
+  Table,
+  TableRow,
+  TableHeader,
+  TableCell,
+} from '@tiptap/extension-table';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import { Markdown } from 'tiptap-markdown';
+import type { MarkdownStorage } from 'tiptap-markdown';
 import { getNotesStore } from '../core/store';
 import type { NotesState } from '../core/store/notes-store';
 import { useUnloadGuard } from '../integration/use-unload-guard';
-import { MarkdownPreview } from './markdown-preview';
 
-function splitBlocks(markdown: string): string[] {
-  if (!markdown.trim()) return [];
-  const lines = markdown.split('\n');
-  const blocks: string[] = [];
-  let buf: string[] = [];
-  let inFence = false;
-
-  for (const line of lines) {
-    if (/^```/.test(line)) {
-      if (inFence) {
-        buf.push(line);
-        blocks.push(buf.join('\n'));
-        buf = [];
-        inFence = false;
-      } else {
-        if (buf.length) {
-          blocks.push(buf.join('\n'));
-          buf = [];
-        }
-        buf.push(line);
-        inFence = true;
-      }
-    } else if (inFence) {
-      buf.push(line);
-    } else if (line.trim() === '') {
-      if (buf.length) {
-        blocks.push(buf.join('\n'));
-        buf = [];
-      }
-    } else {
-      buf.push(line);
-    }
-  }
-  if (buf.length) blocks.push(buf.join('\n'));
-  return blocks;
-}
-
-function joinBlocks(blocks: string[]): string {
-  return blocks.join('\n\n');
-}
-
-interface EditableBlockProps {
-  content: string;
-  isEditing: boolean;
-  isSelected: boolean;
-  onClick: (e: React.MouseEvent) => void;
-  onImmediate: (value: string) => void;
-  onBlur: (value: string) => void;
-  onEscape: (currentValue: string) => void;
-}
-
-function EditableBlock({
-  content,
-  isEditing,
-  isSelected,
+function TBtn({
+  children,
   onClick,
-  onImmediate,
-  onBlur,
-  onEscape,
-}: EditableBlockProps) {
-  const [localValue, setLocalValue] = useState(content);
-  const taRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (!isEditing) setLocalValue(content);
-  }, [content, isEditing]);
-
-  useEffect(() => {
-    if (isEditing && taRef.current) {
-      const ta = taRef.current;
-      ta.focus();
-      ta.selectionStart = ta.selectionEnd = ta.value.length;
-      ta.style.height = 'auto';
-      ta.style.height = ta.scrollHeight + 'px';
-    }
-  }, [isEditing]);
-
-  if (isEditing) {
-    return (
-      <div className="not-prose my-1">
-        <textarea
-          ref={taRef}
-          className="w-full resize-none outline-none font-mono text-sm bg-zinc-800 text-zinc-200 rounded p-3 leading-relaxed border border-zinc-600 focus:border-zinc-400 transition-colors"
-          value={localValue}
-          onChange={(e) => {
-            const v = e.target.value;
-            setLocalValue(v);
-            onImmediate(v);
-            e.target.style.height = 'auto';
-            e.target.style.height = e.target.scrollHeight + 'px';
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              e.preventDefault();
-              onEscape(localValue);
-              return;
-            }
-            if (e.shiftKey && e.key === 'Enter') {
-              e.preventDefault();
-              const ta = e.currentTarget;
-              const { selectionStart: start, selectionEnd: end } = ta;
-              const newValue =
-                localValue.slice(0, start) + '<br>' + localValue.slice(end);
-              setLocalValue(newValue);
-              onImmediate(newValue);
-              requestAnimationFrame(() => {
-                ta.selectionStart = ta.selectionEnd = start + 4;
-              });
-              return;
-            }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
-              e.preventDefault();
-              const ta = e.currentTarget;
-              const { selectionStart: start, selectionEnd: end } = ta;
-              const selected = localValue.slice(start, end);
-              const newValue =
-                localValue.slice(0, start) +
-                `**${selected}**` +
-                localValue.slice(end);
-              setLocalValue(newValue);
-              onImmediate(newValue);
-              requestAnimationFrame(() => {
-                ta.selectionStart = selected ? end + 4 : start + 2;
-                ta.selectionEnd = selected ? end + 4 : start + 2;
-              });
-            }
-          }}
-          onBlur={() => onBlur(localValue)}
-        />
-      </div>
-    );
-  }
-
-  if (!content.trim()) return null;
-
+  danger,
+  title,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  danger?: boolean;
+  title?: string;
+}) {
   return (
-    <div
-      className={`cursor-pointer rounded -mx-2 px-2 transition-colors select-none ${
-        isSelected
-          ? 'bg-emerald-900/25 ring-1 ring-inset ring-emerald-500/30'
-          : 'hover:bg-zinc-800/40'
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault(); // keep editor focus
+        onClick();
+      }}
+      title={title}
+      className={`px-2 py-0.5 rounded hover:bg-zinc-700 transition-colors ${
+        danger ? 'text-red-400' : 'text-zinc-300'
       }`}
-      onClick={onClick}
     >
-      <MarkdownPreview markdown={content} />
-    </div>
+      {children}
+    </button>
   );
+}
+
+function Sep() {
+  return <div className="w-px h-3 bg-zinc-600 mx-0.5 shrink-0" />;
+}
+
+const PROSE_CLASSES = [
+  'outline-none min-h-[200px]',
+  'prose prose-invert max-w-none',
+  'prose-headings:text-zinc-100 prose-p:text-zinc-300',
+  'prose-strong:text-zinc-100 prose-li:text-zinc-300',
+  'prose-blockquote:text-zinc-400 prose-hr:border-zinc-700',
+  'prose-a:text-blue-400',
+].join(' ');
+
+function getMarkdown(editor: ReturnType<typeof useEditor>): string {
+  if (!editor) return '';
+  return (
+    editor.storage as unknown as { markdown: MarkdownStorage }
+  ).markdown.getMarkdown();
 }
 
 export function Editor() {
@@ -160,20 +70,6 @@ export function Editor() {
   const [state, setState] = useState<NotesState>(store.getState());
   const pathname = usePathname();
   const prevPathRef = useRef(pathname);
-  const [blocks, setBlocks] = useState<string[]>(() =>
-    splitBlocks(store.getState().activeNoteContent?.markdown ?? ''),
-  );
-  const [editingBlockIndex, setEditingBlockIndex] = useState<number | null>(
-    null,
-  );
-  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(
-    new Set(),
-  );
-  const [selectionAnchor, setSelectionAnchor] = useState<number | null>(null);
-  // Prevents handleBlockBlur from double-processing when Escape already handled it
-  const escapedRef = useRef(false);
-  // Undo stack for block deletions (not for in-block typing, which has native undo)
-  const undoStackRef = useRef<string[][]>([]);
 
   useEffect(() => store.subscribe(setState), [store]);
 
@@ -184,173 +80,45 @@ export function Editor() {
     }
   }, [pathname, store]);
 
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Markdown.configure({
+        html: false,
+        tightLists: true,
+        bulletListMarker: '-',
+        linkify: false,
+        breaks: false,
+        transformPastedText: true,
+      }),
+      Table.configure({ resizable: false }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      TaskList,
+      TaskItem.configure({ nested: true }),
+    ],
+    content: state.activeNoteContent?.markdown ?? '',
+    editorProps: {
+      attributes: { class: PROSE_CLASSES },
+    },
+    onUpdate: ({ editor }) => {
+      store.editMarkdown(getMarkdown(editor));
+    },
+  });
+
+  // Reload editor content when the active note changes
   const activeNoteId = state.activeNoteId;
-  const prevNoteIdRef = useRef(activeNoteId);
+  const prevNoteIdRef = useRef<string | null>(null);
   useEffect(() => {
-    if (prevNoteIdRef.current !== activeNoteId) {
-      prevNoteIdRef.current = activeNoteId;
-      setBlocks(splitBlocks(state.activeNoteContent?.markdown ?? ''));
-      setEditingBlockIndex(null);
-      setSelectedIndices(new Set());
-      setSelectionAnchor(null);
-      undoStackRef.current = [];
-    }
-  }, [activeNoteId, state.activeNoteContent?.markdown]);
+    if (!editor || prevNoteIdRef.current === activeNoteId) return;
+    prevNoteIdRef.current = activeNoteId;
+    editor.commands.setContent(
+      store.getState().activeNoteContent?.markdown ?? '',
+    );
+  }, [activeNoteId, editor, store]);
 
   useUnloadGuard(state.dirty);
-
-  // Global keyboard handler for block-level operations
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      const target = e.target as HTMLElement;
-      const inField =
-        target.tagName === 'TEXTAREA' || target.tagName === 'INPUT';
-
-      // Cmd+A: select all blocks when not in a text field
-      if ((e.metaKey || e.ctrlKey) && e.key === 'a' && !inField) {
-        e.preventDefault();
-        setSelectedIndices(
-          new Set(Array.from({ length: blocks.length }, (_, i) => i)),
-        );
-        setSelectionAnchor(0);
-        setEditingBlockIndex(null);
-        return;
-      }
-
-      // Cmd+Z: undo the last block deletion
-      if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !inField) {
-        if (undoStackRef.current.length > 0) {
-          e.preventDefault();
-          const prev = undoStackRef.current[undoStackRef.current.length - 1]!;
-          undoStackRef.current = undoStackRef.current.slice(0, -1);
-          setBlocks(prev);
-          setSelectedIndices(new Set());
-          setSelectionAnchor(null);
-          store.editMarkdown(joinBlocks(prev));
-        }
-        return;
-      }
-
-      if (inField || selectedIndices.size === 0) return;
-
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        e.preventDefault();
-        undoStackRef.current = [...undoStackRef.current, blocks];
-        const newBlocks = blocks.filter((_, i) => !selectedIndices.has(i));
-        setBlocks(newBlocks);
-        setSelectedIndices(new Set());
-        setSelectionAnchor(null);
-        store.editMarkdown(joinBlocks(newBlocks));
-      } else if (e.key === 'Escape') {
-        setSelectedIndices(new Set());
-        setSelectionAnchor(null);
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        const idx = Math.min(...selectedIndices);
-        setSelectedIndices(new Set());
-        setEditingBlockIndex(idx);
-      }
-    }
-
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [blocks, selectedIndices, store]);
-
-  function applyBlockEdit(index: number, value: string): string[] {
-    const subBlocks = splitBlocks(value);
-    if (subBlocks.length === 0) return blocks.filter((_, i) => i !== index);
-    return [
-      ...blocks.slice(0, index),
-      ...subBlocks,
-      ...blocks.slice(index + 1),
-    ];
-  }
-
-  function handleBlockClick(index: number, e: React.MouseEvent) {
-    if (editingBlockIndex === index) return;
-
-    if (e.shiftKey && selectionAnchor !== null) {
-      e.preventDefault();
-      const min = Math.min(selectionAnchor, index);
-      const max = Math.max(selectionAnchor, index);
-      setSelectedIndices(
-        new Set(Array.from({ length: max - min + 1 }, (_, i) => min + i)),
-      );
-      setEditingBlockIndex(null);
-    } else if (e.metaKey || e.ctrlKey) {
-      setEditingBlockIndex(null);
-      setSelectedIndices((prev) => {
-        const next = new Set(prev);
-        if (next.has(index)) next.delete(index);
-        else next.add(index);
-        return next;
-      });
-      setSelectionAnchor(index);
-    } else if (selectedIndices.size > 0) {
-      if (selectedIndices.size === 1 && selectedIndices.has(index)) {
-        // Second click on the sole selected block → enter edit mode
-        setSelectedIndices(new Set());
-        setEditingBlockIndex(index);
-      } else {
-        // Different block or multi-selection → replace selection
-        setSelectedIndices(new Set([index]));
-        setSelectionAnchor(index);
-      }
-    } else {
-      // First click: select the block
-      setSelectedIndices(new Set([index]));
-      setSelectionAnchor(index);
-    }
-  }
-
-  function handleBlockEscape(index: number, currentValue: string) {
-    escapedRef.current = true;
-    const newBlocks = applyBlockEdit(index, currentValue);
-    if (joinBlocks(newBlocks) !== joinBlocks(blocks)) {
-      undoStackRef.current = [...undoStackRef.current, blocks];
-    }
-    setBlocks(newBlocks);
-    store.editMarkdown(joinBlocks(newBlocks));
-    setEditingBlockIndex(null);
-    // Select the block at this position (or clear if it was deleted)
-    if (newBlocks.length > index) {
-      setSelectedIndices(new Set([index]));
-      setSelectionAnchor(index);
-    } else {
-      setSelectedIndices(new Set());
-      setSelectionAnchor(null);
-    }
-  }
-
-  function handleBlockImmediate(index: number, value: string) {
-    const tempBlocks = blocks.map((b, i) => (i === index ? value : b));
-    store.editMarkdown(joinBlocks(tempBlocks));
-  }
-
-  function handleBlockBlur(index: number, value: string) {
-    if (escapedRef.current) {
-      escapedRef.current = false;
-      return;
-    }
-    setEditingBlockIndex(null);
-    const newBlocks = applyBlockEdit(index, value);
-    if (joinBlocks(newBlocks) !== joinBlocks(blocks)) {
-      undoStackRef.current = [...undoStackRef.current, blocks];
-    }
-    setBlocks(newBlocks);
-    store.editMarkdown(joinBlocks(newBlocks));
-  }
-
-  function clearSelection() {
-    setSelectedIndices(new Set());
-    setSelectionAnchor(null);
-  }
-
-  function addBlock() {
-    const newBlocks = [...blocks, ''];
-    setBlocks(newBlocks);
-    setEditingBlockIndex(newBlocks.length - 1);
-  }
 
   if (!state.activeNoteContent) {
     return (
@@ -366,56 +134,85 @@ export function Editor() {
         <input
           className="w-full text-xl font-semibold outline-none bg-transparent text-zinc-100 placeholder:text-zinc-600"
           value={state.activeNoteContent.title}
-          onChange={(e) => {
+          onChange={(e) =>
             setState((s) => ({
               ...s,
               activeNoteContent: s.activeNoteContent
                 ? { ...s.activeNoteContent, title: e.target.value }
                 : null,
-            }));
-          }}
-          onFocus={clearSelection}
+            }))
+          }
           onBlur={(e) => store.editTitle(e.target.value)}
           placeholder="Note title"
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4">
-        {blocks.length === 0 ? (
-          <p
-            className="text-zinc-600 cursor-text select-none"
-            onClick={addBlock}
-          >
-            Click to start writing…
-          </p>
-        ) : (
-          <div
-            className="prose prose-invert max-w-none prose-headings:text-zinc-100 prose-p:text-zinc-300 prose-strong:text-zinc-100 prose-code:text-zinc-200 prose-li:text-zinc-300 prose-blockquote:text-zinc-400 prose-hr:border-zinc-700 prose-a:text-blue-400"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) clearSelection();
-            }}
-          >
-            {blocks.map((block, i) => (
-              <EditableBlock
-                key={i}
-                content={block}
-                isEditing={editingBlockIndex === i}
-                isSelected={selectedIndices.has(i)}
-                onClick={(e) => handleBlockClick(i, e)}
-                onImmediate={(v) => handleBlockImmediate(i, v)}
-                onBlur={(v) => handleBlockBlur(i, v)}
-                onEscape={(v) => handleBlockEscape(i, v)}
-              />
-            ))}
+      {editor && (
+        <BubbleMenu
+          editor={editor}
+          options={{ placement: 'top' }}
+          shouldShow={({ editor }) => editor.isActive('table')}
+        >
+          <div className="flex items-center gap-0.5 bg-zinc-800 border border-zinc-600 rounded-lg px-1.5 py-1 shadow-xl text-xs select-none">
+            <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
+              Row
+            </span>
+            <TBtn
+              onClick={() => editor.chain().focus().addRowBefore().run()}
+              title="Add row above"
+            >
+              ↑
+            </TBtn>
+            <TBtn
+              onClick={() => editor.chain().focus().addRowAfter().run()}
+              title="Add row below"
+            >
+              ↓
+            </TBtn>
+            <TBtn
+              onClick={() => editor.chain().focus().deleteRow().run()}
+              danger
+              title="Delete row"
+            >
+              ✕
+            </TBtn>
+            <Sep />
+            <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
+              Col
+            </span>
+            <TBtn
+              onClick={() => editor.chain().focus().addColumnBefore().run()}
+              title="Add column left"
+            >
+              ←
+            </TBtn>
+            <TBtn
+              onClick={() => editor.chain().focus().addColumnAfter().run()}
+              title="Add column right"
+            >
+              →
+            </TBtn>
+            <TBtn
+              onClick={() => editor.chain().focus().deleteColumn().run()}
+              danger
+              title="Delete column"
+            >
+              ✕
+            </TBtn>
+            <Sep />
+            <TBtn
+              onClick={() => editor.chain().focus().deleteTable().run()}
+              danger
+              title="Delete table"
+            >
+              Del table
+            </TBtn>
           </div>
-        )}
-        <div
-          className="min-h-16 cursor-text"
-          onClick={() => {
-            if (selectedIndices.size > 0) clearSelection();
-            else addBlock();
-          }}
-        />
+        </BubbleMenu>
+      )}
+
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <EditorContent editor={editor} />
       </div>
     </div>
   );
