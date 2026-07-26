@@ -78,19 +78,12 @@
 .ProseMirror table th,
 .ProseMirror table td {
   border: 1px solid #3f3f46;
-  padding: 0.375rem 0.75rem;
+  padding: 0.15rem 0.4rem;
   vertical-align: top;
   position: relative;
   min-width: 2rem;
-}
-.ProseMirror table th {
-  background-color: #27272a;
-  font-weight: 600;
-  color: #e4e4e7;
-  text-align: left;
-}
-.ProseMirror table td {
   color: #d4d4d8;
+  font-weight: 400;
 }
 .ProseMirror table .selectedCell {
   background-color: oklch(82% 0.14 160 / 0.15);
@@ -139,6 +132,12 @@
 .ProseMirror ul[data-type='taskList'] li[data-checked='true'] > div {
   text-decoration: line-through;
   opacity: 0.5;
+}
+
+/* Compact ordered lists */
+.ProseMirror ol li {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
 }
 
 /* Empty editor placeholder */

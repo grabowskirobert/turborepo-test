@@ -14,6 +14,7 @@ import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import { Markdown } from 'tiptap-markdown';
 import type { MarkdownStorage } from 'tiptap-markdown';
+import { TableCheckbox } from './table-checkbox';
 import { getNotesStore } from '../core/store';
 import type { NotesState } from '../core/store/notes-store';
 import { useUnloadGuard } from '../integration/use-unload-guard';
@@ -84,7 +85,7 @@ export function Editor() {
     extensions: [
       StarterKit,
       Markdown.configure({
-        html: false,
+        html: true,
         tightLists: true,
         bulletListMarker: '-',
         linkify: false,
@@ -97,6 +98,7 @@ export function Editor() {
       TableCell,
       TaskList,
       TaskItem.configure({ nested: true }),
+      TableCheckbox,
     ],
     content: state.activeNoteContent?.markdown ?? '',
     editorProps: {
