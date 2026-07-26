@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
+import rehypeRaw from 'rehype-raw';
 import { CodeBlock } from './code-block';
 import { MermaidDiagram } from './mermaid-diagram';
 
@@ -16,6 +17,7 @@ export const MarkdownPreview = memo(function MarkdownPreview({
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkBreaks]}
+      rehypePlugins={[rehypeRaw]}
       components={{
         // Intercept <pre> so we can render CodeBlock without a nested <pre> wrapper.
         // react-markdown wraps code blocks in <pre><code>; CodeBlock renders its own <pre>.

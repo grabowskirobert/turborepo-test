@@ -101,6 +101,36 @@ function EditableBlock({
             if (e.key === 'Escape') {
               e.preventDefault();
               onEscape(localValue);
+              return;
+            }
+            if (e.shiftKey && e.key === 'Enter') {
+              e.preventDefault();
+              const ta = e.currentTarget;
+              const { selectionStart: start, selectionEnd: end } = ta;
+              const newValue =
+                localValue.slice(0, start) + '<br>' + localValue.slice(end);
+              setLocalValue(newValue);
+              onImmediate(newValue);
+              requestAnimationFrame(() => {
+                ta.selectionStart = ta.selectionEnd = start + 4;
+              });
+              return;
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'b') {
+              e.preventDefault();
+              const ta = e.currentTarget;
+              const { selectionStart: start, selectionEnd: end } = ta;
+              const selected = localValue.slice(start, end);
+              const newValue =
+                localValue.slice(0, start) +
+                `**${selected}**` +
+                localValue.slice(end);
+              setLocalValue(newValue);
+              onImmediate(newValue);
+              requestAnimationFrame(() => {
+                ta.selectionStart = selected ? end + 4 : start + 2;
+                ta.selectionEnd = selected ? end + 4 : start + 2;
+              });
             }
           }}
           onBlur={() => onBlur(localValue)}
@@ -276,6 +306,9 @@ export function Editor() {
   function handleBlockEscape(index: number, currentValue: string) {
     escapedRef.current = true;
     const newBlocks = applyBlockEdit(index, currentValue);
+    if (joinBlocks(newBlocks) !== joinBlocks(blocks)) {
+      undoStackRef.current = [...undoStackRef.current, blocks];
+    }
     setBlocks(newBlocks);
     store.editMarkdown(joinBlocks(newBlocks));
     setEditingBlockIndex(null);
@@ -301,6 +334,9 @@ export function Editor() {
     }
     setEditingBlockIndex(null);
     const newBlocks = applyBlockEdit(index, value);
+    if (joinBlocks(newBlocks) !== joinBlocks(blocks)) {
+      undoStackRef.current = [...undoStackRef.current, blocks];
+    }
     setBlocks(newBlocks);
     store.editMarkdown(joinBlocks(newBlocks));
   }
