@@ -127,12 +127,6 @@
   margin-top: 0.15em;
   cursor: pointer;
 }
-.ProseMirror ul[data-type='taskList'] li > label input[type='checkbox'] {
-  accent-color: oklch(82% 0.14 160);
-  width: 0.9rem;
-  height: 0.9rem;
-  cursor: pointer;
-}
 .ProseMirror ul[data-type='taskList'] li > div {
   flex: 1;
 }
@@ -165,7 +159,8 @@
   margin-bottom: 0 !important;
 }
 
-/* Table inline checkboxes */
+/* Unified checkbox style — TaskList items and inline table checkboxes */
+.ProseMirror ul[data-type='taskList'] li > label input[type='checkbox'],
 .ProseMirror .table-checkbox {
   appearance: none;
   -webkit-appearance: none;
@@ -173,7 +168,7 @@
   height: 1rem;
   border: 1.5px solid #52525b;
   border-radius: 3px;
-  background-color: #27272a;
+  background-color: #27272a !important;
   cursor: pointer;
   vertical-align: middle;
   position: relative;
@@ -182,25 +177,19 @@
     border-color 0.15s,
     background-color 0.15s;
 }
+.ProseMirror ul[data-type='taskList'] li > label input[type='checkbox']:hover,
 .ProseMirror .table-checkbox:hover {
   border-color: #a1a1aa;
-  background-color: #3f3f46;
+  background-color: #3f3f46 !important;
 }
+.ProseMirror ul[data-type='taskList'] li > label input[type='checkbox']:checked,
 .ProseMirror .table-checkbox:checked {
-  background-color: oklch(62% 0.17 160);
+  background-color: oklch(62% 0.17 160) !important;
   border-color: oklch(62% 0.17 160);
-}
-.ProseMirror .table-checkbox:checked::after {
-  content: '';
-  position: absolute;
-  left: 2px;
-  top: -1px;
-  width: 6px;
-  height: 10px;
-  border: 2px solid #fff;
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.3 4.3a1 1 0 0 0-1.4 0L6.5 9.6 4.1 7.3a1 1 0 0 0-1.4 1.4l3 3a1 1 0 0 0 1.4 0l6-6a1 1 0 0 0 0-1.4z'/%3E%3C/svg%3E");
+  background-size: 0.75rem;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* Highlight divider when selected */

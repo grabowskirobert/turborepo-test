@@ -1,10 +1,11 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useEditor, EditorContent } from '@tiptap/react';
 import { EditorState } from '@tiptap/pm/state';
 import { BubbleMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
+import { Extension } from '@tiptap/core';
 import {
   Table,
   TableRow,
@@ -14,10 +15,13 @@ import {
 import { CellSelection } from '@tiptap/pm/tables';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
+import Link from '@tiptap/extension-link';
 import { Markdown } from 'tiptap-markdown';
 import type { MarkdownStorage } from 'tiptap-markdown';
 import { TableCheckbox } from './table-checkbox';
+import { serializeTable } from './table-serializer';
 import { CodeBlockMermaid } from './code-block-mermaid';
+import { LinkModal } from './link-modal';
 import { getNotesStore } from '../core/store';
 import type { NotesState } from '../core/store/notes-store';
 import { useUnloadGuard } from '../integration/use-unload-guard';
@@ -69,9 +73,36 @@ function getMarkdown(editor: ReturnType<typeof useEditor>): string {
   ).markdown.getMarkdown();
 }
 
+// Enter in a table cell creates a new paragraph (childCount > 1), which breaks
+// tiptap-markdown's isMarkdownSerializable check and serializes the whole table
+// as the literal text "[table]". Force Enter → hard break inside cells instead.
+const TableCellEnter = Extension.create({
+  name: 'tableCellEnter',
+  addKeyboardShortcuts() {
+    return {
+      Enter: ({ editor }) => {
+        if (editor.isActive('tableCell') || editor.isActive('tableHeader')) {
+          return editor.commands.setHardBreak();
+        }
+        return false;
+      },
+    };
+  },
+});
+
+type LinkModalState =
+  | { open: false }
+  | {
+      open: true;
+      hasSelection: boolean;
+      defaultText: string;
+      defaultUrl: string;
+    };
+
 export function Editor() {
   const store = getNotesStore();
   const [state, setState] = useState<NotesState>(store.getState());
+  const [linkModal, setLinkModal] = useState<LinkModalState>({ open: false });
   const pathname = usePathname();
   const prevPathRef = useRef(pathname);
 
@@ -83,6 +114,21 @@ export function Editor() {
       store.flushPendingSave();
     }
   }, [pathname, store]);
+
+  const openLinkModal = useCallback(
+    (ed: NonNullable<ReturnType<typeof useEditor>>) => {
+      const { from, to, empty } = ed.state.selection;
+      const existingUrl = ed.getAttributes('link').href as string | undefined;
+      const selectedText = empty ? '' : ed.state.doc.textBetween(from, to);
+      setLinkModal({
+        open: true,
+        hasSelection: !empty,
+        defaultText: selectedText,
+        defaultUrl: existingUrl ?? '',
+      });
+    },
+    [],
+  );
 
   const editor = useEditor({
     extensions: [
@@ -96,13 +142,22 @@ export function Editor() {
         breaks: false,
         transformPastedText: true,
       }),
-      Table.configure({ resizable: false }),
+      Link.configure({ openOnClick: false, autolink: true }),
+      Table.configure({ resizable: false }).extend({
+        // tiptap-markdown's default table serializer falls back to writing the
+        // literal text "[table]" (html:false mode) when any cell has >1 child
+        // block (e.g. two paragraphs from Enter). Override to join children.
+        addStorage() {
+          return { markdown: { serialize: serializeTable, parse: {} } };
+        },
+      }),
       TableRow,
       TableHeader,
       TableCell,
       TaskList,
       TaskItem.configure({ nested: true }),
       TableCheckbox,
+      TableCellEnter,
     ],
     content: state.activeNoteContent?.markdown ?? '',
     editorProps: {
@@ -112,6 +167,20 @@ export function Editor() {
       store.editMarkdown(getMarkdown(editor));
     },
   });
+
+  // Cmd+K to open link modal
+  useEffect(() => {
+    if (!editor) return;
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openLinkModal(editor);
+      }
+    };
+    const el = editor.view.dom;
+    el.addEventListener('keydown', handler);
+    return () => el.removeEventListener('keydown', handler);
+  }, [editor, openLinkModal]);
 
   // Reload editor content when the active note changes
   const activeNoteId = state.activeNoteId;
@@ -135,6 +204,22 @@ export function Editor() {
   }, [activeNoteId, editor, store]);
 
   useUnloadGuard(state.dirty);
+
+  function applyLink(text: string, url: string) {
+    if (!editor) return;
+    setLinkModal({ open: false });
+    if (linkModal.open && linkModal.hasSelection) {
+      // Wrap selected text as a link
+      editor.chain().focus().setLink({ href: url }).run();
+    } else {
+      // Insert new linked text at cursor
+      editor
+        .chain()
+        .focus()
+        .insertContent(`<a href="${url}">${text}</a>`)
+        .run();
+    }
+  }
 
   if (!state.activeNoteContent) {
     return (
@@ -164,74 +249,111 @@ export function Editor() {
       </div>
 
       {editor && (
-        <BubbleMenu
-          editor={editor}
-          options={{ placement: 'top' }}
-          shouldShow={({ editor }) =>
-            editor.state.selection instanceof CellSelection
-          }
-        >
-          <div className="flex items-center gap-0.5 bg-zinc-800 border border-zinc-600 rounded-lg px-1.5 py-1 shadow-xl text-xs select-none">
-            <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
-              Row
-            </span>
-            <TBtn
-              onClick={() => editor.chain().focus().addRowBefore().run()}
-              title="Add row above"
-            >
-              ↑
-            </TBtn>
-            <TBtn
-              onClick={() => editor.chain().focus().addRowAfter().run()}
-              title="Add row below"
-            >
-              ↓
-            </TBtn>
-            <TBtn
-              onClick={() => editor.chain().focus().deleteRow().run()}
-              danger
-              title="Delete row"
-            >
-              ✕
-            </TBtn>
-            <Sep />
-            <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
-              Col
-            </span>
-            <TBtn
-              onClick={() => editor.chain().focus().addColumnBefore().run()}
-              title="Add column left"
-            >
-              ←
-            </TBtn>
-            <TBtn
-              onClick={() => editor.chain().focus().addColumnAfter().run()}
-              title="Add column right"
-            >
-              →
-            </TBtn>
-            <TBtn
-              onClick={() => editor.chain().focus().deleteColumn().run()}
-              danger
-              title="Delete column"
-            >
-              ✕
-            </TBtn>
-            <Sep />
-            <TBtn
-              onClick={() => editor.chain().focus().deleteTable().run()}
-              danger
-              title="Delete table"
-            >
-              Del table
-            </TBtn>
-          </div>
-        </BubbleMenu>
+        <>
+          {/* Table cell selection toolbar */}
+          <BubbleMenu
+            editor={editor}
+            options={{ placement: 'top' }}
+            shouldShow={({ editor }) =>
+              editor.state.selection instanceof CellSelection
+            }
+          >
+            <div className="flex items-center gap-0.5 bg-zinc-800 border border-zinc-600 rounded-lg px-1.5 py-1 shadow-xl text-xs select-none">
+              <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
+                Row
+              </span>
+              <TBtn
+                onClick={() => editor.chain().focus().addRowBefore().run()}
+                title="Add row above"
+              >
+                ↑
+              </TBtn>
+              <TBtn
+                onClick={() => editor.chain().focus().addRowAfter().run()}
+                title="Add row below"
+              >
+                ↓
+              </TBtn>
+              <TBtn
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                danger
+                title="Delete row"
+              >
+                ✕
+              </TBtn>
+              <Sep />
+              <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
+                Col
+              </span>
+              <TBtn
+                onClick={() => editor.chain().focus().addColumnBefore().run()}
+                title="Add column left"
+              >
+                ←
+              </TBtn>
+              <TBtn
+                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                title="Add column right"
+              >
+                →
+              </TBtn>
+              <TBtn
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                danger
+                title="Delete column"
+              >
+                ✕
+              </TBtn>
+              <Sep />
+              <TBtn
+                onClick={() => editor.chain().focus().deleteTable().run()}
+                danger
+                title="Delete table"
+              >
+                Del table
+              </TBtn>
+            </div>
+          </BubbleMenu>
+
+          {/* Link hover toolbar */}
+          <BubbleMenu
+            editor={editor}
+            options={{ placement: 'bottom' }}
+            shouldShow={({ editor }) => editor.isActive('link')}
+          >
+            <div className="flex items-center gap-1 bg-zinc-800 border border-zinc-600 rounded-lg px-2 py-1 shadow-xl text-xs select-none">
+              <span className="text-zinc-400 max-w-[200px] truncate">
+                {editor.getAttributes('link').href as string}
+              </span>
+              <Sep />
+              <TBtn onClick={() => openLinkModal(editor)} title="Edit link">
+                Edit
+              </TBtn>
+              <TBtn
+                onClick={() => editor.chain().focus().unsetLink().run()}
+                danger
+                title="Remove link"
+              >
+                Unlink
+              </TBtn>
+            </div>
+          </BubbleMenu>
+        </>
       )}
 
       <div className="flex-1 overflow-y-auto px-4 py-4">
         <EditorContent editor={editor} />
       </div>
+
+      {linkModal.open && (
+        <LinkModal
+          hideText={linkModal.hasSelection}
+          defaultText={linkModal.defaultText}
+          defaultUrl={linkModal.defaultUrl}
+          onConfirm={applyLink}
+          onCancel={() => setLinkModal({ open: false })}
+        />
+      )}
     </div>
   );
 }
