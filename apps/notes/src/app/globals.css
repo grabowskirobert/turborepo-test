@@ -175,10 +175,9 @@
   border-radius: 3px;
   background-color: #27272a;
   cursor: pointer;
-  vertical-align: -0.2em;
+  vertical-align: middle;
   position: relative;
   flex-shrink: 0;
-  margin-right: 0.35em;
   transition:
     border-color 0.15s,
     background-color 0.15s;
