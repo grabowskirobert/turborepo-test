@@ -140,16 +140,28 @@
   opacity: 0.5;
 }
 
-/* Compact lists — kill prose vertical rhythm on li */
+/* Compact lists — kill prose vertical rhythm on li and the p inside it */
 .ProseMirror ol li,
 .ProseMirror ul li {
   margin-top: 0;
   margin-bottom: 0;
 }
+.ProseMirror ol li p,
+.ProseMirror ul li p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
 .ProseMirror ol,
 .ProseMirror ul {
   margin-top: 0.25em;
   margin-bottom: 0.25em;
+}
+
+/* Kill prose p margins inside table cells */
+.ProseMirror table td p,
+.ProseMirror table th p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 /* Table inline checkboxes */

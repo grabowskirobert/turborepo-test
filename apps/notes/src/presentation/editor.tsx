@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useEditor, EditorContent } from '@tiptap/react';
+import { EditorState } from '@tiptap/pm/state';
 import { BubbleMenu } from '@tiptap/react/menus';
 import StarterKit from '@tiptap/starter-kit';
 import {
@@ -118,6 +119,16 @@ export function Editor() {
     prevNoteIdRef.current = activeNoteId;
     editor.commands.setContent(
       store.getState().activeNoteContent?.markdown ?? '',
+      { emitUpdate: false },
+    );
+    // Reset all plugin states (including undo history) so Cmd+Z can't
+    // undo across a note switch and corrupt the wrong note's content.
+    editor.view.updateState(
+      EditorState.create({
+        doc: editor.state.doc,
+        schema: editor.state.schema,
+        plugins: editor.state.plugins,
+      }),
     );
   }, [activeNoteId, editor, store]);
 
