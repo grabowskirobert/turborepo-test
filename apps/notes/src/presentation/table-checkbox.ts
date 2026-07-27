@@ -66,10 +66,6 @@ export const TableCheckbox = Node.create({
       dom.type = 'checkbox';
       dom.className = 'table-checkbox';
       dom.checked = node.attrs.checked as boolean;
-      dom.style.cursor = 'pointer';
-      dom.style.accentColor = 'oklch(82% 0.14 160)';
-      dom.style.width = '0.85rem';
-      dom.style.height = '0.85rem';
       dom.addEventListener('mousedown', (e) => e.preventDefault());
       dom.addEventListener('change', () => {
         const pos = typeof getPos === 'function' ? getPos() : undefined;

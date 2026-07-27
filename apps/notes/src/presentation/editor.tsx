@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableCell,
 } from '@tiptap/extension-table';
+import { CellSelection } from '@tiptap/pm/tables';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import { Markdown } from 'tiptap-markdown';
@@ -85,7 +86,7 @@ export function Editor() {
     extensions: [
       StarterKit,
       Markdown.configure({
-        html: true,
+        html: false,
         tightLists: true,
         bulletListMarker: '-',
         linkify: false,
@@ -153,7 +154,9 @@ export function Editor() {
         <BubbleMenu
           editor={editor}
           options={{ placement: 'top' }}
-          shouldShow={({ editor }) => editor.isActive('table')}
+          shouldShow={({ editor }) =>
+            editor.state.selection instanceof CellSelection
+          }
         >
           <div className="flex items-center gap-0.5 bg-zinc-800 border border-zinc-600 rounded-lg px-1.5 py-1 shadow-xl text-xs select-none">
             <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">

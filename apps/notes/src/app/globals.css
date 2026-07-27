@@ -72,8 +72,9 @@
 /* Tables */
 .ProseMirror table {
   border-collapse: collapse;
-  width: 100%;
+  width: auto;
   table-layout: auto;
+  margin: 0;
 }
 .ProseMirror table th,
 .ProseMirror table td {
@@ -84,6 +85,11 @@
   min-width: 2rem;
   color: #d4d4d8;
   font-weight: 400;
+}
+/* Remove prose margins around table wrapper */
+.ProseMirror .tableWrapper {
+  margin: 0;
+  overflow-x: auto;
 }
 .ProseMirror table .selectedCell {
   background-color: oklch(82% 0.14 160 / 0.15);
@@ -134,10 +140,54 @@
   opacity: 0.5;
 }
 
-/* Compact ordered lists */
-.ProseMirror ol li {
-  margin-top: 0.1em;
-  margin-bottom: 0.1em;
+/* Compact lists — kill prose vertical rhythm on li */
+.ProseMirror ol li,
+.ProseMirror ul li {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.ProseMirror ol,
+.ProseMirror ul {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+/* Table inline checkboxes */
+.ProseMirror .table-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #71717a;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  flex-shrink: 0;
+  accent-color: oklch(82% 0.14 160);
+  transition:
+    border-color 0.1s,
+    background-color 0.1s;
+}
+.ProseMirror .table-checkbox:checked {
+  background-color: oklch(82% 0.14 160);
+  border-color: oklch(82% 0.14 160);
+}
+.ProseMirror .table-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: -1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid #18181b;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.ProseMirror .table-checkbox:hover {
+  border-color: oklch(82% 0.14 160);
 }
 
 /* Empty editor placeholder */
