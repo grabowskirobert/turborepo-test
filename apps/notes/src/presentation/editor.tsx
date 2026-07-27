@@ -17,6 +17,7 @@ import TaskItem from '@tiptap/extension-task-item';
 import { Markdown } from 'tiptap-markdown';
 import type { MarkdownStorage } from 'tiptap-markdown';
 import { TableCheckbox } from './table-checkbox';
+import { CodeBlockMermaid } from './code-block-mermaid';
 import { getNotesStore } from '../core/store';
 import type { NotesState } from '../core/store/notes-store';
 import { useUnloadGuard } from '../integration/use-unload-guard';
@@ -85,7 +86,8 @@ export function Editor() {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({ codeBlock: false }),
+      CodeBlockMermaid,
       Markdown.configure({
         html: false,
         tightLists: true,
