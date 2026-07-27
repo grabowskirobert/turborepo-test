@@ -89,6 +89,7 @@
 /* Remove prose margins around table wrapper */
 .ProseMirror .tableWrapper {
   margin: 0;
+  margin-bottom: 1rem;
   overflow-x: auto;
 }
 .ProseMirror table .selectedCell {
@@ -170,21 +171,25 @@
   -webkit-appearance: none;
   width: 1rem;
   height: 1rem;
-  border: 2px solid #71717a;
+  border: 1.5px solid #52525b;
   border-radius: 3px;
-  background: transparent;
+  background-color: #27272a;
   cursor: pointer;
-  vertical-align: middle;
+  vertical-align: -0.2em;
   position: relative;
   flex-shrink: 0;
-  accent-color: oklch(82% 0.14 160);
+  margin-right: 0.35em;
   transition:
-    border-color 0.1s,
-    background-color 0.1s;
+    border-color 0.15s,
+    background-color 0.15s;
+}
+.ProseMirror .table-checkbox:hover {
+  border-color: #a1a1aa;
+  background-color: #3f3f46;
 }
 .ProseMirror .table-checkbox:checked {
-  background-color: oklch(82% 0.14 160);
-  border-color: oklch(82% 0.14 160);
+  background-color: oklch(62% 0.17 160);
+  border-color: oklch(62% 0.17 160);
 }
 .ProseMirror .table-checkbox:checked::after {
   content: '';
@@ -193,13 +198,18 @@
   top: -1px;
   width: 6px;
   height: 10px;
-  border: 2px solid #18181b;
+  border: 2px solid #fff;
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
 }
-.ProseMirror .table-checkbox:hover {
-  border-color: oklch(82% 0.14 160);
+
+/* Highlight divider when selected */
+.ProseMirror hr.ProseMirror-selectednode {
+  border-color: oklch(62% 0.17 160);
+  outline: 2px solid oklch(62% 0.17 160 / 0.4);
+  outline-offset: 2px;
+  border-radius: 1px;
 }
 
 /* Empty editor placeholder */
