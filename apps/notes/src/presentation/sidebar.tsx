@@ -23,19 +23,17 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    store.loadFolders().then(() => store.restoreLastNote());
-    return store.subscribe(setState);
-  }, [store]);
-
-  useEffect(() => {
-    if (state.activeFolderId && !expandedFolderIds.has(state.activeFolderId)) {
-      setExpandedFolderIds((prev) => new Set([...prev, state.activeFolderId!]));
-      if (!state.notesByFolder[state.activeFolderId]) {
-        store.loadNotes(state.activeFolderId);
+    const unsub = store.subscribe(setState);
+    store.loadFolders().then(async () => {
+      await store.restoreLastNote();
+      const { activeFolderId } = store.getState();
+      if (activeFolderId) {
+        setExpandedFolderIds((prev) => new Set([...prev, activeFolderId]));
+        await store.loadNotes(activeFolderId);
       }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.activeFolderId]);
+    });
+    return unsub;
+  }, [store]);
 
   function closeModal() {
     setModal({ kind: 'none' });
