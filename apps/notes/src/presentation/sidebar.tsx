@@ -30,6 +30,9 @@ export function Sidebar() {
   useEffect(() => {
     if (state.activeFolderId && !expandedFolderIds.has(state.activeFolderId)) {
       setExpandedFolderIds((prev) => new Set([...prev, state.activeFolderId!]));
+      if (!state.notesByFolder[state.activeFolderId]) {
+        store.loadNotes(state.activeFolderId);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.activeFolderId]);

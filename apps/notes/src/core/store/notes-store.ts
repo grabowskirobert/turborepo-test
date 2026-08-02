@@ -64,6 +64,12 @@ export class NotesStore {
 
   async loadNotes(folderId: FolderId): Promise<void> {
     const notes = await this.repo.getNotesByFolder(folderId);
+    notes.sort((a, b) =>
+      a.title.localeCompare(b.title, undefined, {
+        numeric: true,
+        sensitivity: 'base',
+      }),
+    );
     this.setState({
       notesByFolder: { ...this.state.notesByFolder, [folderId]: notes },
     });

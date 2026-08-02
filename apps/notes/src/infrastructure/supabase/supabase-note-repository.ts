@@ -19,6 +19,7 @@ function toNote(row: Record<string, unknown>): Note {
     folderId: row.folder_id as string,
     title: row.title as string,
     markdown: row.markdown as string,
+    createdAt: new Date(row.created_at as string),
     updatedAt: new Date(row.updated_at as string),
     deletedAt: row.deleted_at ? new Date(row.deleted_at as string) : null,
   };
@@ -73,7 +74,7 @@ export class SupabaseNoteRepository implements NoteRepository {
       .select('*')
       .eq('folder_id', folderId)
       .is('deleted_at', null)
-      .order('updated_at', { ascending: false });
+      .order('title', { ascending: true });
     if (error) throw error;
     return (data ?? []).map(toNote);
   }

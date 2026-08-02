@@ -15,6 +15,7 @@ export interface Note {
   folderId: FolderId;
   title: string;
   markdown: string;
+  createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
 }
