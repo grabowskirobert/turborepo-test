@@ -135,7 +135,8 @@ export const TableCheckbox = Node.create({
                     newChildren.push(child);
                     continue;
                   }
-                  const regex = /\[(x| )\]/gi;
+                  // Match checkboxes [ ]/[x] and hard breaks [hardBreak] in one pass
+                  const regex = /(\[(x| )\]|\[hardBreak\])/gi;
                   let last = 0;
                   let m: RegExpExecArray | null;
                   while ((m = regex.exec(child.content)) !== null) {
@@ -144,13 +145,16 @@ export const TableCheckbox = Node.create({
                       t.content = child.content.slice(last, m.index);
                       newChildren.push(t);
                     }
-                    const matchStr = m[1];
-                    const checked =
-                      matchStr !== undefined && matchStr.toLowerCase() === 'x';
                     const t = new Token('html_inline', '', 0);
-                    t.content = checked
-                      ? '<input type="checkbox" class="table-checkbox" checked>'
-                      : '<input type="checkbox" class="table-checkbox">';
+                    if (m[0].toLowerCase() === '[hardbreak]') {
+                      t.content = '<br>';
+                    } else {
+                      const checked =
+                        m[2] !== undefined && m[2].toLowerCase() === 'x';
+                      t.content = checked
+                        ? '<input type="checkbox" class="table-checkbox" checked>'
+                        : '<input type="checkbox" class="table-checkbox">';
+                    }
                     newChildren.push(t);
                     last = m.index + m[0].length;
                   }
