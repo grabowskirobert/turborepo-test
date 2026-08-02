@@ -157,9 +157,6 @@
 .ProseMirror table th p {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  display: flex;
-  align-items: center;
-  gap: 0.35em;
 }
 
 /* Strike through the line when its table checkbox is checked */
@@ -182,6 +179,7 @@
   cursor: pointer;
   vertical-align: middle;
   position: relative;
+  top: 1px;
   flex-shrink: 0;
   transition:
     border-color 0.15s,
