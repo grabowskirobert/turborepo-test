@@ -11,6 +11,8 @@ export interface NotesState {
   loading: boolean;
 }
 
+const LAST_NOTE_KEY = 'notes:lastNoteId';
+
 type Listener = (state: NotesState) => void;
 
 function makeInitialState(): NotesState {
@@ -89,7 +91,13 @@ export class NotesStore {
     }
   }
 
+  async restoreLastNote(): Promise<void> {
+    const id = localStorage.getItem(LAST_NOTE_KEY);
+    if (id) await this.selectNote(id);
+  }
+
   async selectNote(noteId: NoteId): Promise<void> {
+    localStorage.setItem(LAST_NOTE_KEY, noteId);
     await this.flushPendingSave();
     const cached = this.noteCache.get(noteId);
     if (cached) {

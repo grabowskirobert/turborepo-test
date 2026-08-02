@@ -23,7 +23,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    store.loadFolders();
+    store.loadFolders().then(() => store.restoreLastNote());
     return store.subscribe(setState);
   }, [store]);
 
