@@ -73,16 +73,16 @@ function getMarkdown(editor: ReturnType<typeof useEditor>): string {
   ).markdown.getMarkdown();
 }
 
-// Enter in a table cell creates a new paragraph (childCount > 1), which breaks
-// tiptap-markdown's isMarkdownSerializable check and serializes the whole table
-// as the literal text "[table]". Force Enter → hard break inside cells instead.
+// GFM markdown tables cannot store newlines in cells — any hardBreak serializes
+// as the literal text "[hardBreak]" and corrupts the stored note. Block Enter
+// entirely inside cells; rows are added via the toolbar or Tab.
 const TableCellEnter = Extension.create({
   name: 'tableCellEnter',
   addKeyboardShortcuts() {
     return {
       Enter: ({ editor }) => {
         if (editor.isActive('tableCell') || editor.isActive('tableHeader')) {
-          return editor.commands.setHardBreak();
+          return true; // consume, do nothing
         }
         return false;
       },
