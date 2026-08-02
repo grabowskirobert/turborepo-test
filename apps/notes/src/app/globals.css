@@ -159,13 +159,6 @@
   margin-bottom: 0 !important;
 }
 
-/* Strike through the line when its table checkbox is checked */
-.ProseMirror table td p:has(.table-checkbox:checked),
-.ProseMirror table th p:has(.table-checkbox:checked) {
-  text-decoration: line-through;
-  opacity: 0.5;
-}
-
 /* Unified checkbox style — TaskList items and inline table checkboxes */
 .ProseMirror ul[data-type='taskList'] li > label input[type='checkbox'],
 .ProseMirror .table-checkbox {
