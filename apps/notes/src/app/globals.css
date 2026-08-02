@@ -79,7 +79,7 @@
 .ProseMirror table th,
 .ProseMirror table td {
   border: 1px solid #3f3f46;
-  padding: 0.15rem 0.4rem;
+  padding: 0.15rem 0.4rem !important;
   vertical-align: top;
   position: relative;
   min-width: 2rem;
@@ -172,6 +172,7 @@
   cursor: pointer;
   vertical-align: middle;
   position: relative;
+  top: 1px;
   flex-shrink: 0;
   transition:
     border-color 0.15s,

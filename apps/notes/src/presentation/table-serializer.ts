@@ -6,6 +6,14 @@
 // inline so the table always serialises to proper markdown.
 export function serializeTable(state: any, node: any) {
   state.inTable = true;
+
+  // hardBreak has no tiptap-markdown serializer; it falls back to writing the
+  // literal text "[hardBreak]". A real \n would also break the table row.
+  // Override it for the duration of the table write — a space is the closest
+  // valid representation inside GFM table cells.
+  const origNodes = state.nodes as Record<string, unknown>;
+  state.nodes = { ...origNodes, hardBreak: (s: any) => s.write(' ') };
+
   node.forEach((row: any, _p: any, i: number) => {
     state.write('| ');
     row.forEach((col: any, _p2: any, j: number) => {
@@ -27,6 +35,7 @@ export function serializeTable(state: any, node: any) {
       state.ensureNewLine();
     }
   });
+  state.nodes = origNodes;
   state.closeBlock(node);
   state.inTable = false;
 }
