@@ -18,6 +18,27 @@ import {
   getInspectedTabId,
   onInspectedPageNavigated,
 } from '../integration/chrome-devtools';
+import styles from './devtools-panel.module.css';
+
+/**
+ * Maps the domain status onto its CSS Module modifier class. Keeping this
+ * explicit (instead of interpolating the status into the class name) means
+ * renaming a `DetectorStatus` member is a compile error, not a silent
+ * styling regression.
+ */
+// `string | undefined` because Vite types CSS Modules as an index signature
+// and the repo enables `noUncheckedIndexedAccess`; React accepts undefined.
+const statusClasses: Record<DetectorStatus, string | undefined> = {
+  unknown: styles.unknown,
+  active: styles.active,
+  inactive: styles.inactive,
+};
+
+const statusLabels: Record<DetectorStatus, string> = {
+  unknown: '…',
+  active: 'Active',
+  inactive: 'Inactive',
+};
 
 export function DevtoolsPanel() {
   const [status, setStatus] = useState<DetectorStatus>('unknown');
@@ -77,9 +98,9 @@ export function DevtoolsPanel() {
 
   if (!isRegularWebTab) {
     return (
-      <div className="panel">
+      <div className={styles.panel}>
         <h1>IO Detector</h1>
-        <div className="error">
+        <div className={styles.error}>
           DevTools attached to invalid target (tabId={String(tabId)}). Open
           DevTools on a regular web page and reopen this panel.
         </div>
@@ -87,35 +108,30 @@ export function DevtoolsPanel() {
     );
   }
 
-  const statusLabels: Record<DetectorStatus, string> = {
-    unknown: '…',
-    active: 'Active',
-    inactive: 'Inactive',
-  };
   const label = statusLabels[status];
 
   return (
-    <div className="panel">
+    <div className={styles.panel}>
       <h1>IO Detector</h1>
       <p>
         Reloads the inspected page with an early IntersectionObserver patch.
         Visual overlay + monitor panel appear directly on the page in a Shadow
         DOM.
       </p>
-      <div className={`status ${status}`}>
-        <span className="status-dot" />
+      <div className={`${styles.status} ${statusClasses[status]}`}>
+        <span className={styles.statusDot} />
         <span>{label}</span>
       </div>
       <button
         type="button"
-        className={`toggle ${status === 'active' ? 'active' : ''}`}
+        className={`${styles.toggle} ${status === 'active' ? styles.active : ''}`}
         onClick={() => void toggle()}
         disabled={pending || status === 'unknown'}
       >
         {status === 'active' ? 'Turn OFF' : 'Turn ON'}
       </button>
-      {message ? <div className="message">{message}</div> : null}
-      {error ? <div className="error">{error}</div> : null}
+      {message ? <div className={styles.message}>{message}</div> : null}
+      {error ? <div className={styles.error}>{error}</div> : null}
     </div>
   );
 }

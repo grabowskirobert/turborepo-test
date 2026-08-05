@@ -28,7 +28,9 @@ Pnpm monorepo managed by Turborepo. Two apps, one core library package, and thre
 ### Apps
 
 - **`apps/web`** — Next.js 16 app (App Router, port 3001). Playground for learning RxJS and testing the IO Detector integration. Routes: `/rxjs-playground`, `/io-detector`.
-- **`apps/io-detector-devtools-extension`** — Chrome DevTools extension (Vite + `@crxjs/vite-plugin`). Injects the IO Detector bundle into inspected pages via `chrome.scripting`. The bundle file (`io-detector.bundle.js`) is generated from `@repo/io-detector` and committed alongside the extension source.
+- **`apps/io-detector-devtools-extension`** — Chrome DevTools extension (Vite + `@crxjs/vite-plugin`). Injects the IO Detector bundle into inspected pages via `chrome.scripting`. A `buildStart` plugin in `vite.config.ts` copies `packages/io-detector/dist/io-detector.js` into `public/io-detector.bundle.js` so `@crxjs` can resolve the `web_accessible_resources` manifest entry; that staged file is generated build output and is gitignored, so `@repo/io-detector` must be built first.
+
+The DevTools panel is styled with a CSS Module (`src/presentation/devtools-panel.module.css`) imported from the component — Vite injects the stylesheet, so `devtools-panel.html` has no `<link>`.
 
 ### Core Package
 

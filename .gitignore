@@ -37,7 +37,7 @@ yarn-error.log*
 dist/
 
 # generated extension assets
-apps/extension/public/io-detector.bundle.js
+apps/io-detector-devtools-extension/public/io-detector.bundle.js
 
 # ide
 .idea
