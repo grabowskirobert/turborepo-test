@@ -51,9 +51,24 @@ notes    ( id, owner_id, folder_id → folders.id, title,
 
 A 1s debounce coalesces keystrokes. The pending write is **flushed** (fired immediately, debounce cancelled) on note-switch and in-app route change, so switching away never drops an edit. A `dirty` flag in the store drives a `beforeunload` handler (in `integration/`) that triggers the browser's native prompt only while unsaved. Flush-on-switch keeps the unguarded window to ~1s, limited to full tab-close/reload where a custom message is impossible anyway.
 
-### Markdown rendering
+### Editor: Tiptap WYSIWYG over split-pane react-markdown
 
-`react-markdown` + `remark-gfm` for GFM. A custom `code` component renderer inspects the fence language: `mermaid` → render via the `mermaid` package into a container (with error boundary / try-catch so invalid diagrams show an inline error without breaking the preview); everything else → `shiki` highlighting (reusing the version already in the repo). Because preview is always live, rendering is memoized on the Markdown string to avoid re-highlighting on every keystroke.
+The initial design called for a split-pane layout (raw Markdown source on the left, `react-markdown` preview on the right). During implementation, **Tiptap** (a ProseMirror-based WYSIWYG rich text editor) was chosen instead. Reasons:
+
+- A WYSIWYG editor is a better UX for a personal notes app: the owner sees formatted output as they type without any pane management.
+- Tiptap natively handles GFM constructs (tables, task lists, strikethrough, links) via extensions (`@tiptap/extension-task-list`, `@tiptap/extension-table`, etc.), eliminating the need for `react-markdown` + `remark-gfm`.
+- The `tiptap-markdown` package serialises the ProseMirror document to Markdown for persistence, so the backend still stores raw Markdown.
+
+`react-markdown` and `remark-gfm` are **not installed**; all GFM rendering is handled by Tiptap extensions.
+
+**Code highlighting and Mermaid (within Tiptap)**:
+
+A custom `CodeBlockMermaid` Tiptap extension (node view) handles fenced code blocks:
+
+- `mermaid` fences → rendered as a live diagram via the `mermaid` package (dynamic import, error boundary on invalid syntax).
+- All other fences → **shiki** (`github-dark` theme) highlights the code in display mode. The node view shows shiki-highlighted HTML when the block is not being edited; clicking the block switches to an editable `NodeViewContent` (ProseMirror-managed raw text). Shiki highlights asynchronously on each content change, ready for display when the user clicks away. Unsupported languages fall back to `plaintext`.
+
+Because Tiptap is WYSIWYG (no separate preview), there is no "memoized on the Markdown string" concern — the editor itself is always in rendered state.
 
 ### Auth / access control
 

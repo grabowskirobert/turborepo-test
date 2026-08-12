@@ -5,7 +5,7 @@
 /*
   Inline code: compact padding, vivid tint.
   Outside @layer so it wins over the typography plugin's layered styles.
-  :not(pre code) targets inline <code> only, not shiki code blocks.
+  :not(pre code) targets inline <code> only, not shiki-rendered code blocks.
 */
 .prose code:not(pre code) {
   color: oklch(82% 0.14 160);
@@ -47,7 +47,7 @@
   content: none;
 }
 
-/* Code blocks */
+/* Code blocks — applies to both the editable pre and the shiki-highlighted pre */
 .ProseMirror pre {
   background-color: #18181b;
   border: 1px solid #3f3f46;
@@ -62,6 +62,10 @@
   padding: 0;
   font-size: inherit;
   color: inherit;
+}
+/* Normalize shiki's inline background-color so display and edit modes match */
+.ProseMirror pre.shiki {
+  background-color: #18181b !important;
 }
 
 /* Blockquote accent */

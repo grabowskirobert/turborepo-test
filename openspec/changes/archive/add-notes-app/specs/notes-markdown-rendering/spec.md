@@ -2,26 +2,31 @@
 
 ### Requirement: GitHub-flavored Markdown rendering
 
-The preview SHALL render Markdown using `react-markdown` with GitHub-flavored Markdown extensions (tables, task lists, strikethrough, autolinks).
+The editor SHALL support GitHub-flavored Markdown constructs (tables, task lists, strikethrough, autolinks) rendered live in the WYSIWYG editor via Tiptap extensions.
 
 #### Scenario: Render GFM constructs
 
-- **WHEN** the note contains a table, a task list, or strikethrough text
-- **THEN** the preview renders them as a formatted table, checkbox list, and struck-through text respectively
+- **WHEN** the owner types a table, a task list, or strikethrough text
+- **THEN** the editor renders them as a formatted table, checkbox list, and struck-through text respectively, live as the owner types
 
 ### Requirement: Syntax-highlighted code blocks
 
-The preview SHALL render fenced code blocks with syntax highlighting using `shiki`.
+Non-mermaid fenced code blocks SHALL display with syntax highlighting powered by shiki (`github-dark` theme). While the block is being actively edited, the raw code is shown (editable); when the block loses focus, the highlighted display is restored.
 
 #### Scenario: Highlight a fenced code block
 
-- **WHEN** the note contains a fenced code block with a language identifier
-- **THEN** the preview renders the code with language-appropriate syntax highlighting
+- **WHEN** the owner writes a fenced code block with a language identifier and clicks away
+- **THEN** the block is rendered with language-appropriate syntax highlighting via shiki
 
 #### Scenario: Plain fenced block without language
 
 - **WHEN** the note contains a fenced code block with no language identifier
-- **THEN** the preview renders it as a monospaced code block without failing
+- **THEN** the block renders as a monospaced plain-text block without failing
+
+#### Scenario: Click to edit highlighted block
+
+- **WHEN** the owner clicks a shiki-highlighted code block
+- **THEN** the block switches to editable mode showing the raw code with ProseMirror cursor support
 
 ### Requirement: Mermaid diagram rendering
 

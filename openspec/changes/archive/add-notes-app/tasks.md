@@ -65,4 +65,4 @@
 
 - [x] 10.1 Unit-test `core` use-cases for cascade/restore/permanent-delete invariants (esp. "every archived note keeps a folder")
 - [x] 10.2 Pass the quality gate: `pnpm ci:is-working` (check-types + lint 0-warnings + build)
-- [ ] 10.3 Deploy to Vercel with Supabase env vars; verify sign-in, autosave, mermaid, and archive/restore end-to-end
+- [x] 10.3 Deploy to Vercel with Supabase env vars; verify sign-in, autosave, mermaid, and archive/restore end-to-end

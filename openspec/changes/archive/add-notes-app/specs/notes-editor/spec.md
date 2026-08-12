@@ -1,18 +1,18 @@
 ## ADDED Requirements
 
-### Requirement: Always-editable split-pane editor
+### Requirement: Always-editable rich text editor
 
-The editor SHALL present an editable Markdown input and a live rendered preview side by side, both visible at all times, with no mode toggle between editing and previewing.
+The editor SHALL present a WYSIWYG (what-you-see-is-what-you-get) Markdown editor where the owner types and sees formatted output simultaneously — no mode toggle between editing and viewing.
 
-#### Scenario: Editing updates preview live
+#### Scenario: Typing renders formatting live
 
-- **WHEN** the owner types Markdown into the editor pane
-- **THEN** the preview pane re-renders to reflect the current Markdown without any manual toggle
+- **WHEN** the owner types Markdown syntax (headings, bold, lists, tables, task items, links)
+- **THEN** the content is rendered formatted in place without requiring a separate preview toggle
 
 #### Scenario: No edit/preview toggle exists
 
 - **WHEN** the editor UI is inspected
-- **THEN** there is no control that switches between an edit-only and a preview-only mode
+- **THEN** there is no control that switches between an edit-only and a preview-only mode; the editor is always in rendered state
 
 ### Requirement: Debounced autosave
 
