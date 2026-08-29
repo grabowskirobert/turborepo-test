@@ -30,11 +30,13 @@ function TBtn({
   children,
   onClick,
   danger,
+  active,
   title,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   danger?: boolean;
+  active?: boolean;
   title?: string;
 }) {
   return (
@@ -44,8 +46,12 @@ function TBtn({
         onClick();
       }}
       title={title}
-      className={`px-2 py-0.5 rounded hover:bg-zinc-700 transition-colors ${
-        danger ? 'text-red-400' : 'text-zinc-300'
+      className={`px-2 py-0.5 rounded transition-colors ${
+        danger
+          ? 'text-red-400 hover:bg-zinc-700'
+          : active
+            ? 'bg-zinc-600 text-zinc-100'
+            : 'text-zinc-300 hover:bg-zinc-700'
       }`}
     >
       {children}
@@ -335,6 +341,44 @@ export function Editor() {
                 title="Remove link"
               >
                 Unlink
+              </TBtn>
+            </div>
+          </BubbleMenu>
+
+          {/* List type conversion toolbar */}
+          <BubbleMenu
+            editor={editor}
+            options={{ placement: 'top' }}
+            shouldShow={({ editor }) =>
+              editor.isActive('bulletList') ||
+              editor.isActive('orderedList') ||
+              editor.isActive('taskList')
+            }
+          >
+            <div className="flex items-center gap-0.5 bg-zinc-800 border border-zinc-600 rounded-lg px-1.5 py-1 shadow-xl text-xs select-none">
+              <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
+                List
+              </span>
+              <TBtn
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+                active={editor.isActive('bulletList')}
+                title="Bullet list"
+              >
+                •
+              </TBtn>
+              <TBtn
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                active={editor.isActive('orderedList')}
+                title="Numbered list"
+              >
+                1.
+              </TBtn>
+              <TBtn
+                onClick={() => editor.chain().focus().toggleTaskList().run()}
+                active={editor.isActive('taskList')}
+                title="Checkbox list"
+              >
+                ☐
               </TBtn>
             </div>
           </BubbleMenu>
