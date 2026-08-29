@@ -63,6 +63,87 @@ function Sep() {
   return <div className="w-px h-3 bg-zinc-600 mx-0.5 shrink-0" />;
 }
 
+function BulletListIcon() {
+  return (
+    <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+      <circle cx="1.5" cy="2" r="1.2" />
+      <rect x="4" y="1" width="10" height="2" rx="0.8" />
+      <circle cx="1.5" cy="6" r="1.2" />
+      <rect x="4" y="5" width="10" height="2" rx="0.8" />
+      <circle cx="1.5" cy="10" r="1.2" />
+      <rect x="4" y="9" width="7" height="2" rx="0.8" />
+    </svg>
+  );
+}
+
+function OrderedListIcon() {
+  return (
+    <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+      <rect x="0.5" y="0" width="1.5" height="4" rx="0.5" />
+      <rect x="4" y="1" width="10" height="2" rx="0.8" />
+      <rect x="0" y="4.5" width="3" height="1.5" rx="0.5" />
+      <rect x="0" y="6" width="3" height="1.5" rx="0.5" />
+      <rect x="4" y="5" width="10" height="2" rx="0.8" />
+      <rect x="0" y="8.5" width="3" height="1.5" rx="0.5" />
+      <rect x="0" y="10" width="3" height="1.5" rx="0.5" />
+      <rect x="4" y="9" width="7" height="2" rx="0.8" />
+    </svg>
+  );
+}
+
+function TaskListIcon() {
+  return (
+    <svg
+      width="14"
+      height="12"
+      viewBox="0 0 14 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    >
+      <rect x="0.6" y="0.6" width="2.8" height="2.8" rx="0.5" />
+      <line x1="5" y1="2" x2="14" y2="2" />
+      <rect x="0.6" y="4.6" width="2.8" height="2.8" rx="0.5" />
+      <line x1="5" y1="6" x2="14" y2="6" />
+      <rect x="0.6" y="8.6" width="2.8" height="2.8" rx="0.5" />
+      <line x1="5" y1="10" x2="11" y2="10" />
+    </svg>
+  );
+}
+
+function ListTypeBtn({
+  icon,
+  label,
+  active,
+  title,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  title: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+      title={title}
+      className={`flex items-center gap-1.5 px-2.5 py-1.5 transition-colors ${
+        active
+          ? 'bg-zinc-600 text-zinc-100'
+          : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60'
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+}
+
 const PROSE_CLASSES = [
   'outline-none min-h-[200px]',
   'prose prose-invert max-w-none',
@@ -187,6 +268,17 @@ export function Editor() {
     el.addEventListener('keydown', handler);
     return () => el.removeEventListener('keydown', handler);
   }, [editor, openLinkModal]);
+
+  // Block Cmd+S / Ctrl+S — prevents the browser's "Save page" dialog
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   // Reload editor content when the active note changes
   const activeNoteId = state.activeNoteId;
@@ -355,31 +447,33 @@ export function Editor() {
               editor.isActive('taskList')
             }
           >
-            <div className="flex items-center gap-0.5 bg-zinc-800 border border-zinc-600 rounded-lg px-1.5 py-1 shadow-xl text-xs select-none">
-              <span className="text-zinc-500 text-[10px] px-1 uppercase tracking-wide">
+            <div className="flex items-stretch bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl text-xs select-none overflow-hidden">
+              <span className="flex items-center text-zinc-500 text-[10px] px-2 uppercase tracking-wide border-r border-zinc-600 shrink-0">
                 List
               </span>
-              <TBtn
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
+              <ListTypeBtn
+                icon={<BulletListIcon />}
+                label="Bullet"
                 active={editor.isActive('bulletList')}
-                title="Bullet list"
-              >
-                •
-              </TBtn>
-              <TBtn
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                title="Convert to bullet list"
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+              />
+              <div className="w-px bg-zinc-700 shrink-0" />
+              <ListTypeBtn
+                icon={<OrderedListIcon />}
+                label="Numbered"
                 active={editor.isActive('orderedList')}
-                title="Numbered list"
-              >
-                1.
-              </TBtn>
-              <TBtn
-                onClick={() => editor.chain().focus().toggleTaskList().run()}
+                title="Convert to numbered list"
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              />
+              <div className="w-px bg-zinc-700 shrink-0" />
+              <ListTypeBtn
+                icon={<TaskListIcon />}
+                label="Checklist"
                 active={editor.isActive('taskList')}
-                title="Checkbox list"
-              >
-                ☐
-              </TBtn>
+                title="Convert to checklist"
+                onClick={() => editor.chain().focus().toggleTaskList().run()}
+              />
             </div>
           </BubbleMenu>
         </>
