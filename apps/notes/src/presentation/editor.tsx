@@ -15,6 +15,7 @@ import {
 import { CellSelection } from '@tiptap/pm/tables';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
+import Highlight from '@tiptap/extension-highlight';
 import Link from '@tiptap/extension-link';
 import { Markdown } from 'tiptap-markdown';
 import type { MarkdownStorage } from 'tiptap-markdown';
@@ -109,6 +110,72 @@ function TaskListIcon() {
       <rect x="0.6" y="8.6" width="2.8" height="2.8" rx="0.5" />
       <line x1="5" y1="10" x2="11" y2="10" />
     </svg>
+  );
+}
+
+function CodeIcon() {
+  return (
+    <svg
+      width="14"
+      height="12"
+      viewBox="0 0 14 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="4,1 1,6 4,11" />
+      <polyline points="10,1 13,6 10,11" />
+    </svg>
+  );
+}
+
+function HighlightIcon() {
+  return (
+    <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+      <rect x="1" y="7.5" width="12" height="3" rx="0.8" opacity="0.55" />
+      <rect x="3.5" y="1" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
+function QuoteIcon() {
+  return (
+    <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+      <rect x="0" y="1" width="2" height="10" rx="1" />
+      <rect x="4" y="3" width="10" height="2" rx="0.8" />
+      <rect x="4" y="6.5" width="7" height="2" rx="0.8" />
+    </svg>
+  );
+}
+
+function FormatBtn({
+  children,
+  active,
+  title,
+  onClick,
+}: {
+  children: React.ReactNode;
+  active: boolean;
+  title: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onMouseDown={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
+      title={title}
+      className={`flex items-center justify-center px-2.5 py-1.5 transition-colors ${
+        active
+          ? 'bg-zinc-600 text-zinc-100'
+          : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60'
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -229,6 +296,7 @@ export function Editor() {
         breaks: false,
         transformPastedText: true,
       }),
+      Highlight,
       Link.configure({ openOnClick: false, autolink: true }),
       Table.configure({ resizable: false }).extend({
         // tiptap-markdown's default table serializer falls back to writing the
@@ -437,14 +505,86 @@ export function Editor() {
             </div>
           </BubbleMenu>
 
+          {/* Text selection formatting toolbar */}
+          <BubbleMenu
+            editor={editor}
+            options={{ placement: 'top' }}
+            shouldShow={({ editor }) =>
+              !editor.state.selection.empty &&
+              !(editor.state.selection instanceof CellSelection)
+            }
+          >
+            <div className="flex items-stretch bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl text-xs select-none overflow-hidden">
+              <FormatBtn
+                active={editor.isActive('bold')}
+                title="Bold (⌘B)"
+                onClick={() => editor.chain().focus().toggleBold().run()}
+              >
+                <span className="font-bold text-sm leading-none">B</span>
+              </FormatBtn>
+              <div className="w-px bg-zinc-700 shrink-0" />
+              <FormatBtn
+                active={editor.isActive('code')}
+                title="Inline code"
+                onClick={() => editor.chain().focus().toggleCode().run()}
+              >
+                <CodeIcon />
+              </FormatBtn>
+              <FormatBtn
+                active={editor.isActive('highlight')}
+                title="Highlight"
+                onClick={() => editor.chain().focus().toggleHighlight().run()}
+              >
+                <HighlightIcon />
+              </FormatBtn>
+              <div className="w-px bg-zinc-700 shrink-0" />
+              <FormatBtn
+                active={editor.isActive('blockquote')}
+                title="Blockquote"
+                onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              >
+                <QuoteIcon />
+              </FormatBtn>
+              <div className="w-px bg-zinc-700 shrink-0" />
+              <FormatBtn
+                active={editor.isActive('heading', { level: 1 })}
+                title="Heading 1"
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 1 }).run()
+                }
+              >
+                H1
+              </FormatBtn>
+              <FormatBtn
+                active={editor.isActive('heading', { level: 2 })}
+                title="Heading 2"
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 2 }).run()
+                }
+              >
+                H2
+              </FormatBtn>
+              <FormatBtn
+                active={editor.isActive('heading', { level: 3 })}
+                title="Heading 3"
+                onClick={() =>
+                  editor.chain().focus().toggleHeading({ level: 3 }).run()
+                }
+              >
+                H3
+              </FormatBtn>
+            </div>
+          </BubbleMenu>
+
           {/* List type conversion toolbar */}
           <BubbleMenu
             editor={editor}
             options={{ placement: 'top' }}
             shouldShow={({ editor }) =>
-              editor.isActive('bulletList') ||
-              editor.isActive('orderedList') ||
-              editor.isActive('taskList')
+              editor.state.selection.empty &&
+              (editor.isActive('bulletList') ||
+                editor.isActive('orderedList') ||
+                editor.isActive('taskList'))
             }
           >
             <div className="flex items-stretch bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl text-xs select-none overflow-hidden">

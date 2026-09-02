@@ -153,6 +153,9 @@ importers:
       '@tiptap/extension-code-block':
         specifier: ^3.29.0
         version: 3.29.0(@tiptap/core@3.29.0(@tiptap/pm@3.29.0))(@tiptap/pm@3.29.0)
+      '@tiptap/extension-highlight':
+        specifier: ^3.31.0
+        version: 3.31.0(@tiptap/core@3.29.0(@tiptap/pm@3.29.0))
       '@tiptap/extension-link':
         specifier: ^3.29.0
         version: 3.29.0(@tiptap/core@3.29.0(@tiptap/pm@3.29.0))(@tiptap/pm@3.29.0)
@@ -247,6 +250,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/io-detector':
+        specifier: workspace:*
+        version: link:../../packages/io-detector
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -2133,6 +2139,14 @@ packages:
     peerDependencies:
       '@tiptap/core': 3.29.0
 
+  '@tiptap/extension-highlight@3.31.0':
+    resolution:
+      {
+        integrity: sha512-Kc5attKuiHdrowCPBJt8aqceYDeUTEdSJctEf9MxiYvFmt4Vk9fptvZ5cRH+nxSy2TvYoYUJgye1NZg1uub4Tw==,
+      }
+    peerDependencies:
+      '@tiptap/core': 3.31.0
+
   '@tiptap/extension-horizontal-rule@3.29.0':
     resolution:
       {
@@ -4008,6 +4022,7 @@ packages:
         integrity: sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==,
       }
     engines: { node: ^18.18.0 || ^20.9.0 || >=21.1.0 }
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -7737,6 +7752,10 @@ snapshots:
       '@tiptap/core': 3.29.0(@tiptap/pm@3.29.0)
 
   '@tiptap/extension-heading@3.29.0(@tiptap/core@3.29.0(@tiptap/pm@3.29.0))':
+    dependencies:
+      '@tiptap/core': 3.29.0(@tiptap/pm@3.29.0)
+
+  '@tiptap/extension-highlight@3.31.0(@tiptap/core@3.29.0(@tiptap/pm@3.29.0))':
     dependencies:
       '@tiptap/core': 3.29.0(@tiptap/pm@3.29.0)
 
