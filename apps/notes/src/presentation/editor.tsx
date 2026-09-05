@@ -133,9 +133,29 @@ function CodeIcon() {
 
 function HighlightIcon() {
   return (
-    <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
-      <rect x="1" y="7.5" width="12" height="3" rx="0.8" opacity="0.55" />
-      <rect x="3.5" y="1" width="7" height="7" rx="1" />
+    <svg width="14" height="12" viewBox="0 0 14 12" fill="none">
+      <path
+        d="M3 9.5L5.5 4 7 1.5 8.5 4 11 9.5H3Z"
+        fill="currentColor"
+        opacity="0.85"
+      />
+      <line
+        x1="4.5"
+        y1="6.5"
+        x2="9.5"
+        y2="6.5"
+        stroke="currentColor"
+        strokeWidth="1"
+        opacity="0.5"
+      />
+      <rect
+        x="1"
+        y="10.5"
+        width="12"
+        height="1.5"
+        rx="0.75"
+        fill="currentColor"
+      />
     </svg>
   );
 }
@@ -168,45 +188,13 @@ function FormatBtn({
         onClick();
       }}
       title={title}
-      className={`flex items-center justify-center px-2.5 py-1.5 transition-colors ${
+      className={`flex items-center justify-center px-2 py-1.5 transition-colors ${
         active
           ? 'bg-zinc-600 text-zinc-100'
           : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60'
       }`}
     >
       {children}
-    </button>
-  );
-}
-
-function ListTypeBtn({
-  icon,
-  label,
-  active,
-  title,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  active: boolean;
-  title: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onMouseDown={(e) => {
-        e.preventDefault();
-        onClick();
-      }}
-      title={title}
-      className={`flex items-center gap-1.5 px-2.5 py-1.5 transition-colors ${
-        active
-          ? 'bg-zinc-600 text-zinc-100'
-          : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60'
-      }`}
-    >
-      {icon}
-      <span>{label}</span>
     </button>
   );
 }
@@ -297,7 +285,12 @@ export function Editor() {
         breaks: false,
         transformPastedText: true,
       }),
-      Highlight,
+      Highlight.configure({
+        HTMLAttributes: {
+          style:
+            'background-color: rgba(253, 224, 71, 0.28); border-radius: 3px; padding: 0 2px;',
+        },
+      }),
       Link.configure({ openOnClick: false, autolink: true }),
       Table.configure({ resizable: false }).extend({
         // tiptap-markdown's default table serializer falls back to writing the
@@ -531,11 +524,20 @@ export function Editor() {
           >
             <div className="flex items-stretch bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl text-xs select-none overflow-hidden">
               <FormatBtn
+                active={editor.isActive('italic')}
+                title="Italic (⌘I)"
+                onClick={() => editor.chain().focus().toggleItalic().run()}
+              >
+                <span className="italic font-serif text-[13px] leading-none">
+                  I
+                </span>
+              </FormatBtn>
+              <FormatBtn
                 active={editor.isActive('bold')}
                 title="Bold (⌘B)"
                 onClick={() => editor.chain().focus().toggleBold().run()}
               >
-                <span className="font-bold text-sm leading-none">B</span>
+                <span className="font-bold text-[13px] leading-none">B</span>
               </FormatBtn>
               <div className="w-px bg-zinc-700 shrink-0" />
               <FormatBtn
@@ -588,45 +590,28 @@ export function Editor() {
               >
                 H3
               </FormatBtn>
-              {(editor.isActive('bulletList') ||
-                editor.isActive('orderedList') ||
-                editor.isActive('taskList')) && (
-                <>
-                  <div className="w-px bg-zinc-700 shrink-0" />
-                  <span className="flex items-center text-zinc-500 text-[10px] px-2 uppercase tracking-wide border-r border-zinc-600 shrink-0">
-                    List
-                  </span>
-                  <ListTypeBtn
-                    icon={<BulletListIcon />}
-                    label="Bullet"
-                    active={editor.isActive('bulletList')}
-                    title="Convert to bullet list"
-                    onClick={() =>
-                      editor.chain().focus().toggleBulletList().run()
-                    }
-                  />
-                  <div className="w-px bg-zinc-700 shrink-0" />
-                  <ListTypeBtn
-                    icon={<OrderedListIcon />}
-                    label="Numbered"
-                    active={editor.isActive('orderedList')}
-                    title="Convert to numbered list"
-                    onClick={() =>
-                      editor.chain().focus().toggleOrderedList().run()
-                    }
-                  />
-                  <div className="w-px bg-zinc-700 shrink-0" />
-                  <ListTypeBtn
-                    icon={<TaskListIcon />}
-                    label="Checklist"
-                    active={editor.isActive('taskList')}
-                    title="Convert to checklist"
-                    onClick={() =>
-                      editor.chain().focus().toggleTaskList().run()
-                    }
-                  />
-                </>
-              )}
+              <div className="w-px bg-zinc-700 shrink-0" />
+              <FormatBtn
+                active={editor.isActive('bulletList')}
+                title="Bullet list"
+                onClick={() => editor.chain().focus().toggleBulletList().run()}
+              >
+                <BulletListIcon />
+              </FormatBtn>
+              <FormatBtn
+                active={editor.isActive('orderedList')}
+                title="Numbered list"
+                onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              >
+                <OrderedListIcon />
+              </FormatBtn>
+              <FormatBtn
+                active={editor.isActive('taskList')}
+                title="Checklist"
+                onClick={() => editor.chain().focus().toggleTaskList().run()}
+              >
+                <TaskListIcon />
+              </FormatBtn>
             </div>
           </BubbleMenu>
         </>
