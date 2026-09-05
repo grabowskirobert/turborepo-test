@@ -257,6 +257,7 @@ export function Editor() {
   const store = getNotesStore();
   const [state, setState] = useState<NotesState>(store.getState());
   const [linkModal, setLinkModal] = useState<LinkModalState>({ open: false });
+  const [copied, setCopied] = useState(false);
   const pathname = usePathname();
   const prevPathRef = useRef(pathname);
 
@@ -371,6 +372,13 @@ export function Editor() {
 
   useUnloadGuard(state.dirty);
 
+  async function copyMarkdown() {
+    if (!editor) return;
+    await navigator.clipboard.writeText(getMarkdown(editor));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
+
   function applyLink(text: string, url: string) {
     if (!editor) return;
     setLinkModal({ open: false });
@@ -397,9 +405,9 @@ export function Editor() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-zinc-900">
-      <div className="flex items-center h-12 border-b border-zinc-700 px-4">
+      <div className="flex items-center h-12 border-b border-zinc-700 px-4 gap-2">
         <input
-          className="w-full text-xl font-semibold outline-none bg-transparent text-zinc-100 placeholder:text-zinc-600"
+          className="flex-1 text-xl font-semibold outline-none bg-transparent text-zinc-100 placeholder:text-zinc-600"
           value={state.activeNoteContent.title}
           onChange={(e) =>
             setState((s) => ({
@@ -412,6 +420,13 @@ export function Editor() {
           onBlur={(e) => store.editTitle(e.target.value)}
           placeholder="Note title"
         />
+        <button
+          onClick={copyMarkdown}
+          title="Copy as Markdown"
+          className="shrink-0 px-2 py-1 text-xs rounded transition-colors text-zinc-500 hover:text-zinc-300 hover:bg-zinc-700"
+        >
+          {copied ? 'Copied!' : 'Copy MD'}
+        </button>
       </div>
 
       {editor && (
@@ -573,47 +588,45 @@ export function Editor() {
               >
                 H3
               </FormatBtn>
-            </div>
-          </BubbleMenu>
-
-          {/* List type conversion toolbar */}
-          <BubbleMenu
-            editor={editor}
-            options={{ placement: 'top' }}
-            shouldShow={({ editor }) =>
-              editor.state.selection.empty &&
-              (editor.isActive('bulletList') ||
+              {(editor.isActive('bulletList') ||
                 editor.isActive('orderedList') ||
-                editor.isActive('taskList'))
-            }
-          >
-            <div className="flex items-stretch bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl text-xs select-none overflow-hidden">
-              <span className="flex items-center text-zinc-500 text-[10px] px-2 uppercase tracking-wide border-r border-zinc-600 shrink-0">
-                List
-              </span>
-              <ListTypeBtn
-                icon={<BulletListIcon />}
-                label="Bullet"
-                active={editor.isActive('bulletList')}
-                title="Convert to bullet list"
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-              />
-              <div className="w-px bg-zinc-700 shrink-0" />
-              <ListTypeBtn
-                icon={<OrderedListIcon />}
-                label="Numbered"
-                active={editor.isActive('orderedList')}
-                title="Convert to numbered list"
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              />
-              <div className="w-px bg-zinc-700 shrink-0" />
-              <ListTypeBtn
-                icon={<TaskListIcon />}
-                label="Checklist"
-                active={editor.isActive('taskList')}
-                title="Convert to checklist"
-                onClick={() => editor.chain().focus().toggleTaskList().run()}
-              />
+                editor.isActive('taskList')) && (
+                <>
+                  <div className="w-px bg-zinc-700 shrink-0" />
+                  <span className="flex items-center text-zinc-500 text-[10px] px-2 uppercase tracking-wide border-r border-zinc-600 shrink-0">
+                    List
+                  </span>
+                  <ListTypeBtn
+                    icon={<BulletListIcon />}
+                    label="Bullet"
+                    active={editor.isActive('bulletList')}
+                    title="Convert to bullet list"
+                    onClick={() =>
+                      editor.chain().focus().toggleBulletList().run()
+                    }
+                  />
+                  <div className="w-px bg-zinc-700 shrink-0" />
+                  <ListTypeBtn
+                    icon={<OrderedListIcon />}
+                    label="Numbered"
+                    active={editor.isActive('orderedList')}
+                    title="Convert to numbered list"
+                    onClick={() =>
+                      editor.chain().focus().toggleOrderedList().run()
+                    }
+                  />
+                  <div className="w-px bg-zinc-700 shrink-0" />
+                  <ListTypeBtn
+                    icon={<TaskListIcon />}
+                    label="Checklist"
+                    active={editor.isActive('taskList')}
+                    title="Convert to checklist"
+                    onClick={() =>
+                      editor.chain().focus().toggleTaskList().run()
+                    }
+                  />
+                </>
+              )}
             </div>
           </BubbleMenu>
         </>
