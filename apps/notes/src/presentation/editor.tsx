@@ -574,97 +574,132 @@ export function Editor() {
               !(editor.state.selection instanceof CellSelection)
             }
           >
-            <div className="flex items-stretch bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl text-xs select-none overflow-hidden">
-              <FormatBtn
-                active={editor.isActive('italic')}
-                title="Italic (⌘I)"
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-              >
-                <span className="italic font-serif text-[13px] leading-none">
-                  I
-                </span>
-              </FormatBtn>
-              <FormatBtn
-                active={editor.isActive('bold')}
-                title="Bold (⌘B)"
-                onClick={() => editor.chain().focus().toggleBold().run()}
-              >
-                <span className="font-bold text-[13px] leading-none">B</span>
-              </FormatBtn>
-              <div className="w-px bg-zinc-700 shrink-0" />
-              <FormatBtn
-                active={editor.isActive('code')}
-                title="Inline code"
-                onClick={() => editor.chain().focus().toggleCode().run()}
-              >
-                <CodeIcon />
-              </FormatBtn>
-              <FormatBtn
-                active={editor.isActive('highlight')}
-                title="Highlight"
-                onClick={() => editor.chain().focus().toggleHighlight().run()}
-              >
-                <HighlightIcon />
-              </FormatBtn>
-              <div className="w-px bg-zinc-700 shrink-0" />
-              <FormatBtn
-                active={editor.isActive('blockquote')}
-                title="Blockquote"
-                onClick={() => editor.chain().focus().toggleBlockquote().run()}
-              >
-                <QuoteIcon />
-              </FormatBtn>
-              <div className="w-px bg-zinc-700 shrink-0" />
-              <FormatBtn
-                active={editor.isActive('heading', { level: 1 })}
-                title="Heading 1"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
+            {(() => {
+              // Use $from.parent for block-level checks to avoid false positives
+              // when the selection range merely *overlaps* a node boundary.
+              // editor.isActive() returns true for any node that intersects the
+              // selection range, so selecting from a heading into a paragraph
+              // would light up H2 even though the selection starts in a paragraph.
+              const { $from } = editor.state.selection;
+              const parentType = $from.parent.type.name;
+              const parentAttrs = $from.parent.attrs;
+              const inHeading = (level: number) =>
+                parentType === 'heading' && parentAttrs.level === level;
+              const inBlockquote = () =>
+                $from.node($from.depth - 1)?.type.name === 'blockquote' ||
+                parentType === 'blockquote';
+              const inList = (name: string) => {
+                for (let d = $from.depth; d >= 0; d--) {
+                  if ($from.node(d).type.name === name) return true;
                 }
-              >
-                H1
-              </FormatBtn>
-              <FormatBtn
-                active={editor.isActive('heading', { level: 2 })}
-                title="Heading 2"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-              >
-                H2
-              </FormatBtn>
-              <FormatBtn
-                active={editor.isActive('heading', { level: 3 })}
-                title="Heading 3"
-                onClick={() =>
-                  editor.chain().focus().toggleHeading({ level: 3 }).run()
-                }
-              >
-                H3
-              </FormatBtn>
-              <div className="w-px bg-zinc-700 shrink-0" />
-              <FormatBtn
-                active={editor.isActive('bulletList')}
-                title="Bullet list"
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-              >
-                <BulletListIcon />
-              </FormatBtn>
-              <FormatBtn
-                active={editor.isActive('orderedList')}
-                title="Numbered list"
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              >
-                <OrderedListIcon />
-              </FormatBtn>
-              <FormatBtn
-                active={editor.isActive('taskList')}
-                title="Checklist"
-                onClick={() => editor.chain().focus().toggleTaskList().run()}
-              >
-                <TaskListIcon />
-              </FormatBtn>
-            </div>
+                return false;
+              };
+              return (
+                <div className="flex items-stretch bg-zinc-800 border border-zinc-600 rounded-lg shadow-xl text-xs select-none overflow-hidden">
+                  <FormatBtn
+                    active={editor.isActive('italic')}
+                    title="Italic (⌘I)"
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                  >
+                    <span className="italic font-serif text-[13px] leading-none">
+                      I
+                    </span>
+                  </FormatBtn>
+                  <FormatBtn
+                    active={editor.isActive('bold')}
+                    title="Bold (⌘B)"
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                  >
+                    <span className="font-bold text-[13px] leading-none">
+                      B
+                    </span>
+                  </FormatBtn>
+                  <div className="w-px bg-zinc-700 shrink-0" />
+                  <FormatBtn
+                    active={editor.isActive('code')}
+                    title="Inline code"
+                    onClick={() => editor.chain().focus().toggleCode().run()}
+                  >
+                    <CodeIcon />
+                  </FormatBtn>
+                  <FormatBtn
+                    active={editor.isActive('highlight')}
+                    title="Highlight"
+                    onClick={() =>
+                      editor.chain().focus().toggleHighlight().run()
+                    }
+                  >
+                    <HighlightIcon />
+                  </FormatBtn>
+                  <div className="w-px bg-zinc-700 shrink-0" />
+                  <FormatBtn
+                    active={inBlockquote()}
+                    title="Blockquote"
+                    onClick={() =>
+                      editor.chain().focus().toggleBlockquote().run()
+                    }
+                  >
+                    <QuoteIcon />
+                  </FormatBtn>
+                  <div className="w-px bg-zinc-700 shrink-0" />
+                  <FormatBtn
+                    active={inHeading(1)}
+                    title="Heading 1"
+                    onClick={() =>
+                      editor.chain().focus().toggleHeading({ level: 1 }).run()
+                    }
+                  >
+                    H1
+                  </FormatBtn>
+                  <FormatBtn
+                    active={inHeading(2)}
+                    title="Heading 2"
+                    onClick={() =>
+                      editor.chain().focus().toggleHeading({ level: 2 }).run()
+                    }
+                  >
+                    H2
+                  </FormatBtn>
+                  <FormatBtn
+                    active={inHeading(3)}
+                    title="Heading 3"
+                    onClick={() =>
+                      editor.chain().focus().toggleHeading({ level: 3 }).run()
+                    }
+                  >
+                    H3
+                  </FormatBtn>
+                  <div className="w-px bg-zinc-700 shrink-0" />
+                  <FormatBtn
+                    active={inList('bulletList')}
+                    title="Bullet list"
+                    onClick={() =>
+                      editor.chain().focus().toggleBulletList().run()
+                    }
+                  >
+                    <BulletListIcon />
+                  </FormatBtn>
+                  <FormatBtn
+                    active={inList('orderedList')}
+                    title="Numbered list"
+                    onClick={() =>
+                      editor.chain().focus().toggleOrderedList().run()
+                    }
+                  >
+                    <OrderedListIcon />
+                  </FormatBtn>
+                  <FormatBtn
+                    active={inList('taskList')}
+                    title="Checklist"
+                    onClick={() =>
+                      editor.chain().focus().toggleTaskList().run()
+                    }
+                  >
+                    <TaskListIcon />
+                  </FormatBtn>
+                </div>
+              );
+            })()}
           </BubbleMenu>
         </>
       )}
