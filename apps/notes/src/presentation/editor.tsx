@@ -80,14 +80,24 @@ function BulletListIcon() {
 function OrderedListIcon() {
   return (
     <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
-      <rect x="0.5" y="0" width="1.5" height="4" rx="0.5" />
-      <rect x="4" y="1" width="10" height="2" rx="0.8" />
-      <rect x="0" y="4.5" width="3" height="1.5" rx="0.5" />
-      <rect x="0" y="6" width="3" height="1.5" rx="0.5" />
-      <rect x="4" y="5" width="10" height="2" rx="0.8" />
-      <rect x="0" y="8.5" width="3" height="1.5" rx="0.5" />
-      <rect x="0" y="10" width="3" height="1.5" rx="0.5" />
-      <rect x="4" y="9" width="7" height="2" rx="0.8" />
+      <text x="0" y="3.8" fontSize="4" fontFamily="sans-serif" fontWeight="700">
+        1.
+      </text>
+      <rect x="5" y="1.5" width="9" height="2" rx="0.8" />
+      <text x="0" y="7.8" fontSize="4" fontFamily="sans-serif" fontWeight="700">
+        2.
+      </text>
+      <rect x="5" y="5.5" width="9" height="2" rx="0.8" />
+      <text
+        x="0"
+        y="11.8"
+        fontSize="4"
+        fontFamily="sans-serif"
+        fontWeight="700"
+      >
+        3.
+      </text>
+      <rect x="5" y="9.5" width="6" height="2" rx="0.8" />
     </svg>
   );
 }
@@ -99,16 +109,49 @@ function TaskListIcon() {
       height="12"
       viewBox="0 0 14 12"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.2"
       strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <rect x="0.6" y="0.6" width="2.8" height="2.8" rx="0.5" />
-      <line x1="5" y1="2" x2="14" y2="2" />
-      <rect x="0.6" y="4.6" width="2.8" height="2.8" rx="0.5" />
-      <line x1="5" y1="6" x2="14" y2="6" />
-      <rect x="0.6" y="8.6" width="2.8" height="2.8" rx="0.5" />
-      <line x1="5" y1="10" x2="11" y2="10" />
+      <rect
+        x="0.6"
+        y="0.6"
+        width="2.8"
+        height="2.8"
+        rx="0.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <polyline
+        points="1.2,2 2,2.9 3.3,1.3"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+      <rect x="4" y="1" width="10" height="2" rx="0.8" fill="currentColor" />
+      <rect
+        x="0.6"
+        y="4.6"
+        width="2.8"
+        height="2.8"
+        rx="0.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <polyline
+        points="1.2,6 2,6.9 3.3,5.3"
+        stroke="currentColor"
+        strokeWidth="1"
+      />
+      <rect x="4" y="5" width="10" height="2" rx="0.8" fill="currentColor" />
+      <rect
+        x="0.6"
+        y="8.6"
+        width="2.8"
+        height="2.8"
+        rx="0.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <rect x="4" y="9" width="7" height="2" rx="0.8" fill="currentColor" />
     </svg>
   );
 }
@@ -134,20 +177,29 @@ function CodeIcon() {
 function HighlightIcon() {
   return (
     <svg width="14" height="12" viewBox="0 0 14 12" fill="none">
-      <path
-        d="M3 9.5L5.5 4 7 1.5 8.5 4 11 9.5H3Z"
+      {/* Marker pen body */}
+      <rect
+        x="2"
+        y="3.5"
+        width="8"
+        height="3.5"
+        rx="1"
         fill="currentColor"
-        opacity="0.85"
+        opacity="0.9"
       />
-      <line
-        x1="4.5"
-        y1="6.5"
-        x2="9.5"
-        y2="6.5"
-        stroke="currentColor"
-        strokeWidth="1"
-        opacity="0.5"
+      {/* Cap */}
+      <rect
+        x="10"
+        y="4"
+        width="2.5"
+        height="2.5"
+        rx="0.5"
+        fill="currentColor"
+        opacity="0.55"
       />
+      {/* Nib/tip */}
+      <path d="M2 4.5L0.5 6L2 7.5" fill="currentColor" opacity="0.9" />
+      {/* Highlight bar underneath */}
       <rect
         x="1"
         y="10.5"
@@ -188,7 +240,7 @@ function FormatBtn({
         onClick();
       }}
       title={title}
-      className={`flex items-center justify-center px-2 py-1.5 transition-colors ${
+      className={`flex items-center justify-center w-8 py-1.5 transition-colors ${
         active
           ? 'bg-zinc-600 text-zinc-100'
           : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60'
@@ -288,7 +340,7 @@ export function Editor() {
       Highlight.configure({
         HTMLAttributes: {
           style:
-            'background-color: rgba(253, 224, 71, 0.28); border-radius: 3px; padding: 0 2px;',
+            'background-color: rgba(253, 224, 71, 0.16); border-radius: 3px; padding: 0 2px;',
         },
       }),
       Link.configure({ openOnClick: false, autolink: true }),
