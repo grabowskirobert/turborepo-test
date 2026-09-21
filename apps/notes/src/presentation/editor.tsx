@@ -340,7 +340,7 @@ export function Editor() {
       Highlight.configure({
         HTMLAttributes: {
           style:
-            'background-color: rgba(253, 224, 71, 0.16); border-radius: 3px; padding: 0 2px;',
+            'background-color: oklch(85% 0.18 85 / 0.35); color: inherit; border-radius: 3px; padding: 0 2px;',
         },
       }),
       Link.configure({ openOnClick: false, autolink: true }),
