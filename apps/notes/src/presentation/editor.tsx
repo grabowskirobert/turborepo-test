@@ -16,6 +16,7 @@ import { CellSelection } from '@tiptap/pm/tables';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Highlight from '@tiptap/extension-highlight';
+import markdownItMark from 'markdown-it-mark';
 import Link from '@tiptap/extension-link';
 import { Markdown } from 'tiptap-markdown';
 import type { MarkdownStorage } from 'tiptap-markdown';
@@ -341,6 +342,31 @@ export function Editor() {
         HTMLAttributes: {
           style:
             'background-color: oklch(85% 0.18 85 / 0.35); color: inherit; border-radius: 3px; padding: 0 2px;',
+        },
+      }).extend({
+        addStorage() {
+          return {
+            markdown: {
+              serialize: {
+                open: '==',
+                close: '==',
+                expelEnclosingWhitespace: true,
+              },
+              parse: {
+                setup(md: { use: (plugin: unknown) => void }) {
+                  md.use(markdownItMark);
+                },
+                updateDOM(element: HTMLElement) {
+                  element.querySelectorAll('mark').forEach((mark) => {
+                    mark.setAttribute(
+                      'style',
+                      'background-color: oklch(85% 0.18 85 / 0.35); color: inherit; border-radius: 3px; padding: 0 2px;',
+                    );
+                  });
+                },
+              },
+            },
+          };
         },
       }),
       Link.configure({ openOnClick: false, autolink: true }),
